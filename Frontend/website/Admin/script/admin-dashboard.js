@@ -1,6 +1,6 @@
 // Beans Cafe - Admin Dashboard
 
-const API_URL = 'https://your-backend-url.onrender.com/api';
+const API_URL = 'https://beans-cafe-backend.onrender.com/api';
 let token = null;
 
 // Debug: Track page refresh

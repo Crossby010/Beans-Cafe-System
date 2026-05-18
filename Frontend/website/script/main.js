@@ -1,7 +1,7 @@
 // Beans Cafe - Main JavaScript
 
 // API Base URL
-const API_URL = 'https://your-backend-url.onrender.com/api';
+const API_URL = 'https://beans-cafe-backend.onrender.com/api';
 //const API_URL = 'http://localhost:5000/api';
 
 // Global base URL for navigation
