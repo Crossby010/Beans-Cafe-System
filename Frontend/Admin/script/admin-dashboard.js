@@ -3,15 +3,9 @@
 const API_URL = 'http://localhost:5000/api';
 let token = null;
 
-// Block all unintended form submissions
-document.addEventListener('submit', function(e) {
-    if (e.target.id === 'product-form') {
-        var isSaveButton = e.submitter && e.submitter.classList && e.submitter.classList.contains('btn-primary');
-        if (!isSaveButton) {
-            e.preventDefault();
-            return false;
-        }
-    }
+// Debug: Track page refresh
+window.addEventListener('beforeunload', function() {
+    console.log('🔴 PAGE REFRESHING!');
 });
 
 // Check authentication
@@ -419,7 +413,7 @@ async function loadUsers() {
     }
 }
 
-// ============ IMAGE UPLOAD ============
+// ============ IMAGE UPLOAD - FIXED ============
 function setupImageUpload() {
     var uploadArea = document.getElementById('upload-area');
     if (!uploadArea) return;
@@ -634,7 +628,7 @@ async function saveProduct() {
     
     if (!productName || !productPrice || parseFloat(productPrice) <= 0) {
         showMessage('Please fill in product name and price', 'error');
-        return;
+        return false;
     }
     
     var imageUrl = document.getElementById('product-image-url') ? document.getElementById('product-image-url').value : '';
@@ -693,6 +687,7 @@ async function saveProduct() {
             submitBtn.textContent = originalText;
         }
     }
+    return false;
 }
 
 // Edit product
@@ -740,10 +735,14 @@ async function loadInventory() {
             var stockStatus = '';
             var statusText = '';
             
-            if (item.stock_quantity <= 0) {
+            var stockQty = parseFloat(item.stock_quantity) || 0;
+            var minStock = parseFloat(item.min_stock_level) || 0;
+            var costPerUnit = parseFloat(item.cost_per_unit) || 0;
+            
+            if (stockQty <= 0) {
                 stockStatus = 'stock-critical';
                 statusText = '⚠️ Out of Stock';
-            } else if (item.stock_quantity <= item.min_stock_level) {
+            } else if (stockQty <= minStock) {
                 stockStatus = 'stock-low';
                 statusText = '⚠️ Low Stock';
             } else {
@@ -753,13 +752,13 @@ async function loadInventory() {
             
             html += '<tr>';
             html += '<td><strong>' + escapeHtml(item.name) + '</strong><br><small>' + escapeHtml(item.category || '') + '</small></td>';
-            html += '<td>' + item.stock_quantity + ' ' + item.unit + '</td>';
-            html += '<td>' + item.min_stock_level + ' ' + item.unit + '</td>';
+            html += '<td>' + stockQty + ' ' + escapeHtml(item.unit) + '</td>';
+            html += '<td>' + minStock + ' ' + escapeHtml(item.unit) + '</td>';
             html += '<td><span class="stock-badge ' + stockStatus + '">' + statusText + '</span></td>';
-            html += '<td>₱' + (item.cost_per_unit || 0).toFixed(2) + '</td>';
+            html += '<td>₱' + costPerUnit.toFixed(2) + '</td>';
             html += '<td>' + escapeHtml(item.supplier || '-') + '</td>';
             html += '<td class="action-buttons">';
-            html += '<button class="btn-edit" onclick="openAddStockModal(' + item.id + ', \'' + escapeHtml(item.name) + '\', ' + item.stock_quantity + ', \'' + item.unit + '\')">➕ Add Stock</button>';
+            html += '<button class="btn-edit" onclick="openAddStockModal(' + item.id + ', \'' + escapeHtml(item.name) + '\', ' + stockQty + ', \'' + escapeHtml(item.unit) + '\')">➕ Add Stock</button>';
             html += '<button class="btn-danger" onclick="deleteInventoryItem(' + item.id + ')">Delete</button>';
             html += '</td>';
             html += '</tr>';
@@ -775,13 +774,20 @@ async function loadInventory() {
 }
 
 function checkLowStock(items) {
-    var lowStockItems = items.filter(function(item) {
-        return item.stock_quantity <= item.min_stock_level && item.stock_quantity > 0;
-    });
+    var lowStockItems = [];
+    var outOfStockItems = [];
     
-    var outOfStockItems = items.filter(function(item) {
-        return item.stock_quantity <= 0;
-    });
+    for (var i = 0; i < items.length; i++) {
+        var item = items[i];
+        var stockQty = parseFloat(item.stock_quantity) || 0;
+        var minStock = parseFloat(item.min_stock_level) || 0;
+        
+        if (stockQty <= 0) {
+            outOfStockItems.push(item);
+        } else if (stockQty <= minStock) {
+            lowStockItems.push(item);
+        }
+    }
     
     var alertContainer = document.getElementById('low-stock-alert');
     if (!alertContainer) return;
@@ -802,7 +808,8 @@ function checkLowStock(items) {
         html += '<div class="low-stock-alert">';
         html += '<div><strong>⚠️ Low Stock Alert!</strong> These items are running low:<br>';
         for (var i = 0; i < lowStockItems.length; i++) {
-            html += '<span class="low-stock-item">' + escapeHtml(lowStockItems[i].name) + ' (' + lowStockItems[i].stock_quantity + ' ' + lowStockItems[i].unit + ' left)</span>';
+            var stockQty = parseFloat(lowStockItems[i].stock_quantity) || 0;
+            html += '<span class="low-stock-item">' + escapeHtml(lowStockItems[i].name) + ' (' + stockQty + ' ' + lowStockItems[i].unit + ' left)</span>';
         }
         html += '</div>';
         html += '</div>';
@@ -843,22 +850,24 @@ async function loadRecipes() {
                 for (var j = 0; j < recipe.ingredients.length; j++) {
                     var ing = recipe.ingredients[j];
                     if (ing && ing.ingredient_name) {
-                        ingredientsList += ing.ingredient_name + ': ' + ing.quantity + ' ' + ing.unit + '<br>';
-                        totalCost += (ing.quantity) * (ing.cost_per_unit || 0);
+                        var ingQuantity = parseFloat(ing.quantity) || 0;
+                        var ingCost = parseFloat(ing.cost_per_unit) || 0;
+                        ingredientsList += ing.ingredient_name + ': ' + ingQuantity + ' ' + ing.unit + '<br>';
+                        totalCost += ingQuantity * ingCost;
                     }
                 }
             } else {
                 ingredientsList = 'No ingredients listed';
             }
             
-            var sellingPrice = product ? product.price : 0;
+            var sellingPrice = product ? (parseFloat(product.price) || 0) : 0;
             var profit = sellingPrice - totalCost;
             var profitPercent = sellingPrice > 0 ? (profit / sellingPrice * 100).toFixed(0) : 0;
             
             html += '<tr>';
             html += '<td><strong>' + escapeHtml(recipe.name) + '</strong><br><small>' + (product ? product.name : 'Unknown') + '</small></td>';
             html += '<td style="font-size: 13px;">' + ingredientsList + '</div>';
-            html += '<td>' + recipe.prep_time + ' min</div>';
+            html += '<td>' + (recipe.prep_time || 5) + ' min</div>';
             html += '<td>₱' + totalCost.toFixed(2) + '</div>';
             html += '<td>₱' + sellingPrice.toFixed(2) + '</div>';
             html += '<td style="color: ' + (profit >= 0 ? '#10b981' : '#ef4444') + ';">₱' + profit.toFixed(2) + ' (' + profitPercent + '%)</div>';
@@ -894,12 +903,13 @@ async function loadTransactions() {
             var trans = transactions[i];
             var typeIcon = trans.transaction_type === 'add' ? '➕' : (trans.transaction_type === 'remove' ? '➖' : '🍽️');
             var typeColor = trans.transaction_type === 'add' ? '#10b981' : (trans.transaction_type === 'remove' ? '#ef4444' : '#3b82f6');
+            var quantity = parseFloat(trans.quantity) || 0;
             
             html += '<tr>';
             html += '<td>' + new Date(trans.created_at).toLocaleString() + '</div>';
             html += '<td>' + escapeHtml(trans.item_name) + '</div>';
             html += '<td><span style="color: ' + typeColor + ';">' + typeIcon + ' ' + trans.transaction_type + '</span></div>';
-            html += '<td>' + trans.quantity + '</div>';
+            html += '<td>' + quantity + '</div>';
             html += '<td>' + escapeHtml(trans.note || '-') + '</div>';
             html += '</tr>';
         }
@@ -1041,7 +1051,7 @@ async function viewRecipe(recipeId) {
         
         var html = '<div style="margin-bottom: 20px;">';
         html += '<h4>' + escapeHtml(recipe.name) + '</h4>';
-        html += '<p><strong>Prep Time:</strong> ' + recipe.prep_time + ' minutes</p>';
+        html += '<p><strong>Prep Time:</strong> ' + (recipe.prep_time || 5) + ' minutes</p>';
         html += '<h5>Instructions:</h5>';
         html += '<p style="white-space: pre-line;">' + escapeHtml(recipe.instructions || 'No instructions provided') + '</p>';
         html += '<h5>Ingredients:</h5>';
@@ -1052,8 +1062,10 @@ async function viewRecipe(recipeId) {
             for (var i = 0; i < recipe.ingredients.length; i++) {
                 var ing = recipe.ingredients[i];
                 if (ing && ing.ingredient_name) {
-                    html += '<li>' + ing.quantity + ' ' + ing.unit + ' - ' + escapeHtml(ing.ingredient_name) + '</li>';
-                    totalCost += (ing.quantity) * (ing.cost_per_unit || 0);
+                    var ingQuantity = parseFloat(ing.quantity) || 0;
+                    var ingCost = parseFloat(ing.cost_per_unit) || 0;
+                    html += '<li>' + ingQuantity + ' ' + ing.unit + ' - ' + escapeHtml(ing.ingredient_name) + '</li>';
+                    totalCost += ingQuantity * ingCost;
                 }
             }
         }
@@ -1191,15 +1203,20 @@ document.getElementById('add-recipe-form')?.addEventListener('submit', async fun
 
 // Tab switching
 function switchInventoryTab(tabName) {
-    document.querySelectorAll('.inventory-tab').forEach(function(tab) {
-        tab.classList.remove('active');
-    });
-    document.querySelectorAll('.inventory-tab-content').forEach(function(content) {
-        content.classList.remove('active');
-    });
+    var tabs = document.querySelectorAll('.inventory-tab');
+    for (var i = 0; i < tabs.length; i++) {
+        tabs[i].classList.remove('active');
+    }
+    var contents = document.querySelectorAll('.inventory-tab-content');
+    for (var i = 0; i < contents.length; i++) {
+        contents[i].classList.remove('active');
+    }
     
-    document.querySelector('.inventory-tab[data-tab="' + tabName + '"]').classList.add('active');
-    document.getElementById(tabName + '-tab').classList.add('active');
+    var activeTab = document.querySelector('.inventory-tab[data-tab="' + tabName + '"]');
+    if (activeTab) activeTab.classList.add('active');
+    
+    var activeContent = document.getElementById(tabName + '-tab');
+    if (activeContent) activeContent.classList.add('active');
 }
 
 // ============ USER MODAL ============

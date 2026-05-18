@@ -1,6 +1,6 @@
 const pool = require('../config/database');
 
-// Get all settings
+// Get all settings (Admin only)
 const getSettings = async (req, res) => {
     try {
         const result = await pool.query('SELECT setting_key, setting_value FROM settings');
@@ -10,12 +10,27 @@ const getSettings = async (req, res) => {
         });
         res.json({ success: true, settings });
     } catch (error) {
-        console.error('Get settings error:', error);
+        console.error('Error getting settings:', error);
         res.status(500).json({ success: false, message: 'Server error' });
     }
 };
 
-// Update settings
+// Get public settings (no auth required for website)
+const getPublicSettings = async (req, res) => {
+    try {
+        const result = await pool.query('SELECT setting_key, setting_value FROM settings');
+        const settings = {};
+        result.rows.forEach(row => {
+            settings[row.setting_key] = row.setting_value;
+        });
+        res.json({ success: true, settings });
+    } catch (error) {
+        console.error('Error getting public settings:', error);
+        res.status(500).json({ success: false, message: 'Server error' });
+    }
+};
+
+// Update settings (Admin only)
 const updateSettings = async (req, res) => {
     try {
         const settings = req.body;
@@ -32,9 +47,9 @@ const updateSettings = async (req, res) => {
         
         res.json({ success: true, message: 'Settings saved' });
     } catch (error) {
-        console.error('Update settings error:', error);
+        console.error('Error updating settings:', error);
         res.status(500).json({ success: false, message: 'Server error' });
     }
 };
 
-module.exports = { getSettings, updateSettings };
+module.exports = { getSettings, getPublicSettings, updateSettings };

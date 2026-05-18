@@ -16,37 +16,49 @@ async function loadProductForCustomization() {
     const urlParams = new URLSearchParams(window.location.search);
     const productId = urlParams.get('id');
     
-    console.log('Loading product ID:', productId);
+    console.log('=== CUSTOMIZE PAGE DEBUG ===');
+    console.log('Full URL:', window.location.href);
+    console.log('Product ID from URL:', productId);
     
-    if (!productId) {
-        window.location.href = 'menu.html';
+    const container = document.getElementById('customize-content');
+    if (!container) {
+        console.error('Container not found!');
         return;
     }
     
-    const container = document.getElementById('customize-content');
+    if (!productId) {
+        console.error('No product ID in URL!');
+        container.innerHTML = '<div class="loading">No product selected. <a href="menu.html">Go back to menu</a></div>';
+        return;
+    }
+    
+    container.innerHTML = '<div class="loading">Loading product...</div>';
     
     try {
-        const response = await fetch(`${API_URL}/products/${productId}`);
+        const url = `${API_URL}/products/${productId}`;
+        console.log('Fetching from:', url);
+        
+        const response = await fetch(url);
         const data = await response.json();
         
-        console.log('Product data:', data);
+        console.log('Product data received:', data);
         
         if (!data.product) {
-            container.innerHTML = '<div class="loading">Product not found</div>';
+            container.innerHTML = '<div class="loading">Product not found. <a href="menu.html">Go back to menu</a></div>';
             return;
         }
         
         currentProduct = data.product;
-        basePrice = parseFloat(currentProduct.price);
+        basePrice = parseFloat(currentProduct.price) || 0;
         totalPrice = basePrice;
         
-        console.log('Base price:', basePrice);
+        console.log('Product loaded:', currentProduct.name, 'Price:', basePrice);
         
         displayCustomizationOptions();
         
     } catch (error) {
         console.error('Error loading product:', error);
-        container.innerHTML = '<div class="loading">Error loading product. Please try again.</div>';
+        container.innerHTML = '<div class="loading">Error loading product. <a href="menu.html">Go back to menu</a></div>';
     }
 }
 
@@ -122,10 +134,8 @@ function displayCustomizationOptions() {
         </div>
     `;
     
-    // Setup option click listeners
     setupOptionListeners();
     
-    // Setup add to cart button listener
     const addBtn = document.getElementById('addToCartBtn');
     if (addBtn) {
         addBtn.addEventListener('click', addCustomizedToCart);
@@ -145,22 +155,18 @@ function setupOptionListeners() {
             
             console.log('Option clicked:', optionType, optionValue, optionPrice);
             
-            // Remove selected class from same group
             const parentGroup = this.parentElement;
             parentGroup.querySelectorAll('.option-btn').forEach(b => {
                 b.classList.remove('selected');
             });
             
-            // Add selected class to clicked button
             this.classList.add('selected');
             
-            // Update selected options
             selectedOptions[optionType] = {
                 value: optionValue,
                 price: optionPrice
             };
             
-            // Update total price
             updateTotalPrice();
         });
     });
@@ -171,21 +177,19 @@ function updateTotalPrice() {
     let extras = 0;
     
     if (selectedOptions.size && selectedOptions.size.price) {
-        extras += parseFloat(selectedOptions.size.price);
+        extras += selectedOptions.size.price;
     }
     if (selectedOptions.milk && selectedOptions.milk.price) {
-        extras += parseFloat(selectedOptions.milk.price);
+        extras += selectedOptions.milk.price;
     }
     if (selectedOptions.sweetness && selectedOptions.sweetness.price) {
-        extras += parseFloat(selectedOptions.sweetness.price);
+        extras += selectedOptions.sweetness.price;
     }
     if (selectedOptions.ice && selectedOptions.ice.price) {
-        extras += parseFloat(selectedOptions.ice.price);
+        extras += selectedOptions.ice.price;
     }
     
     totalPrice = basePrice + extras;
-    
-    // Fix decimal precision - round to 2 decimal places
     totalPrice = Math.round(totalPrice * 100) / 100;
     
     console.log('Price update - Base:', basePrice, 'Extras:', extras, 'Total:', totalPrice);
@@ -205,45 +209,36 @@ function updateTotalPrice() {
 function addCustomizedToCart() {
     console.log('Adding to cart - Total price:', totalPrice);
     
-    if (!currentProduct) return;
+    if (!currentProduct) {
+        showMessage('Product not loaded', 'error');
+        return;
+    }
     
-    // Build customization text
     let customizationText = '';
     if (selectedOptions.size) customizationText += `${selectedOptions.size.value}, `;
     if (selectedOptions.milk) customizationText += `${selectedOptions.milk.value}, `;
     if (selectedOptions.sweetness) customizationText += `${selectedOptions.sweetness.value} sweetness, `;
     if (selectedOptions.ice) customizationText += `${selectedOptions.ice.value}`;
     
-    // Remove trailing comma and space
     customizationText = customizationText.replace(/, $/, '');
     
-    // Round total price to 2 decimals
     const finalTotal = Math.round(totalPrice * 100) / 100;
     
     console.log('Final total:', finalTotal);
     console.log('Customizations:', customizationText);
     
-    // Create cart item with customizations
     const cartItem = {
         id: currentProduct.id,
         name: currentProduct.name,
         price: finalTotal,
         originalPrice: basePrice,
         image_url: currentProduct.image_url,
-        customizations: customizationText || 'Standard',
-        customizationDetails: {
-            text: customizationText || 'Standard',
-            totalPrice: finalTotal,
-            options: selectedOptions
-        }
+        customizations: customizationText || 'Standard'
     };
     
-    // Use the global addToCart function from cart.js
     if (typeof addToCart === 'function') {
-        addToCart(cartItem, 1, cartItem.customizationDetails);
+        addToCart(cartItem);
     } else {
-        console.error('addToCart function not found');
-        // Fallback: save directly to localStorage
         let cart = JSON.parse(localStorage.getItem('beans_cart') || '[]');
         cart.push({
             id: cartItem.id,
@@ -257,10 +252,31 @@ function addCustomizedToCart() {
         showMessage(`${cartItem.name} added to cart!`, 'success');
     }
     
-    // Redirect to cart page after adding
     setTimeout(() => {
         window.location.href = 'cart.html';
     }, 1000);
+}
+
+// Show message
+function showMessage(message, type) {
+    const msgDiv = document.createElement('div');
+    msgDiv.textContent = message;
+    msgDiv.style.cssText = `
+        position: fixed;
+        bottom: 20px;
+        right: 20px;
+        background: ${type === 'success' ? '#10b981' : '#ef4444'};
+        color: white;
+        padding: 12px 24px;
+        border-radius: 8px;
+        z-index: 9999;
+        animation: fadeInOut 3s ease;
+    `;
+    document.body.appendChild(msgDiv);
+    
+    setTimeout(() => {
+        if (msgDiv.parentNode) msgDiv.remove();
+    }, 3000);
 }
 
 // Escape HTML

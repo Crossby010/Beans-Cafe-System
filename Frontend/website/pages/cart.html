@@ -10,7 +10,7 @@
 
 <nav class="navbar">
     <div class="nav-container">
-        <a href="../index.html" class="logo">Beans<span>Cafe</span></a>
+        <a href="../index.html" class="logo cafe-name">Beans<span>Cafe</span></a>
         
         <div class="nav-links">
             <a href="../index.html">Home</a>
@@ -57,7 +57,7 @@
     <div class="container">
         <div class="footer-content">
             <div>
-                <a href="../index.html" class="footer-logo">Beans<span>Cafe</span></a>
+                <a href="../index.html" class="footer-logo cafe-name">Beans<span>Cafe</span></a>
                 <p style="margin-top: 15px;">Premium coffee experience crafted with passion.</p>
             </div>
             <div class="footer-links">
@@ -70,18 +70,18 @@
             </div>
             <div class="footer-links">
                 <h4>Contact</h4>
-                <a href="#">📍 123 Coffee Street, Manila</a>
-                <a href="#">📞 (02) 1234 5678</a>
-                <a href="#">✉️ hello@beanscafe.com</a>
+                <a href="#" class="cafe-address">📍 123 Coffee Street, Manila</a>
+                <a href="#" class="cafe-phone">📞 (02) 1234 5678</a>
+                <a href="#" class="cafe-email">✉️ hello@beanscafe.com</a>
             </div>
             <div class="footer-links">
                 <h4>Hours</h4>
-                <a href="#">Mon - Fri: 7am - 9pm</a>
-                <a href="#">Sat - Sun: 8am - 10pm</a>
+                <div class="cafe-hours">Mon - Fri: 7am - 9pm</div>
+                <div class="cafe-hours">Sat - Sun: 8am - 10pm</div>
             </div>
         </div>
         <div class="footer-bottom">
-            <p>&copy; 2024 Beans Cafe. All rights reserved. | Pickup Only</p>
+            <p>&copy; 2024 <span class="cafe-name">Beans Cafe</span>. All rights reserved. | Pickup Only</p>
         </div>
     </div>
 </footer>
@@ -93,6 +93,7 @@
     document.addEventListener('DOMContentLoaded', function() {
         loadCartPage();
         updateCartCount();
+        loadCafeSettings();
     });
 </script>
 

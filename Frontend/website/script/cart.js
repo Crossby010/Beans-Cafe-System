@@ -1,6 +1,5 @@
 // Beans Cafe - Cart JavaScript
 
-// Cart functions
 function getCart() {
     const cart = localStorage.getItem('beans_cart');
     return cart ? JSON.parse(cart) : [];
@@ -13,15 +12,15 @@ function saveCart(cart) {
 
 function addToCart(product, quantity = 1, customizations = null) {
     const cart = getCart();
-    const existingIndex = cart.findIndex(item => 
-        item.id === product.id && JSON.stringify(item.customizations) === JSON.stringify(customizations)
-    );
-    
-    // Calculate final price (if customizations have extra cost)
     let finalPrice = product.price;
+    
     if (customizations && customizations.totalPrice) {
         finalPrice = customizations.totalPrice;
     }
+    
+    const existingIndex = cart.findIndex(item => 
+        item.id === product.id && JSON.stringify(item.customizations) === JSON.stringify(customizations)
+    );
     
     if (existingIndex > -1) {
         cart[existingIndex].quantity += quantity;
@@ -33,8 +32,7 @@ function addToCart(product, quantity = 1, customizations = null) {
             originalPrice: product.price,
             image: product.image_url,
             quantity: quantity,
-            customizations: customizations ? customizations.text : null,
-            customizationDetails: customizations
+            customizations: product.customizations || null
         });
     }
     
@@ -48,7 +46,7 @@ function removeFromCart(index) {
     cart.splice(index, 1);
     saveCart(cart);
     showMessage('Item removed from cart', 'success');
-    if (window.location.pathname.includes('cart.html')) {
+    if (typeof loadCartPage === 'function') {
         loadCartPage();
     }
 }
@@ -63,14 +61,14 @@ function updateQuantity(index, newQuantity) {
     cart[index].quantity = newQuantity;
     saveCart(cart);
     
-    if (window.location.pathname.includes('cart.html')) {
+    if (typeof loadCartPage === 'function') {
         loadCartPage();
     }
 }
 
 function updateCartCount() {
     const cart = getCart();
-    const totalItems = cart.reduce((sum, item) => sum + item.quantity, 0);
+    const totalItems = cart.reduce((sum, item) => sum + (item.quantity || 1), 0);
     const cartCountElements = document.querySelectorAll('#cart-count');
     cartCountElements.forEach(el => {
         el.textContent = totalItems;
@@ -79,48 +77,14 @@ function updateCartCount() {
 
 function getCartTotal() {
     const cart = getCart();
-    return cart.reduce((sum, item) => {
-        const price = parseFloat(item.price) || 0;
-        const quantity = parseInt(item.quantity) || 0;
-        return sum + (price * quantity);
-    }, 0);
+    return cart.reduce((sum, item) => sum + (parseFloat(item.price) * (item.quantity || 1)), 0);
 }
-
-// In loadCartPage function, make sure prices use ₱
-cartContainer.innerHTML = cart.map((item, index) => {
-    let imagePath = item.image || '/assets/images/coffee-placeholder.jpg';
-    if (imagePath && !imagePath.startsWith('http') && !imagePath.startsWith('/')) {
-        imagePath = '../' + imagePath;
-    }
-    
-    return `
-        <div class="cart-item">
-            <img src="${imagePath}" 
-                 alt="${escapeHtml(item.name)}" 
-                 class="cart-item-image" 
-                 onerror="this.src='https://placehold.co/80x80/F5E6D3/6F4E37?text=Coffee'">
-            <div class="cart-item-details">
-                <div class="cart-item-name">${escapeHtml(item.name)}</div>
-                <div class="cart-item-price">₱${parseFloat(item.price).toFixed(2)}</div>
-                ${item.customizations ? `<div style="font-size: 12px; color: #8B5E3C;">${escapeHtml(item.customizations)}</div>` : ''}
-            </div>
-            <div class="cart-item-quantity">
-                <button class="quantity-btn" onclick="updateQuantity(${index}, ${item.quantity - 1})">-</button>
-                <span>${item.quantity}</span>
-                <button class="quantity-btn" onclick="updateQuantity(${index}, ${item.quantity + 1})">+</button>
-            </div>
-            <div class="cart-item-total">₱${(parseFloat(item.price) * item.quantity).toFixed(2)}</div>
-            <div class="remove-item" onclick="removeFromCart(${index})">🗑️</div>
-        </div>
-    `;
-}).join('');
 
 function clearCart() {
     localStorage.removeItem('beans_cart');
     updateCartCount();
 }
 
-// Load cart page content
 function loadCartPage() {
     const cartContainer = document.querySelector('.cart-items');
     const cartSummary = document.querySelector('.cart-summary');
@@ -128,7 +92,6 @@ function loadCartPage() {
     if (!cartContainer) return;
     
     const cart = getCart();
-    console.log('Cart items:', cart); // Debug: Check if cart has items
     
     if (cart.length === 0) {
         cartContainer.innerHTML = `
@@ -145,8 +108,7 @@ function loadCartPage() {
     if (cartSummary) cartSummary.style.display = 'block';
     
     cartContainer.innerHTML = cart.map((item, index) => {
-        // Fix image path
-        let imagePath = item.image || '/assets/images/coffee-placeholder.jpg';
+        let imagePath = item.image || '../assets/images/coffee-placeholder.jpg';
         if (imagePath && !imagePath.startsWith('http') && !imagePath.startsWith('/')) {
             imagePath = '../' + imagePath;
         }
@@ -163,28 +125,24 @@ function loadCartPage() {
                     ${item.customizations ? `<div style="font-size: 12px; color: #8B5E3C;">${escapeHtml(item.customizations)}</div>` : ''}
                 </div>
                 <div class="cart-item-quantity">
-                    <button class="quantity-btn" onclick="updateQuantity(${index}, ${item.quantity - 1})">-</button>
-                    <span>${item.quantity}</span>
-                    <button class="quantity-btn" onclick="updateQuantity(${index}, ${item.quantity + 1})">+</button>
+                    <button class="quantity-btn" onclick="updateQuantity(${index}, ${(item.quantity || 1) - 1})">-</button>
+                    <span>${item.quantity || 1}</span>
+                    <button class="quantity-btn" onclick="updateQuantity(${index}, ${(item.quantity || 1) + 1})">+</button>
                 </div>
-                <div class="cart-item-total">₱${(parseFloat(item.price) * item.quantity).toFixed(2)}</div>
+                <div class="cart-item-total">₱${(parseFloat(item.price) * (item.quantity || 1)).toFixed(2)}</div>
                 <div class="remove-item" onclick="removeFromCart(${index})">🗑️</div>
             </div>
         `;
     }).join('');
     
-    // Update summary
     const subtotal = getCartTotal();
-    const total = subtotal;
-    
     const subtotalEl = document.getElementById('cart-subtotal');
     const totalEl = document.getElementById('cart-total');
     
     if (subtotalEl) subtotalEl.textContent = `₱${subtotal.toFixed(2)}`;
-    if (totalEl) totalEl.textContent = `₱${total.toFixed(2)}`;
+    if (totalEl) totalEl.textContent = `₱${subtotal.toFixed(2)}`;
 }
 
-// Proceed to checkout
 function proceedToCheckout() {
     const cart = getCart();
     if (cart.length === 0) {
@@ -194,7 +152,27 @@ function proceedToCheckout() {
     window.location.href = 'checkout.html';
 }
 
-// Escape HTML
+function showMessage(message, type) {
+    const msgDiv = document.createElement('div');
+    msgDiv.textContent = message;
+    msgDiv.style.cssText = `
+        position: fixed;
+        bottom: 20px;
+        right: 20px;
+        background: ${type === 'success' ? '#6F4E37' : '#dc3545'};
+        color: white;
+        padding: 12px 24px;
+        border-radius: 8px;
+        z-index: 9999;
+        animation: fadeInOut 3s ease;
+    `;
+    document.body.appendChild(msgDiv);
+    
+    setTimeout(() => {
+        if (msgDiv.parentNode) msgDiv.remove();
+    }, 3000);
+}
+
 function escapeHtml(text) {
     if (!text) return '';
     const div = document.createElement('div');

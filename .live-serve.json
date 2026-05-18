@@ -1,0 +1,10 @@
+{
+    "port": 5500,
+    "host": "127.0.0.1",
+    "root": "/",
+    "watch": ["Frontend/website"],
+    "ignore": ["backend/uploads", "**/uploads/**", "**/node_modules/**"],
+    "file": "Frontend/website/index.html",
+    "wait": 1000,
+    "logLevel": 1
+}

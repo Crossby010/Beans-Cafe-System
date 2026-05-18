@@ -3,6 +3,9 @@
 // API Base URL
 const API_URL = 'http://localhost:5000/api';
 
+// Global base URL for navigation
+window.BASE_URL = window.location.origin;
+
 // Setup navigation when page loads
 document.addEventListener('DOMContentLoaded', function() {
     console.log('DOM loaded - setting up navigation');
@@ -130,6 +133,7 @@ async function loadFeaturedProducts() {
                      onerror="this.src='https://placehold.co/300x200/F5E6D3/6F4E37?text=Coffee'">
                 <div class="product-info">
                     <h3 class="product-title">${escapeHtml(product.name)}</h3>
+                    <p class="product-description" style="font-size: 14px; color: #666; margin-bottom: 10px;">${escapeHtml(product.description || '')}</p>
                     <p class="product-price">₱${product.price}</p>
                     <button class="product-btn" onclick="event.stopPropagation(); addToCartFromProduct(${product.id})">Add to Cart</button>
                 </div>
@@ -144,7 +148,12 @@ async function loadFeaturedProducts() {
 
 // Go to product customization page
 function goToProduct(productId) {
-    window.location.href = `pages/customize.html?id=${productId}`;
+    console.log('Going to product with ID:', productId);
+    if (productId) {
+        window.location.href = `customize.html?id=${productId}`;
+    } else {
+        console.error('No product ID provided');
+    }
 }
 
 // Add to cart from homepage
@@ -191,6 +200,72 @@ function showMessage(message, type) {
     setTimeout(() => {
         msgDiv.remove();
     }, 3000);
+}
+
+// Load cafe settings from backend
+async function loadCafeSettings() {
+    try {
+        const response = await fetch(`${API_URL}/settings/public`);
+        const data = await response.json();
+        const settings = data.settings || {};
+        
+        // Update cafe name in footer and logo
+        const cafeNameElements = document.querySelectorAll('.cafe-name, .footer-logo');
+        cafeNameElements.forEach(el => {
+            if (el.tagName === 'A' && el.classList.contains('footer-logo')) {
+                const name = settings.cafe_name || 'Beans Cafe';
+                el.innerHTML = name.replace('Beans Cafe', '<span class="cafe-name-text">' + name + '</span>');
+                if (!el.innerHTML.includes('span')) {
+                    el.textContent = name;
+                }
+            } else if (el.classList.contains('cafe-name')) {
+                el.textContent = settings.cafe_name || 'Beans Cafe';
+            }
+        });
+        
+        // Update address in footer
+        const addressElements = document.querySelectorAll('.cafe-address');
+        addressElements.forEach(el => {
+            el.innerHTML = settings.cafe_address || '📍 123 Coffee Street, Barangay Kapitolyo, Pasig City';
+        });
+        
+        // Update phone in footer
+        const phoneElements = document.querySelectorAll('.cafe-phone');
+        phoneElements.forEach(el => {
+            el.innerHTML = settings.cafe_phone || '📞 (02) 1234 5678';
+        });
+        
+        // Update email in footer
+        const emailElements = document.querySelectorAll('.cafe-email');
+        emailElements.forEach(el => {
+            el.innerHTML = settings.cafe_email || '✉️ hello@beanscafe.com';
+        });
+        
+        // Update hours in footer
+        const hoursElements = document.querySelectorAll('.cafe-hours');
+        hoursElements.forEach(el => {
+            el.innerHTML = settings.cafe_hours || 'Mon-Fri: 7am-9pm, Sat-Sun: 8am-10pm';
+        });
+        
+        // Update social links
+        if (settings.facebook_url) {
+            const fbLinks = document.querySelectorAll('.social-facebook');
+            fbLinks.forEach(el => {
+                el.href = settings.facebook_url;
+            });
+        }
+        
+        if (settings.instagram_url) {
+            const igLinks = document.querySelectorAll('.social-instagram');
+            igLinks.forEach(el => {
+                el.href = settings.instagram_url;
+            });
+        }
+        
+        console.log('✅ Cafe settings loaded:', settings);
+    } catch (error) {
+        console.error('Error loading cafe settings:', error);
+    }
 }
 
 // Add CSS animation
