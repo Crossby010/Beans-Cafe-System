@@ -1,6 +1,7 @@
 // Beans Cafe - Admin Login
 
-const API_URL = 'http://localhost:5000/api';
+const API_URL = 'https://beans-cafe-backend.onrender.com/api';
+//const API_URL = 'http://localhost:5000/api';
 
 document.addEventListener('DOMContentLoaded', function() {
     // Check if already logged in
