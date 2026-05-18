@@ -1,0 +1,12 @@
+{
+    "rewrites": [
+        {
+            "source": "/api/(.*)",
+            "destination": "https://beans-cafe-backend.onrender.com/api/$1"
+        },
+        {
+            "source": "/uploads/(.*)",
+            "destination": "https://beans-cafe-backend.onrender.com/uploads/$1"
+        }
+    ]
+}
