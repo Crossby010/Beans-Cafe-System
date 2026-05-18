@@ -1,0 +1,688 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Admin Dashboard | Beans Cafe</title>
+    <link rel="stylesheet" href="css/admin.css">
+</head>
+<body>
+    <div class="admin-container">
+        <!-- Sidebar -->
+        <aside class="sidebar">
+            <div class="sidebar-header">
+                <h2>Beans Cafe</h2>
+                <p>Admin Panel</p>
+            </div>
+            <nav class="sidebar-nav">
+                <div class="nav-item active" data-section="dashboard">
+                    <span class="icon">📊</span>
+                    <span>Dashboard</span>
+                </div>
+                <div class="nav-item" data-section="products">
+                    <span class="icon">☕</span>
+                    <span>Products</span>
+                </div>
+                <div class="nav-item" data-section="featured">
+                    <span class="icon">⭐</span>
+                    <span>Featured Items</span>
+                </div>
+                <div class="nav-item" data-section="orders">
+                    <span class="icon">📦</span>
+                    <span>Orders</span>
+                </div>
+                <div class="nav-item" data-section="users">
+                    <span class="icon">👥</span>
+                    <span>Users</span>
+                </div>
+                <div class="nav-item" data-section="inventory">
+                    <span class="icon">📦</span>
+                    <span>Inventory</span>
+                </div>
+                <div class="nav-item" data-section="settings">
+                    <span class="icon">⚙️</span>
+                    <span>Settings</span>
+                </div>
+            </nav>
+        </aside>
+        
+        <!-- Main Content -->
+        <main class="main-content">
+            <div class="admin-header">
+                <div class="header-title">
+                    <h1>Dashboard</h1>
+                    <p>Welcome back, <span id="admin-name">Admin</span></p>
+                </div>
+                <button class="logout-btn" onclick="logout()">Logout</button>
+            </div>
+            
+            <!-- Dashboard Section -->
+            <div id="dashboard-section" class="section active">
+                <!-- Stats Grid -->
+                <div class="dashboard-stats-grid">
+                    <div class="dashboard-stat-card">
+                        <div class="stat-header">
+                            <span class="stat-title">Today's Sales</span>
+                            <span class="stat-icon">💰</span>
+                        </div>
+                        <div class="stat-value" id="today-sales">₱0</div>
+                        <div class="stat-change up" id="today-change">↑ +0%</div>
+                    </div>
+                    
+                    <div class="dashboard-stat-card">
+                        <div class="stat-header">
+                            <span class="stat-title">This Week</span>
+                            <span class="stat-icon">📅</span>
+                        </div>
+                        <div class="stat-value" id="week-sales">₱0</div>
+                        <div class="stat-change up" id="week-change">↑ +0%</div>
+                    </div>
+                    
+                    <div class="dashboard-stat-card">
+                        <div class="stat-header">
+                            <span class="stat-title">Pending Orders</span>
+                            <span class="stat-icon">⏳</span>
+                        </div>
+                        <div class="stat-value" id="pending-orders">0</div>
+                        <div class="stat-change neutral">Ready for pickup</div>
+                    </div>
+                    
+                    <div class="dashboard-stat-card">
+                        <div class="stat-header">
+                            <span class="stat-title">Total Revenue</span>
+                            <span class="stat-icon">🏆</span>
+                        </div>
+                        <div class="stat-value" id="total-revenue">₱0</div>
+                        <div class="stat-change up" id="revenue-change">↑ +0%</div>
+                    </div>
+                </div>
+                
+                <!-- Two Column Layout -->
+                <div class="dashboard-two-column">
+                    <!-- Weekly Sales Chart -->
+                    <div class="dashboard-card">
+                        <div class="dashboard-card-header">
+                            <h3>📈 Weekly Sales</h3>
+                            <select id="chart-period" style="padding: 5px; border-radius: 8px; border: 1px solid #E8DDD0;">
+                                <option value="week">This Week</option>
+                                <option value="month">This Month</option>
+                            </select>
+                        </div>
+                        <div class="chart-container">
+                            <div class="chart-bars" id="sales-chart">
+                                <div style="text-align: center; width: 100%;">Loading...</div>
+                            </div>
+                        </div>
+                    </div>
+                    
+                    <!-- Top Selling Items -->
+                    <div class="dashboard-card">
+                        <div class="dashboard-card-header">
+                            <h3>🍽️ Top Selling Items</h3>
+                            <span>This Month</span>
+                        </div>
+                        <ul class="top-items-list" id="top-items-list">
+                            <li style="text-align: center; color: #666;">Loading...</li>
+                        </ul>
+                    </div>
+                </div>
+                
+                <!-- Second Row -->
+                <div class="dashboard-two-column">
+                    <!-- Peak Hours -->
+                    <div class="dashboard-card">
+                        <div class="dashboard-card-header">
+                            <h3>⏰ Peak Hours</h3>
+                            <span>Most orders time</span>
+                        </div>
+                        <div id="peak-hours-container">
+                            <div style="text-align: center; color: #666;">Loading...</div>
+                        </div>
+                    </div>
+                    
+                    <!-- Quick Actions -->
+                    <div class="dashboard-card">
+                        <div class="dashboard-card-header">
+                            <h3>⚡ Quick Actions</h3>
+                            <span>Shortcuts</span>
+                        </div>
+                        <div class="quick-actions">
+                            <button class="quick-action-btn" onclick="document.querySelector('[data-section=\'products\']').click();">
+                                <span>➕</span>
+                                <span>Add Product</span>
+                            </button>
+                            <button class="quick-action-btn" onclick="document.querySelector('[data-section=\'orders\']').click();">
+                                <span>📦</span>
+                                <span>View Orders</span>
+                            </button>
+                            <button class="quick-action-btn" onclick="window.open('../website/pages/menu.html', '_blank');">
+                                <span>🛒</span>
+                                <span>View Menu</span>
+                            </button>
+                        </div>
+                    </div>
+                </div>
+            </div>
+            
+            <!-- Products Section -->
+            <div id="products-section" class="section">
+                <div class="section-header">
+                    <h2>Product Management</h2>
+                    <button class="btn-primary" onclick="openProductModal()">+ Add Product</button>
+                </div>
+                <div class="search-box">
+                    <input type="text" id="search-products" placeholder="Search products by name...">
+                </div>
+                <div style="overflow-x: auto;">
+                    <table class="data-table">
+                        <thead>
+                            <tr><th>Image</th><th>Name</th><th>Category</th><th>Price</th><th>Stock</th><th>Actions</th></tr>
+                        </thead>
+                        <tbody id="products-table-body">
+                            <tr><td colspan="7" style="text-align: center;">Loading...</div></div></tr>
+                        </tbody>
+                    </table>
+                </div>
+            </div>
+            
+            <!-- Featured Items Section -->
+            <div id="featured-section" class="section">
+                <div class="section-header">
+                    <h2>Featured & New Items</h2>
+                    <p>Toggle which products appear as "Featured" or "New" on the website</p>
+                </div>
+                <div class="search-box">
+                    <input type="text" id="search-featured" placeholder="Search products...">
+                </div>
+                <div style="overflow-x: auto;">
+                    <table class="data-table">
+                        <thead>
+                            <tr><th>Image</th><th>Name</th><th>Category</th><th>Featured</th><th>New</th><th>Actions</th></tr>
+                        </thead>
+                        <tbody id="featured-table-body">
+                            <tr><td colspan="6" style="text-align: center;">Loading...</div></div></tr>
+                        </tbody>
+                    </table>
+                </div>
+            </div>
+            
+            <!-- Orders Section -->
+            <div id="orders-section" class="section">
+                <div class="section-header">
+                    <h2>Order Management</h2>
+                </div>
+                <div style="overflow-x: auto;">
+                    <table class="data-table">
+                        <thead>
+                            <tr><th>Order #</th><th>Customer</th><th>Items</th><th>Total</th><th>Status</th><th>Actions</th></tr>
+                        </thead>
+                        <tbody id="orders-table-body">
+                            <tr><td colspan="6" style="text-align: center;">Loading...</div></div></tr>
+                        </tbody>
+                    </table>
+                </div>
+            </div>
+            
+            <!-- Users Section -->
+            <div id="users-section" class="section">
+                <div class="section-header">
+                    <h2>User Management</h2>
+                    <button class="btn-primary" onclick="openUserModal()">+ Add Staff</button>
+                </div>
+                <div class="search-box">
+                    <input type="text" id="search-users" placeholder="Search users...">
+                </div>
+                <div style="overflow-x: auto;">
+                    <table class="data-table">
+                        <thead>
+                            <tr><th>Name</th><th>Email</th><th>Role</th><th>Actions</th></tr>
+                        </thead>
+                        <tbody id="users-table-body">
+                            <tr><td colspan="4" style="text-align: center;">Loading...</div></div></tr>
+                        </tbody>
+                    </table>
+                </div>
+            </div>
+            
+            <!-- Inventory Section -->
+            <div id="inventory-section" class="section">
+                <div class="section-header">
+                    <h2>Inventory Management</h2>
+                    <p>Track stock levels and ingredient usage</p>
+                </div>
+                <div style="text-align: center; padding: 40px;">
+                    <p>Inventory tab coming soon...</p>
+                </div>
+            </div>
+            
+            <!-- Settings Section -->
+            <div id="settings-section" class="section">
+                <div class="section-header">
+                    <h2>Cafe Settings</h2>
+                    <p>Manage your cafe information</p>
+                </div>
+                <form id="settings-form">
+                    <div style="margin-bottom: 30px;">
+                        <h3 style="margin-bottom: 15px; color: #3E2723;">Cafe Information</h3>
+                        <div class="form-row">
+                            <div class="form-group">
+                                <label>Cafe Name</label>
+                                <input type="text" id="setting_cafe_name" class="setting-input">
+                            </div>
+                            <div class="form-group">
+                                <label>Phone Number</label>
+                                <input type="text" id="setting_cafe_phone" class="setting-input">
+                            </div>
+                        </div>
+                        <div class="form-group">
+                            <label>Email Address</label>
+                            <input type="email" id="setting_cafe_email" class="setting-input">
+                        </div>
+                        <div class="form-group">
+                            <label>Address</label>
+                            <textarea id="setting_cafe_address" rows="2" class="setting-input"></textarea>
+                        </div>
+                        <div class="form-group">
+                            <label>Business Hours</label>
+                            <input type="text" id="setting_cafe_hours" class="setting-input">
+                        </div>
+                    </div>
+                    
+                    <div style="margin-bottom: 30px;">
+                        <h3 style="margin-bottom: 15px; color: #3E2723;">Order Settings</h3>
+                        <div class="form-row">
+                            <div class="form-group">
+                                <label>Preparation Time (minutes)</label>
+                                <input type="number" id="setting_prep_time" class="setting-input" min="5" max="60">
+                            </div>
+                        </div>
+                        <div class="form-group">
+                            <label class="checkbox-label">
+                                <input type="checkbox" id="setting_orders_enabled"> Enable Online Ordering
+                            </label>
+                        </div>
+                    </div>
+                    
+                    <div style="margin-bottom: 30px;">
+                        <h3 style="margin-bottom: 15px; color: #3E2723;">Social Media</h3>
+                        <div class="form-group">
+                            <label>Facebook URL</label>
+                            <input type="url" id="setting_facebook_url" class="setting-input">
+                        </div>
+                        <div class="form-group">
+                            <label>Instagram URL</label>
+                            <input type="url" id="setting_instagram_url" class="setting-input">
+                        </div>
+                    </div>
+                    
+                    <div class="modal-buttons">
+                        <button type="submit" class="btn-primary">Save Settings</button>
+                        <button type="button" class="btn-secondary" onclick="loadSettings()">Reset</button>
+                    </div>
+                </form>
+            </div>
+        </main>
+    </div>
+    
+    <!-- Product Modal -->
+    <div id="product-modal" class="modal">
+        <div class="modal-content">
+            <h3 id="product-modal-title">Add Product</h3>
+            
+            <!-- IMAGE UPLOAD SECTION - OUTSIDE THE FORM -->
+            <div class="form-group">
+                <label>Product Image</label>
+                <div id="upload-area" style="border: 2px dashed #E8DDD0; border-radius: 12px; padding: 30px; text-align: center; cursor: pointer; background: #FFF9F2;">
+                    <div class="upload-placeholder">
+                        <span style="font-size: 48px;">📸</span>
+                        <p>Click to upload image</p>
+                        <small>JPG, PNG, GIF (Max 5MB)</small>
+                    </div>
+                    <div id="image-preview-container" style="display: none; position: relative;">
+                        <img id="upload-preview" style="max-width: 200px; max-height: 200px; border-radius: 8px;">
+                        <button type="button" onclick="removeImage(); event.stopPropagation();" style="position: absolute; top: -10px; right: -10px; background: #ef4444; color: white; border: none; border-radius: 50%; width: 30px; height: 30px; cursor: pointer; font-weight: bold;">✕</button>
+                    </div>
+                </div>
+                <input type="hidden" id="product-image-url">
+            </div>
+            
+            <div class="form-group">
+                <label>Or enter image URL</label>
+                <input type="text" id="product-image-url-input" placeholder="https://example.com/image.jpg">
+            </div>
+            
+            <!-- PRODUCT FORM -->
+            <form id="product-form">
+                <input type="hidden" id="product-id">
+                <div class="form-group">
+                    <label>Product Name <span style="color: red;">*</span></label>
+                    <input type="text" id="product-name" required>
+                </div>
+                <div class="form-group">
+                    <label>Description</label>
+                    <textarea id="product-description" rows="3"></textarea>
+                </div>
+                <div class="form-row">
+                    <div class="form-group">
+                        <label>Price (₱) <span style="color: red;">*</span></label>
+                        <input type="number" id="product-price" step="0.01" required>
+                    </div>
+                    <div class="form-group">
+                        <label>Stock Quantity</label>
+                        <input type="number" id="product-stock" value="100">
+                    </div>
+                </div>
+                <div class="form-group">
+                    <label>Category</label>
+                    <select id="product-category">
+                        <option value="Coffee">Coffee</option>
+                        <option value="Tea">Tea</option>
+                        <option value="Frappe">Frappe</option>
+                        <option value="Pastries">Pastries</option>
+                        <option value="Food">Food</option>
+                    </select>
+                </div>
+                
+                <div class="form-row">
+                    <div class="form-group">
+                        <label class="checkbox-label">
+                            <input type="checkbox" id="product-featured"> Mark as Featured
+                        </label>
+                    </div>
+                    <div class="form-group">
+                        <label class="checkbox-label">
+                            <input type="checkbox" id="product-new"> Mark as New
+                        </label>
+                    </div>
+                </div>
+                
+                <div class="modal-buttons">
+                    <button type="submit" class="btn-primary">Save Product</button>
+                    <button type="button" class="btn-secondary" onclick="closeProductModal()">Cancel</button>
+                </div>
+            </form>
+        </div>
+    </div>
+    
+    <!-- User Modal -->
+    <div id="user-modal" class="modal">
+        <div class="modal-content">
+            <h3 id="user-modal-title">Add Staff Account</h3>
+            <form id="user-form">
+                <input type="hidden" id="user-id">
+                <div class="form-row">
+                    <div class="form-group">
+                        <label>First Name *</label>
+                        <input type="text" id="user-firstname" required>
+                    </div>
+                    <div class="form-group">
+                        <label>Last Name *</label>
+                        <input type="text" id="user-lastname" required>
+                    </div>
+                </div>
+                <div class="form-group">
+                    <label>Email *</label>
+                    <input type="email" id="user-email" required>
+                </div>
+                <div class="form-group">
+                    <label>Password *</label>
+                    <input type="password" id="user-password" required>
+                </div>
+                <div class="form-group">
+                    <label>Role</label>
+                    <select id="user-role">
+                        <option value="staff">Staff</option>
+                        <option value="admin">Admin</option>
+                    </select>
+                </div>
+                <div class="modal-buttons">
+                    <button type="submit" class="btn-primary">Save User</button>
+                    <button type="button" class="btn-secondary" onclick="closeUserModal()">Cancel</button>
+                </div>
+            </form>
+        </div>
+    </div>
+
+    <!-- Inventory Section -->
+<div id="inventory-section" class="section">
+    <div class="section-header">
+        <h2>📦 Inventory Management</h2>
+        <div>
+            <button class="btn-primary" onclick="openAddInventoryModal()">+ Add Ingredient</button>
+            <button class="btn-primary" onclick="openAddRecipeModal()" style="background: #D4A373;">📖 Add Recipe</button>
+        </div>
+    </div>
+    
+    <!-- Low Stock Alert -->
+    <div id="low-stock-alert" style="margin-bottom: 20px;"></div>
+    
+    <!-- Inventory Tabs -->
+    <div style="display: flex; gap: 10px; margin-bottom: 20px; border-bottom: 1px solid #E8DDD0;">
+        <button class="inventory-tab active" data-tab="ingredients" onclick="switchInventoryTab('ingredients')">📦 Ingredients</button>
+        <button class="inventory-tab" data-tab="recipes" onclick="switchInventoryTab('recipes')">📖 Recipe Book</button>
+        <button class="inventory-tab" data-tab="transactions" onclick="switchInventoryTab('transactions')">📋 Transactions</button>
+    </div>
+    
+    <!-- Ingredients Tab -->
+    <div id="ingredients-tab" class="inventory-tab-content active">
+        <div class="search-box">
+            <input type="text" id="search-ingredients" placeholder="Search ingredients...">
+        </div>
+        <div style="overflow-x: auto;">
+            <table class="data-table">
+                <thead>
+                    <tr>
+                        <th>Ingredient</th>
+                        <th>Stock</th>
+                        <th>Min Level</th>
+                        <th>Status</th>
+                        <th>Cost/Unit</th>
+                        <th>Supplier</th>
+                        <th>Actions</th>
+                    </tr>
+                </thead>
+                <tbody id="inventory-table-body">
+                    <tr><td colspan="7" style="text-align: center;">Loading...</td></tr>
+                </tbody>
+            </table>
+        </div>
+    </div>
+    
+    <!-- Recipes Tab -->
+    <div id="recipes-tab" class="inventory-tab-content">
+        <div class="search-box">
+            <input type="text" id="search-recipes" placeholder="Search recipes...">
+        </div>
+        <div style="overflow-x: auto;">
+            <table class="data-table">
+                <thead>
+                    <tr>
+                        <th>Drink</th>
+                        <th>Ingredients</th>
+                        <th>Prep Time</th>
+                        <th>Cost per Cup</th>
+                        <th>Selling Price</th>
+                        <th>Profit</th>
+                        <th>Actions</th>
+                    </tr>
+                </thead>
+                <tbody id="recipes-table-body">
+                    <tr><td colspan="7" style="text-align: center;">Loading...</td></tr>
+                </tbody>
+            </table>
+        </div>
+    </div>
+    
+    <!-- Transactions Tab -->
+    <div id="transactions-tab" class="inventory-tab-content">
+        <div style="overflow-x: auto;">
+            <table class="data-table">
+                <thead>
+                    <tr>
+                        <th>Date</th>
+                        <th>Ingredient</th>
+                        <th>Type</th>
+                        <th>Quantity</th>
+                        <th>Note</th>
+                    </tr>
+                </thead>
+                <tbody id="transactions-table-body">
+                    <tr><td colspan="5" style="text-align: center;">Loading...</td></tr>
+                </tbody>
+            </table>
+        </div>
+    </div>
+</div>
+
+<!-- Add Stock Modal -->
+<div id="add-stock-modal" class="modal">
+    <div class="modal-content" style="max-width: 450px;">
+        <h3>➕ Add Stock</h3>
+        <form id="add-stock-form">
+            <input type="hidden" id="stock-item-id">
+            <div class="form-group">
+                <label>Ingredient</label>
+                <input type="text" id="stock-item-name" readonly style="background: #F5E6D3;">
+            </div>
+            <div class="form-group">
+                <label>How many BOXES?</label>
+                <input type="number" id="stock-boxes" value="1" min="1" step="1">
+            </div>
+            <div class="form-group">
+                <label>Items per box</label>
+                <input type="number" id="stock-per-box" value="1" step="0.1">
+                <small>e.g., 6 liters per box, 12 bottles per box</small>
+            </div>
+            <div class="form-group">
+                <label>Total to add</label>
+                <input type="text" id="stock-total-add" readonly style="background: #F5E6D3;">
+            </div>
+            <div class="form-group">
+                <label>Current stock</label>
+                <input type="text" id="stock-current" readonly style="background: #F5E6D3;">
+            </div>
+            <div class="form-group">
+                <label>New stock</label>
+                <input type="text" id="stock-new" readonly style="background: #F5E6D3; font-weight: bold;">
+            </div>
+            <div class="form-group">
+                <label>Cost per box (₱)</label>
+                <input type="number" id="stock-cost-box" step="0.01">
+            </div>
+            <div class="form-group">
+                <label>Total cost</label>
+                <input type="text" id="stock-total-cost" readonly style="background: #F5E6D3;">
+            </div>
+            <div class="modal-buttons">
+                <button type="submit" class="btn-primary">Add Stock</button>
+                <button type="button" class="btn-secondary" onclick="closeAddStockModal()">Cancel</button>
+            </div>
+        </form>
+    </div>
+</div>
+
+<!-- View Recipe Modal -->
+<div id="view-recipe-modal" class="modal">
+    <div class="modal-content" style="max-width: 600px;">
+        <h3 id="recipe-modal-title">Recipe Details</h3>
+        <div id="recipe-details"></div>
+        <div class="modal-buttons">
+            <button class="btn-secondary" onclick="closeViewRecipeModal()">Close</button>
+        </div>
+    </div>
+</div>
+
+<!-- Add Inventory Item Modal -->
+<div id="add-inventory-modal" class="modal">
+    <div class="modal-content" style="max-width: 450px;">
+        <h3>➕ Add Ingredient</h3>
+        <form id="add-inventory-form">
+            <div class="form-group">
+                <label>Ingredient Name</label>
+                <input type="text" id="inv-name" required>
+            </div>
+            <div class="form-group">
+                <label>Unit (liters, kg, grams, pieces, bottles)</label>
+                <input type="text" id="inv-unit" required placeholder="e.g., liters, kg, bottles">
+            </div>
+            <div class="form-group">
+                <label>Initial Stock</label>
+                <input type="number" id="inv-stock" step="0.01" value="0">
+            </div>
+            <div class="form-group">
+                <label>Minimum Stock Level</label>
+                <input type="number" id="inv-min-stock" step="0.01" value="0">
+            </div>
+            <div class="form-group">
+                <label>Cost per Unit (₱)</label>
+                <input type="number" id="inv-cost" step="0.01" value="0">
+            </div>
+            <div class="form-group">
+                <label>Supplier</label>
+                <input type="text" id="inv-supplier">
+            </div>
+            <div class="form-group">
+                <label>Category</label>
+                <select id="inv-category">
+                    <option value="Coffee">Coffee</option>
+                    <option value="Dairy">Dairy</option>
+                    <option value="Syrups">Syrups</option>
+                    <option value="Powders">Powders</option>
+                    <option value="Toppings">Toppings</option>
+                    <option value="Supplies">Supplies</option>
+                </select>
+            </div>
+            <div class="modal-buttons">
+                <button type="submit" class="btn-primary">Add Ingredient</button>
+                <button type="button" class="btn-secondary" onclick="closeAddInventoryModal()">Cancel</button>
+            </div>
+        </form>
+    </div>
+</div>
+
+<!-- Add Recipe Modal -->
+<div id="add-recipe-modal" class="modal">
+    <div class="modal-content" style="max-width: 500px;">
+        <h3>📖 Add Recipe</h3>
+        <form id="add-recipe-form">
+            <div class="form-group">
+                <label>Select Product/Drink</label>
+                <select id="recipe-product-id" required></select>
+            </div>
+            <div class="form-group">
+                <label>Recipe Name</label>
+                <input type="text" id="recipe-name" required>
+            </div>
+            <div class="form-group">
+                <label>Instructions</label>
+                <textarea id="recipe-instructions" rows="4" placeholder="Step by step instructions..."></textarea>
+            </div>
+            <div class="form-group">
+                <label>Preparation Time (minutes)</label>
+                <input type="number" id="recipe-prep-time" value="5">
+            </div>
+            <div class="form-group">
+                <label>Ingredients</label>
+                <div id="recipe-ingredients-list">
+                    <div class="recipe-ingredient-row" style="display: flex; gap: 10px; margin-bottom: 10px;">
+                        <select class="recipe-ingredient-select" style="flex: 2;" required>
+                            <option value="">Select Ingredient</option>
+                        </select>
+                        <input type="number" class="recipe-ingredient-quantity" placeholder="Qty" style="flex: 1;" step="0.01" required>
+                        <input type="text" class="recipe-ingredient-unit" placeholder="Unit" style="flex: 1;" readonly>
+                        <button type="button" class="btn-danger" onclick="this.parentElement.remove()" style="padding: 5px 10px;">✕</button>
+                    </div>
+                </div>
+                <button type="button" class="btn-secondary" onclick="addRecipeIngredientRow()" style="margin-top: 10px;">+ Add Ingredient</button>
+            </div>
+            <div class="modal-buttons">
+                <button type="submit" class="btn-primary">Save Recipe</button>
+                <button type="button" class="btn-secondary" onclick="closeAddRecipeModal()">Cancel</button>
+            </div>
+        </form>
+    </div>
+</div>
+
+    <script src="script/admin-dashboard.js"></script>
+</body>
+</html>

@@ -1,0 +1,86 @@
+const pool = require('../config/database');
+
+class Product {
+    // Get all products
+    static async findAll(filters = {}) {
+        let query = 'SELECT * FROM products WHERE is_available = true';
+        const values = [];
+        let paramCount = 1;
+        
+        if (filters.category && filters.category !== 'all') {
+            query += ` AND category = $${paramCount}`;
+            values.push(filters.category);
+            paramCount++;
+        }
+        
+        if (filters.isFeatured) {
+            query += ` AND is_featured = true`;
+        }
+        
+        if (filters.isNew) {
+            query += ` AND is_new = true`;
+        }
+        
+        query += ' ORDER BY created_at DESC';
+        
+        const result = await pool.query(query, values);
+        return result.rows;
+    }
+
+    // Get product by ID
+    static async findById(id) {
+        const result = await pool.query(
+            'SELECT * FROM products WHERE id = $1',
+            [id]
+        );
+        return result.rows[0];
+    }
+
+    // Create new product (Admin only)
+    static async create(productData) {
+        const { name, description, price, category, image_url, stock_quantity, is_featured, is_new } = productData;
+        
+        const result = await pool.query(
+            `INSERT INTO products (name, description, price, category, image_url, stock_quantity, is_featured, is_new) 
+             VALUES ($1, $2, $3, $4, $5, $6, $7, $8) 
+             RETURNING *`,
+            [name, description, price, category, image_url, stock_quantity, is_featured || false, is_new || false]
+        );
+        
+        return result.rows[0];
+    }
+
+    // Update product (Admin only)
+    static async update(id, productData) {
+        const { name, description, price, category, image_url, stock_quantity, is_available, is_featured, is_new } = productData;
+        
+        const result = await pool.query(
+            `UPDATE products 
+             SET name = $1, description = $2, price = $3, category = $4, 
+                 image_url = $5, stock_quantity = $6, is_available = $7, 
+                 is_featured = $8, is_new = $9, updated_at = CURRENT_TIMESTAMP
+             WHERE id = $10 
+             RETURNING *`,
+            [name, description, price, category, image_url, stock_quantity, is_available, is_featured, is_new, id]
+        );
+        
+        return result.rows[0];
+    }
+
+    // Delete product (Admin only)
+    static async delete(id) {
+        await pool.query('DELETE FROM products WHERE id = $1', [id]);
+        return true;
+    }
+
+    // Get customization options for a product
+    static async getCustomizations(productId) {
+        const result = await pool.query(
+            'SELECT * FROM customization_options WHERE product_id = $1 ORDER BY display_order',
+            [productId]
+        );
+        return result.rows;
+    }
+}
+
+module.exports = Product;
