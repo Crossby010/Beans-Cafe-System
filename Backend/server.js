@@ -1,15 +1,3 @@
-// For Vercel serverless
-if (process.env.NODE_ENV === 'production') {
-    // Use Vercel's port
-    module.exports = app;
-} else {
-    const PORT = process.env.PORT || 5000;
-    server.listen(PORT, () => {
-        console.log(`Server running on port ${PORT}`);
-    });
-}
-
-
 const express = require('express');
 const cors = require('cors');
 const dotenv = require('dotenv');
@@ -52,46 +40,17 @@ app.use(cors({
 
 // Body parsing middleware
 app.use(express.json());
-
-// Debug logging middleware (uncommented)
-app.use((req, res, next) => {
-    console.log(`📨 ${req.method} ${req.url}`);
-    
-    // Capture the response
-    const originalJson = res.json;
-    const originalSend = res.send;
-    
-    res.json = function(data) {
-        console.log(`📤 Response JSON:`, typeof data === 'object' ? Object.keys(data) : 'non-object');
-        return originalJson.call(this, data);
-    };
-    
-    res.send = function(data) {
-        console.log(`📤 Response Send:`, typeof data === 'string' ? data.substring(0, 100) : 'non-string');
-        return originalSend.call(this, data);
-    };
-    
-    next();
-});
-
-app.use('/api', (req, res, next) => {
-    res.setHeader('X-Content-Type-Options', 'nosniff');
-    res.setHeader('Cache-Control', 'no-store, no-cache, must-revalidate');
-    next();
-});
 app.use(express.urlencoded({ extended: true }));
 
 // Make io accessible to routes
 app.set('io', io);
 
 // ============ MULTER SETUP ============
-// Create uploads folder if not exists
 const uploadDir = path.join(__dirname, 'uploads');
 if (!fs.existsSync(uploadDir)) {
     fs.mkdirSync(uploadDir, { recursive: true });
 }
 
-// Configure multer for file uploads
 const storage = multer.diskStorage({
     destination: (req, file, cb) => {
         cb(null, uploadDir);
@@ -104,7 +63,7 @@ const storage = multer.diskStorage({
 
 const upload = multer({ 
     storage: storage,
-    limits: { fileSize: 5 * 1024 * 1024 }, // 5MB
+    limits: { fileSize: 5 * 1024 * 1024 },
     fileFilter: (req, file, cb) => {
         if (file.mimetype.startsWith('image/')) {
             cb(null, true);
@@ -113,33 +72,34 @@ const upload = multer({
         }
     }
 });
-// ============ END MULTER SETUP ============
 
 // Test route (no auth needed)
 app.get('/api/test', (req, res) => {
     res.json({ message: 'Beans Cafe API is running!' });
 });
 
-// ============ UPLOAD ENDPOINT ============
+// Upload endpoint
 app.post('/api/upload', authenticate, adminAuth, upload.single('image'), (req, res) => {
     console.log('Upload endpoint hit');
     
     if (!req.file) {
-        console.log('No file');
         return res.status(400).json({ success: false, message: 'No file uploaded' });
     }
     
-    const imageUrl = `http://localhost:5000/uploads/${req.file.filename}`;
+    // Use dynamic URL for production
+    const baseUrl = process.env.NODE_ENV === 'production' 
+        ? `https://${req.get('host')}`
+        : 'http://localhost:5000';
+    const imageUrl = `${baseUrl}/uploads/${req.file.filename}`;
+    
     console.log('File saved:', req.file.filename);
     console.log('URL:', imageUrl);
     
-    res.setHeader('Content-Type', 'application/json');
-    res.setHeader('Cache-Control', 'no-cache');
     res.json({ success: true, url: imageUrl });
 });
+
 // Serve uploaded images statically
 app.use('/uploads', express.static(path.join(__dirname, 'uploads')));
-// ============ END UPLOAD ENDPOINT ============
 
 // API Routes
 app.use('/api/auth', authRoutes);
@@ -159,6 +119,7 @@ io.on('connection', (socket) => {
     });
 });
 
+// Start server
 const PORT = process.env.PORT || 5000;
 server.listen(PORT, '0.0.0.0', () => {
     console.log(`🚀 Server running on port ${PORT}`);
