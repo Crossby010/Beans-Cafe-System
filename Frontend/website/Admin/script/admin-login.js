@@ -61,7 +61,7 @@ async function handleLogin(e) {
             
             // Redirect to dashboard
             setTimeout(() => {
-                window.location.href = 'dashboard.html';
+                window.location.href = 'Dashboard.html';
             }, 1000);
         } else {
             const errorMsg = result.message || 'Invalid credentials or not an admin user';
