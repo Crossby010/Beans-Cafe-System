@@ -151,7 +151,7 @@ async function loadFeaturedProducts() {
 function goToProduct(productId) {
     console.log('Going to product with ID:', productId);
     if (productId) {
-        window.location.href = `customize.html?id=${productId}`;
+        window.location.href = `pages/customize.html?id=${productId}`;
     } else {
         console.error('No product ID provided');
     }
