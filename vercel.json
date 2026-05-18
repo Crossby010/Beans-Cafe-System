@@ -2,17 +2,35 @@
     "rewrites": [
         {
             "source": "/api/(.*)",
-            "destination": "/backend/server.js"
-        }
-    ],
-    "builds": [
-        {
-            "src": "backend/server.js",
-            "use": "@vercel/node"
+            "destination": "https://beans-cafe-backend.onrender.com/api/$1"
         },
         {
-            "src": "Frontend/website/**",
-            "use": "@vercel/static"
+            "source": "/uploads/(.*)",
+            "destination": "https://beans-cafe-backend.onrender.com/uploads/$1"
+        },
+        {
+            "source": "/admin/(.*)",
+            "destination": "/admin/$1"
+        },
+        {
+            "source": "/pages/(.*)",
+            "destination": "/pages/$1"
+        },
+        {
+            "source": "/css/(.*)",
+            "destination": "/css/$1"
+        },
+        {
+            "source": "/script/(.*)",
+            "destination": "/script/$1"
+        },
+        {
+            "source": "/assets/(.*)",
+            "destination": "/assets/$1"
+        },
+        {
+            "source": "/(.*)",
+            "destination": "/$1"
         }
     ]
 }
