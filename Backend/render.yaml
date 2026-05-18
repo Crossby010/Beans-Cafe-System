@@ -1,0 +1,21 @@
+services:
+  - type: web
+    name: beans-cafe-backend
+    runtime: node
+    buildCommand: npm install
+    startCommand: node server.js
+    envVars:
+      - key: DB_HOST
+        value: ep-mute-grass-aoxuu965-pooler.c-2.ap-southeast-1.aws.neon.tech
+      - key: DB_PORT
+        value: 5432
+      - key: DB_USER
+        value: neondb_owner
+      - key: DB_PASSWORD
+        sync: false
+      - key: DB_NAME
+        value: neondb
+      - key: JWT_SECRET
+        generateValue: true
+      - key: NODE_ENV
+        value: production
