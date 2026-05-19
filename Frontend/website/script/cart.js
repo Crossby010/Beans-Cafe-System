@@ -73,6 +73,36 @@ function updateCartCount() {
     cartCountElements.forEach(el => {
         el.textContent = totalItems;
     });
+    
+    // Hide/show cart link based on items in cart
+    updateCartVisibility();
+}
+
+// NEW FUNCTION: Hide cart link when cart is empty
+function updateCartVisibility() {
+    const cart = getCart();
+    const cartLink = document.querySelector('.cart-link');
+    const mobileCartLink = document.querySelector('.Mobile-Nav-Contents a[href*="cart.html"]');
+    
+    if (cart.length === 0) {
+        // Hide on desktop
+        if (cartLink) {
+            cartLink.style.display = 'none';
+        }
+        // Hide on mobile
+        if (mobileCartLink && mobileCartLink.parentElement) {
+            mobileCartLink.parentElement.style.display = 'none';
+        }
+    } else {
+        // Show on desktop
+        if (cartLink) {
+            cartLink.style.display = 'flex';
+        }
+        // Show on mobile
+        if (mobileCartLink && mobileCartLink.parentElement) {
+            mobileCartLink.parentElement.style.display = 'block';
+        }
+    }
 }
 
 function getCartTotal() {
@@ -83,6 +113,7 @@ function getCartTotal() {
 function clearCart() {
     localStorage.removeItem('beans_cart');
     updateCartCount();
+    updateCartVisibility();
 }
 
 function loadCartPage() {
@@ -179,3 +210,8 @@ function escapeHtml(text) {
     div.textContent = text;
     return div.innerHTML;
 }
+
+// Initialize cart visibility on page load
+document.addEventListener('DOMContentLoaded', function() {
+    updateCartVisibility();
+});
