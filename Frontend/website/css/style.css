@@ -148,33 +148,35 @@ h1, h2, h3, h4, .logo {
     margin-left: 5px;
 }
 
-/* ============ HAMBURGER MENU - BOLD AND VISIBLE ============ */
+/* ============ HAMBURGER MENU - FULLY VISIBLE ============ */
 .Mobile-Menu {
     display: none;
     flex-direction: column;
     cursor: pointer;
-    padding: 10px;
+    padding: 8px;
     border: none;
-    background: transparent;
-    width: 50px;
-    height: 50px;
+    background: #F5E6D3;
+    border-radius: 10px;
+    width: 46px;
+    height: 46px;
     justify-content: center;
     align-items: center;
     z-index: 1001;
+    box-shadow: 0 2px 5px rgba(0,0,0,0.1);
 }
 
 .Mobile-Menu .bar {
-    height: 4px !important;
-    background: #6F4E37 !important;
-    margin: 5px 0 !important;
-    border-radius: 4px !important;
-    width: 28px !important;
+    height: 3px;
+    background: #6F4E37;
+    margin: 3px 0;
+    border-radius: 2px;
+    width: 24px;
     transition: all 0.3s ease;
-    display: block !important;
+    display: block;
 }
 
 .Mobile-Menu.active .bar:nth-child(1) {
-    transform: rotate(45deg) translate(6px, 6px);
+    transform: rotate(45deg) translate(5px, 5px);
 }
 
 .Mobile-Menu.active .bar:nth-child(2) {
@@ -182,20 +184,13 @@ h1, h2, h3, h4, .logo {
 }
 
 .Mobile-Menu.active .bar:nth-child(3) {
-    transform: rotate(-45deg) translate(7px, -7px);
-}
-
-/* Make sure bars are visible on all backgrounds */
-.Mobile-Menu:hover .bar {
-    background: #D4A373 !important;
+    transform: rotate(-45deg) translate(6px, -6px);
 }
 
 /* Mobile styles */
 @media (max-width: 768px) {
     .Mobile-Menu {
         display: flex !important;
-        background: rgba(255,255,255,0.8);
-        border-radius: 8px;
     }
     
     .nav-links {
@@ -203,18 +198,112 @@ h1, h2, h3, h4, .logo {
     }
 }
 
-/* Make hamburger button have a light background on mobile */
-@media (max-width: 768px) {
+/* Desktop styles */
+@media (min-width: 769px) {
     .Mobile-Menu {
-        background: #FFF9F2;
-        border-radius: 8px;
-        box-shadow: 0 2px 5px rgba(0,0,0,0.1);
+        display: none !important;
+    }
+    
+    .nav-links {
+        display: flex !important;
     }
 }
 
-/* ============ HERO SECTION - FULL WIDTH FIXED ============ */
+/* Mobile Navigation Panel */
+.Mobile-Nav {
+    position: fixed;
+    top: 0;
+    right: -100%;
+    width: 80%;
+    max-width: 300px;
+    height: 100vh;
+    background: white;
+    box-shadow: -5px 0 15px rgba(0,0,0,0.1);
+    padding: 80px 20px 30px;
+    transition: right 0.4s ease;
+    z-index: 1000;
+    overflow-y: auto;
+}
+
+.Mobile-Nav.active { right: 0; }
+
+.Mobile-Nav-Contents {
+    list-style: none;
+    padding: 0;
+    margin: 0;
+}
+
+.Mobile-Nav-Contents li { margin-bottom: 10px; }
+
+.Mobile-Nav-Contents a {
+    display: block;
+    padding: 12px 15px;
+    text-decoration: none;
+    color: #2C1810;
+    font-weight: 500;
+    border-radius: 8px;
+    transition: all 0.2s;
+}
+
+.Mobile-Nav-Contents a:hover {
+    background: #F5E6D3;
+    color: #6F4E37;
+}
+
+.close-menu {
+    position: absolute;
+    top: 20px;
+    right: 20px;
+    background: none;
+    border: none;
+    cursor: pointer;
+    width: 40px;
+    height: 40px;
+}
+
+.close-menu::before,
+.close-menu::after {
+    content: '';
+    position: absolute;
+    width: 20px;
+    height: 2px;
+    background: #2C1810;
+    border-radius: 2px;
+}
+
+.close-menu::before { transform: rotate(45deg); }
+.close-menu::after { transform: rotate(-45deg); }
+
+.Overlay {
+    position: fixed;
+    top: 0;
+    left: 0;
+    width: 100%;
+    height: 100%;
+    background: rgba(0,0,0,0.5);
+    opacity: 0;
+    visibility: hidden;
+    transition: all 0.3s;
+    z-index: 999;
+}
+
+.Overlay.active {
+    opacity: 1;
+    visibility: visible;
+}
+
+/* Page Sections */
+.page-section {
+    display: none;
+    padding-top: 80px;
+    min-height: 100vh;
+}
+
+.page-section.active { display: block; }
+
+/* ============ HERO SECTION - CENTERED ============ */
 .hero {
-    width: calc(100% - 40px);
+    width: 100%;
     max-width: 1400px;
     margin: 100px auto 20px auto;
     display: flex;
@@ -224,12 +313,9 @@ h1, h2, h3, h4, .logo {
     background-size: cover;
     background-position: center;
     background-repeat: no-repeat;
-    border-radius: 20px;
-    min-height: 550px;
+    border-radius: 24px;
+    min-height: 500px;
     padding: 60px;
-    position: relative;
-    left: 0;
-    right: 0;
 }
 
 .hero-content {
@@ -279,9 +365,8 @@ h1, h2, h3, h4, .logo {
 /* Hero Responsive */
 @media (max-width: 992px) {
     .hero {
-        width: calc(100% - 40px);
         margin-top: 90px;
-        min-height: 480px;
+        min-height: 450px;
         padding: 50px 40px;
     }
     
@@ -292,11 +377,8 @@ h1, h2, h3, h4, .logo {
 
 @media (max-width: 768px) {
     .hero {
-        width: calc(100% - 20px);
         margin-top: 80px;
-        margin-left: auto;
-        margin-right: auto;
-        min-height: 400px;
+        min-height: 380px;
         padding: 40px 20px;
         border-radius: 15px;
         background-position: 70% center;
@@ -328,9 +410,8 @@ h1, h2, h3, h4, .logo {
 
 @media (max-width: 480px) {
     .hero {
-        width: calc(100% - 20px);
         margin-top: 70px;
-        min-height: 350px;
+        min-height: 320px;
         padding: 30px 15px;
     }
     
@@ -347,6 +428,7 @@ h1, h2, h3, h4, .logo {
         font-size: 12px;
     }
 }
+
 /* Section Title */
 .section-title {
     text-align: center;
