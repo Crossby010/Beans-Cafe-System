@@ -22,7 +22,7 @@ const recipeRoutes = require('./src/routes/recipeRoutes');
 const authenticate = require('./src/middleware/auth');
 const adminAuth = require('./src/middleware/adminAuth');
 
-// Cloudinary setup
+// ============ Cloudinary SETUP ============
 const cloudinary = require('cloudinary').v2;
 const { CloudinaryStorage } = require('multer-storage-cloudinary');
 
@@ -34,7 +34,7 @@ cloudinary.config({
 });
 
 // Configure multer storage for Cloudinary
-const cloudinaryStorage = new CloudinaryStorage({
+const storage = new CloudinaryStorage({
     cloudinary: cloudinary,
     params: {
         folder: 'beans-cafe',
@@ -43,7 +43,7 @@ const cloudinaryStorage = new CloudinaryStorage({
     }
 });
 
-const upload = multer({ storage: cloudinaryStorage });
+const upload = multer({ storage: storage });
 
 const app = express();
 const server = http.createServer(app);
@@ -68,7 +68,7 @@ app.use(express.urlencoded({ extended: true }));
 // Make io accessible to routes
 app.set('io', io);
 
-// Test route (no auth needed)
+// Test route
 app.get('/api/test', (req, res) => {
     res.json({ message: 'Beans Cafe API is running!' });
 });
