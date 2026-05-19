@@ -148,7 +148,7 @@ h1, h2, h3, h4, .logo {
     margin-left: 5px;
 }
 
-/* ============ HAMBURGER MENU - FIXED (VISIBLE BROWN LINES) ============ */
+/* ============ HAMBURGER MENU - BOLD AND VISIBLE ============ */
 .Mobile-Menu {
     display: none;
     flex-direction: column;
@@ -164,16 +164,17 @@ h1, h2, h3, h4, .logo {
 }
 
 .Mobile-Menu .bar {
-    height: 3px;
+    height: 4px !important;
     background: #6F4E37 !important;
-    margin: 4px 0;
-    border-radius: 2px;
-    width: 25px;
+    margin: 5px 0 !important;
+    border-radius: 4px !important;
+    width: 28px !important;
     transition: all 0.3s ease;
+    display: block !important;
 }
 
 .Mobile-Menu.active .bar:nth-child(1) {
-    transform: rotate(45deg) translate(5px, 5px);
+    transform: rotate(45deg) translate(6px, 6px);
 }
 
 .Mobile-Menu.active .bar:nth-child(2) {
@@ -181,122 +182,20 @@ h1, h2, h3, h4, .logo {
 }
 
 .Mobile-Menu.active .bar:nth-child(3) {
-    transform: rotate(-45deg) translate(7px, -6px);
+    transform: rotate(-45deg) translate(7px, -7px);
 }
 
-@keyframes smoothMorph {
-    0% { width: 25px; transform: translateX(0); opacity: 1; }
-    33% { width: 0px; transform: translateX(25px); opacity: 0; }
-    66% { width: 0px; transform: translateX(-25px); opacity: 0; }
-    100% { width: 25px; transform: translateX(0); opacity: 1; }
+/* Make sure bars are visible on all backgrounds */
+.Mobile-Menu:hover .bar {
+    background: #D4A373 !important;
 }
 
-.Mobile-Menu:hover .bar:nth-child(1) { animation: smoothMorph 0.6s ease 0s; }
-.Mobile-Menu:hover .bar:nth-child(2) { animation: smoothMorph 0.6s ease 0.2s; }
-.Mobile-Menu:hover .bar:nth-child(3) { animation: smoothMorph 0.6s ease 0.4s; }
-
-/* Mobile Navigation Panel */
-.Mobile-Nav {
-    position: fixed;
-    top: 0;
-    right: -100%;
-    width: 80%;
-    max-width: 300px;
-    height: 100vh;
-    background: white;
-    box-shadow: -5px 0 15px rgba(0,0,0,0.1);
-    padding: 80px 20px 30px;
-    transition: right 0.4s ease;
-    z-index: 1000;
-    overflow-y: auto;
-}
-
-.Mobile-Nav.active { right: 0; }
-
-.Mobile-Nav-Contents {
-    list-style: none;
-    padding: 0;
-    margin: 0;
-}
-
-.Mobile-Nav-Contents li { margin-bottom: 10px; }
-
-.Mobile-Nav-Contents a {
-    display: block;
-    padding: 12px 15px;
-    text-decoration: none;
-    color: #2C1810;
-    font-weight: 500;
-    border-radius: 8px;
-    transition: all 0.2s;
-}
-
-.Mobile-Nav-Contents a:hover {
-    background: #F5E6D3;
-    color: #6F4E37;
-}
-
-.close-menu {
-    position: absolute;
-    top: 20px;
-    right: 20px;
-    background: none;
-    border: none;
-    cursor: pointer;
-    width: 40px;
-    height: 40px;
-}
-
-.close-menu::before,
-.close-menu::after {
-    content: '';
-    position: absolute;
-    width: 20px;
-    height: 2px;
-    background: #2C1810;
-    border-radius: 2px;
-}
-
-.close-menu::before { transform: rotate(45deg); }
-.close-menu::after { transform: rotate(-45deg); }
-
-.Overlay {
-    position: fixed;
-    top: 0;
-    left: 0;
-    width: 100%;
-    height: 100%;
-    background: rgba(0,0,0,0.5);
-    opacity: 0;
-    visibility: hidden;
-    transition: all 0.3s;
-    z-index: 999;
-}
-
-.Overlay.active {
-    opacity: 1;
-    visibility: visible;
-}
-
-/* Desktop - hide hamburger, show nav-links */
-@media (min-width: 769px) {
-    .Mobile-Menu {
-        display: none !important;
-    }
-    
-    .Mobile-Nav {
-        display: none !important;
-    }
-    
-    .nav-links {
-        display: flex !important;
-    }
-}
-
-/* Mobile - show hamburger, hide nav-links */
+/* Mobile styles */
 @media (max-width: 768px) {
     .Mobile-Menu {
         display: flex !important;
+        background: rgba(255,255,255,0.8);
+        border-radius: 8px;
     }
     
     .nav-links {
@@ -304,14 +203,14 @@ h1, h2, h3, h4, .logo {
     }
 }
 
-/* Page Sections */
-.page-section {
-    display: none;
-    padding-top: 80px;
-    min-height: 100vh;
+/* Make hamburger button have a light background on mobile */
+@media (max-width: 768px) {
+    .Mobile-Menu {
+        background: #FFF9F2;
+        border-radius: 8px;
+        box-shadow: 0 2px 5px rgba(0,0,0,0.1);
+    }
 }
-
-.page-section.active { display: block; }
 
 /* ============ HERO SECTION - FULL WIDTH FIXED ============ */
 .hero {
