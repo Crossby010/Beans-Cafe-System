@@ -203,6 +203,71 @@ function showMessage(message, type) {
     }, 3000);
 }
 
+// Mobile Menu Functionality
+document.addEventListener('DOMContentLoaded', function() {
+    const mobileMenuToggle = document.getElementById('Mobile_Menu_Toggle');
+    const mobileNav = document.getElementById('MobileNav');
+    const closeMenuBtn = document.getElementById('closeMenu');
+    const overlay = document.getElementById('Overlay');
+    
+    // Function to close mobile menu
+    function closeMobileMenu() {
+        if (mobileNav) mobileNav.classList.remove('active');
+        if (overlay) overlay.classList.remove('active');
+        document.body.style.overflow = 'auto';
+    }
+    
+    // Function to open mobile menu
+    function openMobileMenu() {
+        if (mobileNav) mobileNav.classList.add('active');
+        if (overlay) overlay.classList.add('active');
+        document.body.style.overflow = 'hidden';
+    }
+    
+    // Toggle menu on hamburger click
+    if (mobileMenuToggle && mobileNav) {
+        mobileMenuToggle.addEventListener('click', function(e) {
+            e.stopPropagation();
+            if (mobileNav.classList.contains('active')) {
+                closeMobileMenu();
+            } else {
+                openMobileMenu();
+            }
+        });
+    }
+    
+    // Close menu when clicking close button
+    if (closeMenuBtn) {
+        closeMenuBtn.addEventListener('click', closeMobileMenu);
+    }
+    
+    // Close menu when clicking overlay
+    if (overlay) {
+        overlay.addEventListener('click', closeMobileMenu);
+    }
+    
+    // Close menu when clicking a link inside mobile nav
+    if (mobileNav) {
+        const mobileLinks = mobileNav.querySelectorAll('a');
+        mobileLinks.forEach(link => {
+            link.addEventListener('click', closeMobileMenu);
+        });
+    }
+    
+    // Close menu when pressing Escape key
+    document.addEventListener('keydown', function(e) {
+        if (e.key === 'Escape' && mobileNav && mobileNav.classList.contains('active')) {
+            closeMobileMenu();
+        }
+    });
+    
+    // Handle window resize - if resizing to desktop while menu is open, close it
+    window.addEventListener('resize', function() {
+        if (window.innerWidth > 768 && mobileNav && mobileNav.classList.contains('active')) {
+            closeMobileMenu();
+        }
+    });
+});
 // Load cafe settings from backend
 async function loadCafeSettings() {
     try {

@@ -11,7 +11,7 @@
 <!-- Navigation -->
 <nav class="navbar">
     <div class="nav-container">
-        <a href="index.html" class="logo">Beans<span>Cafe</span></a>
+        <a href="index.html" class="logo cafe-name">Beans<span>Cafe</span></a>
         
         <div class="nav-links">
             <a href="index.html" data-section="home" class="active">Home</a>
@@ -20,9 +20,27 @@
             <a href="#" data-section="about">About</a>
         </div>
         
-        <button class="mobile-menu-btn">☰</button>
+        <div class="Mobile-Menu" id="Mobile_Menu_Toggle">
+            <div class="bar"></div>
+            <div class="bar"></div>
+            <div class="bar"></div>
+        </div>
     </div>
 </nav>
+
+<!-- Mobile Navigation Panel -->
+<div class="Mobile-Nav" id="MobileNav">
+    <button class="close-menu" id="closeMenu"></button>
+    <ul class="Mobile-Nav-Contents">
+        <li><a href="index.html" data-section="home">Home</a></li>
+        <li><a href="pages/menu.html">Menu</a></li>
+        <li><a href="#" data-section="howto">How to Order</a></li>
+        <li><a href="#" data-section="about">About</a></li>
+    </ul>
+</div>
+
+<!-- Overlay -->
+<div class="Overlay" id="Overlay"></div>
 
 <!-- ==================== HOME SECTION ==================== -->
 <section id="home-section" class="page-section active">

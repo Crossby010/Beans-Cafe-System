@@ -22,6 +22,29 @@ const recipeRoutes = require('./src/routes/recipeRoutes');
 const authenticate = require('./src/middleware/auth');
 const adminAuth = require('./src/middleware/adminAuth');
 
+// Cloudinary setup
+const cloudinary = require('cloudinary').v2;
+const { CloudinaryStorage } = require('multer-storage-cloudinary');
+
+// Configure Cloudinary
+cloudinary.config({
+    cloud_name: process.env.CLOUDINARY_CLOUD_NAME,
+    api_key: process.env.CLOUDINARY_API_KEY,
+    api_secret: process.env.CLOUDINARY_API_SECRET
+});
+
+// Configure multer storage for Cloudinary
+const cloudinaryStorage = new CloudinaryStorage({
+    cloudinary: cloudinary,
+    params: {
+        folder: 'beans-cafe',
+        allowed_formats: ['jpg', 'jpeg', 'png', 'gif'],
+        transformation: [{ width: 500, height: 500, crop: 'limit' }]
+    }
+});
+
+const upload = multer({ storage: cloudinaryStorage });
+
 const app = express();
 const server = http.createServer(app);
 const io = socketIO(server, {
@@ -45,40 +68,12 @@ app.use(express.urlencoded({ extended: true }));
 // Make io accessible to routes
 app.set('io', io);
 
-// ============ MULTER SETUP ============
-const uploadDir = path.join(__dirname, 'uploads');
-if (!fs.existsSync(uploadDir)) {
-    fs.mkdirSync(uploadDir, { recursive: true });
-}
-
-const storage = multer.diskStorage({
-    destination: (req, file, cb) => {
-        cb(null, uploadDir);
-    },
-    filename: (req, file, cb) => {
-        const uniqueName = Date.now() + '-' + Math.round(Math.random() * 1E9) + path.extname(file.originalname);
-        cb(null, uniqueName);
-    }
-});
-
-const upload = multer({ 
-    storage: storage,
-    limits: { fileSize: 5 * 1024 * 1024 },
-    fileFilter: (req, file, cb) => {
-        if (file.mimetype.startsWith('image/')) {
-            cb(null, true);
-        } else {
-            cb(new Error('Only images allowed'), false);
-        }
-    }
-});
-
 // Test route (no auth needed)
 app.get('/api/test', (req, res) => {
     res.json({ message: 'Beans Cafe API is running!' });
 });
 
-// Upload endpoint
+// Upload endpoint with Cloudinary
 app.post('/api/upload', authenticate, adminAuth, upload.single('image'), (req, res) => {
     console.log('Upload endpoint hit');
     
@@ -86,20 +81,12 @@ app.post('/api/upload', authenticate, adminAuth, upload.single('image'), (req, r
         return res.status(400).json({ success: false, message: 'No file uploaded' });
     }
     
-    // Use dynamic URL for production
-    const baseUrl = process.env.NODE_ENV === 'production' 
-        ? `https://${req.get('host')}`
-        : 'http://localhost:5000';
-    const imageUrl = `${baseUrl}/uploads/${req.file.filename}`;
-    
-    console.log('File saved:', req.file.filename);
-    console.log('URL:', imageUrl);
+    // Cloudinary returns the file path
+    const imageUrl = req.file.path;
+    console.log('Uploaded to Cloudinary:', imageUrl);
     
     res.json({ success: true, url: imageUrl });
 });
-
-// Serve uploaded images statically
-app.use('/uploads', express.static(path.join(__dirname, 'uploads')));
 
 // API Routes
 app.use('/api/auth', authRoutes);
@@ -109,6 +96,17 @@ app.use('/api/users', userRoutes);
 app.use('/api/settings', settingRoutes);
 app.use('/api/inventory', inventoryRoutes);
 app.use('/api/recipes', recipeRoutes);
+
+// Debug database endpoint
+app.get('/api/db-test', async (req, res) => {
+    const pool = require('./src/config/database');
+    try {
+        const result = await pool.query('SELECT NOW() as time');
+        res.json({ success: true, db: result.rows[0] });
+    } catch (error) {
+        res.status(500).json({ success: false, error: error.message });
+    }
+});
 
 // Socket.io connection
 io.on('connection', (socket) => {
