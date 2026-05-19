@@ -31,6 +31,7 @@ body {
     color: var(--text-dark);
     background-color: var(--background);
     line-height: 1.6;
+    overflow-x: hidden;
 }
 
 h1, h2, h3, h4, .logo {
@@ -41,6 +42,7 @@ h1, h2, h3, h4, .logo {
     max-width: 1200px;
     margin: 0 auto;
     padding: 0 20px;
+    width: 100%;
 }
 
 /* Buttons */
@@ -146,7 +148,7 @@ h1, h2, h3, h4, .logo {
     margin-left: 5px;
 }
 
-/* ============ HAMBURGER MENU - FIXED (NO WHITE CIRCLE) ============ */
+/* ============ HAMBURGER MENU - FIXED (VISIBLE BROWN LINES) ============ */
 .Mobile-Menu {
     display: none;
     flex-direction: column;
@@ -154,8 +156,8 @@ h1, h2, h3, h4, .logo {
     padding: 10px;
     border: none;
     background: transparent;
-    width: 45px;
-    height: 45px;
+    width: 50px;
+    height: 50px;
     justify-content: center;
     align-items: center;
     z-index: 1001;
@@ -163,7 +165,7 @@ h1, h2, h3, h4, .logo {
 
 .Mobile-Menu .bar {
     height: 3px;
-    background: #6F4E37;
+    background: #6F4E37 !important;
     margin: 4px 0;
     border-radius: 2px;
     width: 25px;
@@ -311,11 +313,11 @@ h1, h2, h3, h4, .logo {
 
 .page-section.active { display: block; }
 
-/* ============ HERO SECTION - FIXED ============ */
+/* ============ HERO SECTION - FULL WIDTH FIXED ============ */
 .hero {
-    width: 100%;
-    max-width: 1450px;
-    margin: 20px auto;
+    width: calc(100% - 40px);
+    max-width: 1400px;
+    margin: 100px auto 20px auto;
     display: flex;
     align-items: center;
     justify-content: flex-start;
@@ -326,6 +328,9 @@ h1, h2, h3, h4, .logo {
     border-radius: 20px;
     min-height: 550px;
     padding: 60px;
+    position: relative;
+    left: 0;
+    right: 0;
 }
 
 .hero-content {
@@ -375,6 +380,8 @@ h1, h2, h3, h4, .logo {
 /* Hero Responsive */
 @media (max-width: 992px) {
     .hero {
+        width: calc(100% - 40px);
+        margin-top: 90px;
         min-height: 480px;
         padding: 50px 40px;
     }
@@ -386,7 +393,10 @@ h1, h2, h3, h4, .logo {
 
 @media (max-width: 768px) {
     .hero {
-        margin: 10px;
+        width: calc(100% - 20px);
+        margin-top: 80px;
+        margin-left: auto;
+        margin-right: auto;
         min-height: 400px;
         padding: 40px 20px;
         border-radius: 15px;
@@ -419,6 +429,8 @@ h1, h2, h3, h4, .logo {
 
 @media (max-width: 480px) {
     .hero {
+        width: calc(100% - 20px);
+        margin-top: 70px;
         min-height: 350px;
         padding: 30px 15px;
     }
@@ -436,7 +448,6 @@ h1, h2, h3, h4, .logo {
         font-size: 12px;
     }
 }
-
 /* Section Title */
 .section-title {
     text-align: center;
