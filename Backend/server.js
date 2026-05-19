@@ -24,7 +24,6 @@ const adminAuth = require('./src/middleware/adminAuth');
 
 // ============ Cloudinary SETUP ============
 const cloudinary = require('cloudinary').v2;
-const { CloudinaryStorage } = require('multer-storage-cloudinary');
 
 // Configure Cloudinary
 cloudinary.config({
@@ -33,24 +32,41 @@ cloudinary.config({
     api_secret: process.env.CLOUDINARY_API_SECRET
 });
 
-// Configure multer storage for Cloudinary
-const storage = new CloudinaryStorage({
-    cloudinary: cloudinary,
-    params: {
-        folder: 'beans-cafe',
-        allowed_formats: ['jpg', 'jpeg', 'png', 'gif'],
-        transformation: [{ width: 500, height: 500, crop: 'limit' }]
-    }
-});
-
+// Use memory storage instead of disk storage
+const storage = multer.memoryStorage();
 const upload = multer({ storage: storage });
 
-const app = express();
-const server = http.createServer(app);
-const io = socketIO(server, {
-    cors: {
-        origin: "*",
-        methods: ["GET", "POST", "PUT", "DELETE", "OPTIONS"]
+// Upload endpoint with Cloudinary
+app.post('/api/upload', authenticate, adminAuth, upload.single('image'), async (req, res) => {
+    console.log('Upload endpoint hit');
+    
+    if (!req.file) {
+        return res.status(400).json({ success: false, message: 'No file uploaded' });
+    }
+    
+    try {
+        // Upload to Cloudinary using base64
+        const result = await new Promise((resolve, reject) => {
+            const uploadStream = cloudinary.uploader.upload_stream(
+                {
+                    folder: 'beans-cafe',
+                    transformation: [{ width: 500, height: 500, crop: 'limit' }]
+                },
+                (error, result) => {
+                    if (error) reject(error);
+                    else resolve(result);
+                }
+            );
+            uploadStream.end(req.file.buffer);
+        });
+        
+        const imageUrl = result.secure_url;
+        console.log('Uploaded to Cloudinary:', imageUrl);
+        
+        res.json({ success: true, url: imageUrl });
+    } catch (error) {
+        console.error('Cloudinary upload error:', error);
+        res.status(500).json({ success: false, message: 'Upload failed: ' + error.message });
     }
 });
 
