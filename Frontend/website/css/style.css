@@ -130,6 +130,7 @@ h1, h2, h3, h4, .logo {
 
 .cart-link {
     position: relative;
+    display: none;
 }
 
 #cart-count {
@@ -145,17 +146,16 @@ h1, h2, h3, h4, .logo {
     margin-left: 5px;
 }
 
-/* ============ HAMBURGER MENU WITH ANIMATION ============ */
+/* ============ HAMBURGER MENU - FIXED (NO WHITE CIRCLE) ============ */
 .Mobile-Menu {
     display: none;
     flex-direction: column;
     cursor: pointer;
     padding: 10px;
     border: none;
-    border-radius: 10px;
     background: transparent;
-    width: 50px;
-    height: 50px;
+    width: 45px;
+    height: 45px;
     justify-content: center;
     align-items: center;
     z-index: 1001;
@@ -163,7 +163,7 @@ h1, h2, h3, h4, .logo {
 
 .Mobile-Menu .bar {
     height: 3px;
-    background: linear-gradient(135deg, #6F4E37, #D4A373);
+    background: #6F4E37;
     margin: 4px 0;
     border-radius: 2px;
     width: 25px;
@@ -295,13 +295,6 @@ h1, h2, h3, h4, .logo {
 @media (max-width: 768px) {
     .Mobile-Menu {
         display: flex !important;
-        background: rgba(255,255,255,0.9);
-        border-radius: 50%;
-        box-shadow: 0 2px 8px rgba(0,0,0,0.1);
-    }
-    
-    .Mobile-Menu:active {
-        background: #F5E6D3;
     }
     
     .nav-links {
@@ -318,21 +311,21 @@ h1, h2, h3, h4, .logo {
 
 .page-section.active { display: block; }
 
-/* Hero Section - FIXED */
+/* ============ HERO SECTION - FIXED ============ */
 .hero {
     width: 100%;
     max-width: 1450px;
     margin: 20px auto;
     display: flex;
     align-items: center;
-    background: linear-gradient(135deg, rgba(0,0,0,0.6), rgba(0,0,0,0.4)), url('../assets/images/hero-bg.jpg');
+    justify-content: flex-start;
+    background: linear-gradient(135deg, rgba(0,0,0,0.65), rgba(0,0,0,0.45)), url('../assets/images/hero-bg.jpg');
     background-size: cover;
     background-position: center;
     background-repeat: no-repeat;
     border-radius: 20px;
+    min-height: 550px;
     padding: 60px;
-    position: relative;
-    overflow: hidden;
 }
 
 .hero-content {
@@ -351,7 +344,7 @@ h1, h2, h3, h4, .logo {
 
 .hero p {
     font-size: 18px;
-    color: rgba(255,255,255,0.9);
+    color: rgba(255,255,255,0.95);
     margin-bottom: 30px;
     text-shadow: 1px 1px 2px rgba(0,0,0,0.3);
 }
@@ -379,11 +372,11 @@ h1, h2, h3, h4, .logo {
     border-color: white;
 }
 
-/* Hero Responsive Fixes */
+/* Hero Responsive */
 @media (max-width: 992px) {
     .hero {
+        min-height: 480px;
         padding: 50px 40px;
-        min-height: 450px;
     }
     
     .hero h1 {
@@ -394,8 +387,8 @@ h1, h2, h3, h4, .logo {
 @media (max-width: 768px) {
     .hero {
         margin: 10px;
+        min-height: 400px;
         padding: 40px 20px;
-        min-height: 350px;
         border-radius: 15px;
         background-position: 70% center;
     }
@@ -426,7 +419,7 @@ h1, h2, h3, h4, .logo {
 
 @media (max-width: 480px) {
     .hero {
-        min-height: 300px;
+        min-height: 350px;
         padding: 30px 15px;
     }
     
@@ -847,12 +840,11 @@ h1, h2, h3, h4, .logo {
     color: white;
 }
 
-/* Cart link visibility - hidden by default, shown by JS when items exist */
+/* Cart link visibility */
 .cart-link {
     display: none;
 }
 
-/* Ensure cart shows when it has items */
 .cart-link[style*="display: flex"],
 .cart-link[style*="display: block"] {
     display: flex !important;
@@ -874,7 +866,7 @@ h1, h2, h3, h4, .logo {
     display: block;
 }
 
-/* Fix for Remove Item button on checkout */
+/* Fix for Remove Item button */
 .remove-item {
     cursor: pointer;
     font-size: 20px;
@@ -890,7 +882,7 @@ h1, h2, h3, h4, .logo {
     font-size: 24px;
 }
 
-/* Tablet (768px - 1024px) */
+/* Tablet */
 @media (max-width: 1024px) {
     .products-grid {
         grid-template-columns: repeat(2, 1fr);
@@ -904,7 +896,7 @@ h1, h2, h3, h4, .logo {
     .section-title { font-size: 32px; margin-bottom: 40px; }
 }
 
-/* Mobile (up to 768px) - Additional responsive fixes */
+/* Mobile */
 @media (max-width: 768px) {
     .section-title { font-size: 28px; margin-bottom: 30px; }
     
@@ -990,7 +982,7 @@ h1, h2, h3, h4, .logo {
     .back-btn { font-size: 12px; padding: 6px 15px; }
 }
 
-/* Small Mobile (up to 480px) */
+/* Small Mobile */
 @media (max-width: 480px) {
     .logo { font-size: 18px; }
     .Mobile-Menu { width: 40px; height: 40px; }
@@ -1029,7 +1021,7 @@ img {
     }
 }
 
-/* Fix for QR code duplication - ensure only one QR code appears */
+/* Fix for QR code duplication */
 #qrcode > *:not(:first-child) {
     display: none !important;
 }
