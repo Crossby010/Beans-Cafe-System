@@ -32,41 +32,17 @@ cloudinary.config({
     api_secret: process.env.CLOUDINARY_API_SECRET
 });
 
-// Use memory storage instead of disk storage
+// Use memory storage for multer
 const storage = multer.memoryStorage();
 const upload = multer({ storage: storage });
 
-// Upload endpoint with Cloudinary
-app.post('/api/upload', authenticate, adminAuth, upload.single('image'), async (req, res) => {
-    console.log('Upload endpoint hit');
-    
-    if (!req.file) {
-        return res.status(400).json({ success: false, message: 'No file uploaded' });
-    }
-    
-    try {
-        // Upload to Cloudinary using base64
-        const result = await new Promise((resolve, reject) => {
-            const uploadStream = cloudinary.uploader.upload_stream(
-                {
-                    folder: 'beans-cafe',
-                    transformation: [{ width: 500, height: 500, crop: 'limit' }]
-                },
-                (error, result) => {
-                    if (error) reject(error);
-                    else resolve(result);
-                }
-            );
-            uploadStream.end(req.file.buffer);
-        });
-        
-        const imageUrl = result.secure_url;
-        console.log('Uploaded to Cloudinary:', imageUrl);
-        
-        res.json({ success: true, url: imageUrl });
-    } catch (error) {
-        console.error('Cloudinary upload error:', error);
-        res.status(500).json({ success: false, message: 'Upload failed: ' + error.message });
+// ============ CREATE APP ============
+const app = express();
+const server = http.createServer(app);
+const io = socketIO(server, {
+    cors: {
+        origin: "*",
+        methods: ["GET", "POST", "PUT", "DELETE", "OPTIONS"]
     }
 });
 
@@ -89,19 +65,38 @@ app.get('/api/test', (req, res) => {
     res.json({ message: 'Beans Cafe API is running!' });
 });
 
-// Upload endpoint with Cloudinary
-app.post('/api/upload', authenticate, adminAuth, upload.single('image'), (req, res) => {
+// ============ UPLOAD ENDPOINT WITH CLOUDINARY ============
+app.post('/api/upload', authenticate, adminAuth, upload.single('image'), async (req, res) => {
     console.log('Upload endpoint hit');
     
     if (!req.file) {
         return res.status(400).json({ success: false, message: 'No file uploaded' });
     }
     
-    // Cloudinary returns the file path
-    const imageUrl = req.file.path;
-    console.log('Uploaded to Cloudinary:', imageUrl);
-    
-    res.json({ success: true, url: imageUrl });
+    try {
+        // Upload to Cloudinary using buffer
+        const result = await new Promise((resolve, reject) => {
+            const uploadStream = cloudinary.uploader.upload_stream(
+                {
+                    folder: 'beans-cafe',
+                    transformation: [{ width: 500, height: 500, crop: 'limit' }]
+                },
+                (error, result) => {
+                    if (error) reject(error);
+                    else resolve(result);
+                }
+            );
+            uploadStream.end(req.file.buffer);
+        });
+        
+        const imageUrl = result.secure_url;
+        console.log('Uploaded to Cloudinary:', imageUrl);
+        
+        res.json({ success: true, url: imageUrl });
+    } catch (error) {
+        console.error('Cloudinary upload error:', error);
+        res.status(500).json({ success: false, message: 'Upload failed: ' + error.message });
+    }
 });
 
 // API Routes
