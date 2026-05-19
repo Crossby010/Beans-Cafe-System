@@ -148,6 +148,17 @@ h1, h2, h3, h4, .logo {
     margin-left: 5px;
 }
 
+/* Page Sections - FIXED */
+.page-section {
+    display: none;
+    padding-top: 80px;
+    min-height: 100vh;
+}
+
+.page-section.active {
+    display: block;
+}
+
 /* ============ HAMBURGER MENU - FULLY VISIBLE ============ */
 .Mobile-Menu {
     display: none;
@@ -291,15 +302,6 @@ h1, h2, h3, h4, .logo {
     opacity: 1;
     visibility: visible;
 }
-
-/* Page Sections */
-.page-section {
-    display: none;
-    padding-top: 80px;
-    min-height: 100vh;
-}
-
-.page-section.active { display: block; }
 
 /* ============ HERO SECTION - CENTERED ============ */
 .hero {
@@ -495,10 +497,22 @@ h1, h2, h3, h4, .logo {
 
 .step-card p { color: #666; line-height: 1.6; }
 
+/* Step Number for How To Order */
+.step-number {
+    font-size: 48px;
+    font-weight: 700;
+    color: var(--primary-brown);
+    opacity: 0.3;
+    position: absolute;
+    top: 20px;
+    right: 20px;
+}
+
 /* How to Order Section */
 .howto-section {
     padding: 80px 0;
     background: #FFF9F2;
+    min-height: 100vh;
 }
 
 .howto-grid {
@@ -542,6 +556,56 @@ h1, h2, h3, h4, .logo {
 .howto-content p {
     font-size: 14px;
     color: #666;
+}
+
+/* About Section */
+.about-section {
+    padding: 80px 0;
+    background: var(--cream);
+    min-height: 100vh;
+}
+
+.about-grid {
+    display: grid;
+    grid-template-columns: 1fr 1fr;
+    gap: 50px;
+    align-items: start;
+}
+
+.about-image {
+    border-radius: 16px;
+    overflow: hidden;
+    box-shadow: var(--shadow-md);
+    height: 400px;
+}
+
+.about-image img {
+    width: 100%;
+    height: 100%;
+    object-fit: cover;
+}
+
+.about-content h3 {
+    font-size: 28px;
+    margin-bottom: 20px;
+    color: var(--dark-coffee);
+}
+
+.about-content p {
+    margin-bottom: 15px;
+    line-height: 1.8;
+}
+
+.owner-info, .location-info {
+    margin-top: 30px;
+    padding-top: 20px;
+    border-top: 1px solid var(--border-light);
+}
+
+.owner-info h4, .location-info h4 {
+    margin-bottom: 10px;
+    color: var(--primary-brown);
+    font-size: 20px;
 }
 
 /* Featured Products */
@@ -885,11 +949,24 @@ h1, h2, h3, h4, .logo {
         grid-template-columns: repeat(2, 1fr);
     }
     
+    .about-grid {
+        grid-template-columns: 1fr;
+        gap: 30px;
+    }
+    
+    .about-image {
+        height: 350px;
+    }
+    
     .section-title { font-size: 32px; margin-bottom: 40px; }
 }
 
 /* Mobile */
 @media (max-width: 768px) {
+    .page-section {
+        padding-top: 70px;
+    }
+    
     .section-title { font-size: 28px; margin-bottom: 30px; }
     
     .how-it-works { padding: 50px 0; }
@@ -909,6 +986,7 @@ h1, h2, h3, h4, .logo {
     .product-card { max-width: 350px; margin: 0 auto; width: 100%; }
     .product-image { height: 180px; }
     
+    .about-section { padding: 50px 0; }
     .about-grid { grid-template-columns: 1fr; gap: 30px; }
     .about-image { height: 250px; }
     .about-content h3 { font-size: 24px; }
@@ -1026,4 +1104,20 @@ img {
     margin-bottom: 20px;
     text-align: center;
     overflow-x: auto;
+}
+
+/* Loading animation */
+.loading {
+    text-align: center;
+    padding: 40px;
+    color: var(--primary-brown);
+    font-size: 18px;
+}
+
+/* Animation keyframes */
+@keyframes fadeInOut {
+    0% { opacity: 0; transform: translateY(20px); }
+    15% { opacity: 1; transform: translateY(0); }
+    85% { opacity: 1; transform: translateY(0); }
+    100% { opacity: 0; transform: translateY(-20px); }
 }

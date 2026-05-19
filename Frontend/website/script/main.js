@@ -2,7 +2,6 @@
 
 // API Base URL
 const API_URL = 'https://beans-cafe-backend.onrender.com/api';
-//const API_URL = 'http://localhost:5000/api';
 
 // Global base URL for navigation
 window.BASE_URL = window.location.origin;
@@ -22,6 +21,9 @@ document.addEventListener('DOMContentLoaded', function() {
     // Update cart count
     updateCartCount();
     
+    // Load cafe settings
+    loadCafeSettings();
+    
     // Check URL hash on load (for homepage sections)
     if (window.location.pathname.endsWith('index.html') || window.location.pathname.endsWith('/')) {
         checkHash();
@@ -39,6 +41,17 @@ function setupNavigation() {
             e.preventDefault();
             const sectionId = this.getAttribute('data-section');
             console.log('Navigating to section:', sectionId);
+            showSection(sectionId);
+        });
+    });
+    
+    // Also handle nav links with data-section
+    const navLinks = document.querySelectorAll('.nav-links a[data-section]');
+    navLinks.forEach(link => {
+        link.addEventListener('click', function(e) {
+            e.preventDefault();
+            const sectionId = this.getAttribute('data-section');
+            console.log('Nav link clicked:', sectionId);
             showSection(sectionId);
         });
     });
@@ -134,7 +147,6 @@ async function loadFeaturedProducts() {
                      onerror="this.src='https://placehold.co/300x200/F5E6D3/6F4E37?text=Coffee'">
                 <div class="product-info">
                     <h3 class="product-title">${escapeHtml(product.name)}</h3>
-                    <p class="product-description" style="font-size: 14px; color: #666; margin-bottom: 10px;">${escapeHtml(product.description || '')}</p>
                     <p class="product-price">₱${product.price}</p>
                     <button class="product-btn" onclick="event.stopPropagation(); addToCartFromProduct(${product.id})">Add to Cart</button>
                 </div>
@@ -203,71 +215,6 @@ function showMessage(message, type) {
     }, 3000);
 }
 
-// Mobile Menu Functionality
-document.addEventListener('DOMContentLoaded', function() {
-    const mobileMenuToggle = document.getElementById('Mobile_Menu_Toggle');
-    const mobileNav = document.getElementById('MobileNav');
-    const closeMenuBtn = document.getElementById('closeMenu');
-    const overlay = document.getElementById('Overlay');
-    
-    // Function to close mobile menu
-    function closeMobileMenu() {
-        if (mobileNav) mobileNav.classList.remove('active');
-        if (overlay) overlay.classList.remove('active');
-        document.body.style.overflow = 'auto';
-    }
-    
-    // Function to open mobile menu
-    function openMobileMenu() {
-        if (mobileNav) mobileNav.classList.add('active');
-        if (overlay) overlay.classList.add('active');
-        document.body.style.overflow = 'hidden';
-    }
-    
-    // Toggle menu on hamburger click
-    if (mobileMenuToggle && mobileNav) {
-        mobileMenuToggle.addEventListener('click', function(e) {
-            e.stopPropagation();
-            if (mobileNav.classList.contains('active')) {
-                closeMobileMenu();
-            } else {
-                openMobileMenu();
-            }
-        });
-    }
-    
-    // Close menu when clicking close button
-    if (closeMenuBtn) {
-        closeMenuBtn.addEventListener('click', closeMobileMenu);
-    }
-    
-    // Close menu when clicking overlay
-    if (overlay) {
-        overlay.addEventListener('click', closeMobileMenu);
-    }
-    
-    // Close menu when clicking a link inside mobile nav
-    if (mobileNav) {
-        const mobileLinks = mobileNav.querySelectorAll('a');
-        mobileLinks.forEach(link => {
-            link.addEventListener('click', closeMobileMenu);
-        });
-    }
-    
-    // Close menu when pressing Escape key
-    document.addEventListener('keydown', function(e) {
-        if (e.key === 'Escape' && mobileNav && mobileNav.classList.contains('active')) {
-            closeMobileMenu();
-        }
-    });
-    
-    // Handle window resize - if resizing to desktop while menu is open, close it
-    window.addEventListener('resize', function() {
-        if (window.innerWidth > 768 && mobileNav && mobileNav.classList.contains('active')) {
-            closeMobileMenu();
-        }
-    });
-});
 // Load cafe settings from backend
 async function loadCafeSettings() {
     try {
@@ -333,6 +280,74 @@ async function loadCafeSettings() {
         console.error('Error loading cafe settings:', error);
     }
 }
+
+// Mobile Menu Functionality
+document.addEventListener('DOMContentLoaded', function() {
+    const mobileMenuToggle = document.getElementById('Mobile_Menu_Toggle');
+    const mobileNav = document.getElementById('MobileNav');
+    const closeMenuBtn = document.getElementById('closeMenu');
+    const overlay = document.getElementById('Overlay');
+    
+    // Function to close mobile menu
+    function closeMobileMenu() {
+        if (mobileNav) mobileNav.classList.remove('active');
+        if (overlay) overlay.classList.remove('active');
+        if (mobileMenuToggle) mobileMenuToggle.classList.remove('active');
+        document.body.style.overflow = 'auto';
+    }
+    
+    // Function to open mobile menu
+    function openMobileMenu() {
+        if (mobileNav) mobileNav.classList.add('active');
+        if (overlay) overlay.classList.add('active');
+        if (mobileMenuToggle) mobileMenuToggle.classList.add('active');
+        document.body.style.overflow = 'hidden';
+    }
+    
+    // Toggle menu on hamburger click
+    if (mobileMenuToggle && mobileNav) {
+        mobileMenuToggle.addEventListener('click', function(e) {
+            e.stopPropagation();
+            if (mobileNav.classList.contains('active')) {
+                closeMobileMenu();
+            } else {
+                openMobileMenu();
+            }
+        });
+    }
+    
+    // Close menu when clicking close button
+    if (closeMenuBtn) {
+        closeMenuBtn.addEventListener('click', closeMobileMenu);
+    }
+    
+    // Close menu when clicking overlay
+    if (overlay) {
+        overlay.addEventListener('click', closeMobileMenu);
+    }
+    
+    // Close menu when clicking a link inside mobile nav
+    if (mobileNav) {
+        const mobileLinks = mobileNav.querySelectorAll('a');
+        mobileLinks.forEach(link => {
+            link.addEventListener('click', closeMobileMenu);
+        });
+    }
+    
+    // Close menu when pressing Escape key
+    document.addEventListener('keydown', function(e) {
+        if (e.key === 'Escape' && mobileNav && mobileNav.classList.contains('active')) {
+            closeMobileMenu();
+        }
+    });
+    
+    // Handle window resize - if resizing to desktop while menu is open, close it
+    window.addEventListener('resize', function() {
+        if (window.innerWidth > 768 && mobileNav && mobileNav.classList.contains('active')) {
+            closeMobileMenu();
+        }
+    });
+});
 
 // Add CSS animation
 const style = document.createElement('style');

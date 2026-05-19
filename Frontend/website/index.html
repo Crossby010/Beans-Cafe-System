@@ -44,7 +44,9 @@
 <!-- Overlay -->
 <div class="Overlay" id="Overlay"></div>
 
-<!-- ==================== HOME SECTION ==================== -->
+<!-- ==================== HOME SECTION (visible by default) ==================== -->
+<div id="home-section" class="page-section active">
+    <!-- Hero Section -->
     <section class="hero">
         <div class="container" style="width: 100%; padding: 0;">
             <div class="hero-content">
@@ -58,6 +60,7 @@
         </div>
     </section>
 
+    <!-- How It Works Section -->
     <section class="how-it-works">
         <div class="container">
             <h2 class="section-title">How It Works</h2>
@@ -81,6 +84,7 @@
         </div>
     </section>
 
+    <!-- Featured Products Section -->
     <section class="featured-products">
         <div class="container">
             <h2 class="section-title">Featured Drinks</h2>
@@ -89,81 +93,85 @@
             </div>
         </div>
     </section>
-</section>
+</div>
 
 <!-- ==================== HOW TO ORDER SECTION ==================== -->
-<section id="howto-section" class="page-section">
-    <div class="container">
-        <h2 class="section-title">How to Order</h2>
-        
-        <div class="steps-grid" style="margin-bottom: 60px;">
-            <div class="step-card">
-                <div class="step-number">1</div>
-                <h3>Browse Our Menu</h3>
-                <p>Visit our Menu page to see all available drinks, pastries, and food items</p>
+<div id="howto-section" class="page-section">
+    <section class="howto-section">
+        <div class="container">
+            <h2 class="section-title">How to Order</h2>
+            
+            <div class="steps-grid" style="margin-bottom: 60px;">
+                <div class="step-card">
+                    <div class="step-number">1</div>
+                    <h3>Browse Our Menu</h3>
+                    <p>Visit our Menu page to see all available drinks, pastries, and food items</p>
+                </div>
+                <div class="step-card">
+                    <div class="step-number">2</div>
+                    <h3>Customize Your Drink</h3>
+                    <p>Choose your size, milk preference, sweetness level, and add-ons</p>
+                </div>
+                <div class="step-card">
+                    <div class="step-number">3</div>
+                    <h3>Add to Cart</h3>
+                    <p>Review your order and add it to your shopping cart</p>
+                </div>
+                <div class="step-card">
+                    <div class="step-number">4</div>
+                    <h3>Checkout</h3>
+                    <p>Enter your name and phone number for pickup</p>
+                </div>
+                <div class="step-card">
+                    <div class="step-number">5</div>
+                    <h3>Pick Up Your Order</h3>
+                    <p>Visit our cafe and show your order number to claim your drink</p>
+                </div>
+                <div class="step-card">
+                    <div class="step-number">6</div>
+                    <h3>Enjoy!</h3>
+                    <p>Sip and enjoy your perfectly crafted coffee</p>
+                </div>
             </div>
-            <div class="step-card">
-                <div class="step-number">2</div>
-                <h3>Customize Your Drink</h3>
-                <p>Choose your size, milk preference, sweetness level, and add-ons</p>
-            </div>
-            <div class="step-card">
-                <div class="step-number">3</div>
-                <h3>Add to Cart</h3>
-                <p>Review your order and add it to your shopping cart</p>
-            </div>
-            <div class="step-card">
-                <div class="step-number">4</div>
-                <h3>Checkout</h3>
-                <p>Enter your name and phone number for pickup</p>
-            </div>
-            <div class="step-card">
-                <div class="step-number">5</div>
-                <h3>Pick Up Your Order</h3>
-                <p>Visit our cafe and show your order number to claim your drink</p>
-            </div>
-            <div class="step-card">
-                <div class="step-number">6</div>
-                <h3>Enjoy!</h3>
-                <p>Sip and enjoy your perfectly crafted coffee</p>
+            
+            <div style="text-align: center; margin-top: 40px;">
+                <a href="pages/menu.html" class="btn btn-primary">Start Your Order</a>
             </div>
         </div>
-        
-        <div style="text-align: center; margin-top: 40px;">
-            <a href="pages/menu.html" class="btn btn-primary">Start Your Order</a>
-        </div>
-    </div>
-</section>
+    </section>
+</div>
 
 <!-- ==================== ABOUT SECTION ==================== -->
-<section id="about-section" class="page-section">
-    <div class="container">
-        <h2 class="section-title">About Beans Cafe</h2>
-        
-        <div class="about-grid">
-            <div class="about-image">
-                <img src="assets/images/cafe-interior.jpg" alt="Beans Cafe Interior" style="width: 100%; height: 100%; object-fit: cover; border-radius: 16px;" onerror="this.src='https://placehold.co/600x400/F5E6D3/6F4E37?text=Cafe+Image'">
-            </div>
-            <div class="about-content">
-                <h3>Our Story</h3>
-                <p>Beans Cafe was founded with a simple mission: to serve perfectly crafted coffee that brightens your day. We believe that great coffee starts with quality beans and ends with a smile on your face.</p>
-                <p>Every cup is brewed with passion and care, using locally sourced beans whenever possible. Our cafe is a place where coffee lovers gather, share stories, and enjoy moments of warmth and connection.</p>
-                
-                <div class="owner-info">
-                    <h4>Meet Our Owner</h4>
-                    <p><strong>Maria Rodriguez</strong> - A coffee enthusiast with over 10 years of experience in the industry. Maria started Beans Cafe to bring specialty coffee to the neighborhood and create a space where everyone feels welcome.</p>
+<div id="about-section" class="page-section">
+    <section class="about-section">
+        <div class="container">
+            <h2 class="section-title">About Beans Cafe</h2>
+            
+            <div class="about-grid">
+                <div class="about-image">
+                    <img src="assets/images/cafe-interior.jpg" alt="Beans Cafe Interior" style="width: 100%; height: 100%; object-fit: cover; border-radius: 16px;" onerror="this.src='https://placehold.co/600x400/F5E6D3/6F4E37?text=Cafe+Image'">
                 </div>
-                
-                <div class="location-info">
-                    <h4>📍 Our Location</h4>
-                    <p class="cafe-address">123 Coffee Street, Barangay Kapitolyo<br>Pasig City, Metro Manila<br>Philippines</p>
-                    <p><strong>Hours:</strong><br>
-                    <span class="cafe-hours">Monday - Friday: 7:00 AM - 9:00 PM<br>Saturday - Sunday: 8:00 AM - 10:00 PM</span></p>
+                <div class="about-content">
+                    <h3>Our Story</h3>
+                    <p>Beans Cafe was founded with a simple mission: to serve perfectly crafted coffee that brightens your day. We believe that great coffee starts with quality beans and ends with a smile on your face.</p>
+                    <p>Every cup is brewed with passion and care, using locally sourced beans whenever possible. Our cafe is a place where coffee lovers gather, share stories, and enjoy moments of warmth and connection.</p>
+                    
+                    <div class="owner-info">
+                        <h4>Meet Our Owner</h4>
+                        <p><strong>Maria Rodriguez</strong> - A coffee enthusiast with over 10 years of experience in the industry. Maria started Beans Cafe to bring specialty coffee to the neighborhood and create a space where everyone feels welcome.</p>
+                    </div>
+                    
+                    <div class="location-info">
+                        <h4>📍 Our Location</h4>
+                        <p class="cafe-address">123 Coffee Street, Barangay Kapitolyo<br>Pasig City, Metro Manila<br>Philippines</p>
+                        <p><strong>Hours:</strong><br>
+                        <span class="cafe-hours">Monday - Friday: 7:00 AM - 9:00 PM<br>Saturday - Sunday: 8:00 AM - 10:00 PM</span></p>
+                    </div>
                 </div>
             </div>
         </div>
-    </div>
-</section>
+    </section>
+</div>
 
 <footer class="footer">
     <div class="container">
@@ -174,10 +182,10 @@
             </div>
             <div class="footer-links">
                 <h4>Quick Links</h4>
-                <a href="index.html">Home</a>
+                <a href="index.html" data-section="home">Home</a>
                 <a href="pages/menu.html">Menu</a>
-                <a href="index.html#howto">How to Order</a>
-                <a href="index.html#about">About</a>
+                <a href="#" data-section="howto">How to Order</a>
+                <a href="#" data-section="about">About</a>
                 <a href="pages/cart.html">Cart</a>
             </div>
             <div class="footer-links">
@@ -197,6 +205,7 @@
         </div>
     </div>
 </footer>
+
 <script src="script/main.js"></script>
 <script src="script/cart.js"></script>
 
