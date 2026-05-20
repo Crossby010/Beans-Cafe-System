@@ -40,24 +40,33 @@ router.post('/', authenticate, adminAuth, async (req, res) => {
     try {
         const { name, unit, stock_quantity, min_stock_level, cost_per_unit, supplier, category } = req.body;
         
+        console.log('Received inventory item:', { name, unit, stock_quantity, min_stock_level, cost_per_unit, supplier, category });
+        
+        // Ensure numeric values are numbers
+        const stockQty = parseFloat(stock_quantity) || 0;
+        const minStock = parseFloat(min_stock_level) || 0;
+        const costPerUnit = parseFloat(cost_per_unit) || 0;
+        
         const result = await pool.query(
             `INSERT INTO inventory_items (name, unit, stock_quantity, min_stock_level, cost_per_unit, supplier, category) 
              VALUES ($1, $2, $3, $4, $5, $6, $7) 
              RETURNING *`,
-            [name, unit, stock_quantity || 0, min_stock_level || 0, cost_per_unit || 0, supplier, category]
+            [name, unit, stockQty, minStock, costPerUnit, supplier || null, category || null]
         );
         
-        // Add transaction log
-        await pool.query(
-            `INSERT INTO stock_transactions (inventory_item_id, transaction_type, quantity, note) 
-             VALUES ($1, 'add', $2, $3)`,
-            [result.rows[0].id, stock_quantity || 0, 'Initial stock']
-        );
+        // Add transaction log for initial stock
+        if (stockQty > 0) {
+            await pool.query(
+                `INSERT INTO stock_transactions (inventory_item_id, transaction_type, quantity, note) 
+                 VALUES ($1, 'add', $2, $3)`,
+                [result.rows[0].id, stockQty, 'Initial stock']
+            );
+        }
         
         res.json({ success: true, item: result.rows[0] });
     } catch (error) {
         console.error('Error adding inventory item:', error);
-        res.status(500).json({ success: false, message: 'Server error' });
+        res.status(500).json({ success: false, message: error.message });
     }
 });
 
