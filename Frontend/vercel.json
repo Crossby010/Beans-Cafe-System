@@ -9,6 +9,26 @@
         {
             "src": "/",
             "dest": "/website/index.html"
+        },
+        {
+            "src": "/css/(.*)",
+            "dest": "/website/css/$1"
+        },
+        {
+            "src": "/script/(.*)",
+            "dest": "/website/script/$1"
+        },
+        {
+            "src": "/assets/(.*)",
+            "dest": "/website/assets/$1"
+        },
+        {
+            "src": "/pages/(.*)",
+            "dest": "/website/pages/$1"
+        },
+        {
+            "src": "/images/(.*)",
+            "dest": "/website/images/$1"
         }
     ]
 }
