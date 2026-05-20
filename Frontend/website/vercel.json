@@ -1,12 +1,18 @@
 {
-    "rewrites": [
-        {
-            "source": "/api/(.*)",
-            "destination": "https://beans-cafe-backend.onrender.com/api/$1"
-        },
-        {
-            "source": "/uploads/(.*)",
-            "destination": "https://beans-cafe-backend.onrender.com/uploads/$1"
-        }
+    "builds": [
+        { "src": "Frontend/website/**", "use": "@vercel/static" },
+        { "src": "Frontend/Admin/**", "use": "@vercel/static" },
+        { "src": "Frontend/pos/**", "use": "@vercel/static" },
+        { "src": "Frontend/kiosk/**", "use": "@vercel/static" }
+    ],
+    "routes": [
+        { "src": "/api/(.*)", "dest": "https://beans-cafe-backend.onrender.com/api/$1" },
+        { "src": "/uploads/(.*)", "dest": "https://beans-cafe-backend.onrender.com/uploads/$1" },
+        { "src": "/website/(.*)", "dest": "/Frontend/website/$1" },
+        { "src": "/Admin/(.*)", "dest": "/Frontend/Admin/$1" },
+        { "src": "/pos/(.*)", "dest": "/Frontend/pos/$1" },
+        { "src": "/kiosk/(.*)", "dest": "/Frontend/kiosk/$1" },
+        { "src": "/", "dest": "/Frontend/website/index.html" },
+        { "src": "/(.*)", "dest": "/Frontend/website/$1" }
     ]
 }
