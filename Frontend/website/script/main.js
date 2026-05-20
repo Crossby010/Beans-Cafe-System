@@ -32,6 +32,9 @@ document.addEventListener('DOMContentLoaded', function() {
     
     // Initialize mobile menu
     initMobileMenu();
+    
+    // Fix mobile video
+    fixMobileVideo();
 });
 
 // Setup navigation for all section links
@@ -391,4 +394,33 @@ function initMobileMenu() {
             closeMobileMenu();
         }
     });
+}
+
+// Fix mobile video (MOVED OUTSIDE initMobileMenu)
+function fixMobileVideo() {
+    const video = document.getElementById('hero-video');
+    if (!video) return;
+    
+    // Check if mobile device
+    const isMobile = /iPhone|iPad|iPod|Android/i.test(navigator.userAgent);
+    
+    if (isMobile) {
+        // On mobile, hide the video element completely to prevent any issues
+        video.style.display = 'none';
+        video.style.opacity = '0';
+        
+        // The CSS background will show instead
+        const videoBg = document.querySelector('.hero-video-bg');
+        if (videoBg) {
+            videoBg.style.background = "url('https://images.unsplash.com/photo-1442512595331-e89e73853f31?w=1920&h=1080&fit=crop')";
+            videoBg.style.backgroundSize = 'cover';
+            videoBg.style.backgroundPosition = 'center';
+        }
+    } else {
+        // Desktop: try to play video
+        video.muted = true;
+        video.play().catch(function(e) {
+            console.log('Video autoplay prevented:', e);
+        });
+    }
 }

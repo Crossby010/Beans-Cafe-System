@@ -2041,6 +2041,54 @@ h1, h2, h3, h4, h5, h6, .logo {
     margin-bottom: 15px;
 }
 
+/* ========== PREVENT HORIZONTAL SCROLL ON MOBILE ========== */
+html, body {
+    overflow-x: hidden;
+    width: 100%;
+    position: relative;
+}
+
+*, *::before, *::after {
+    max-width: 100%;
+    box-sizing: border-box;
+}
+
+/* Fix overflow issues on mobile */
+@media (max-width: 768px) {
+    .container {
+        overflow-x: hidden;
+        padding-left: 15px;
+        padding-right: 15px;
+    }
+    
+    .products-grid,
+    .gallery-grid,
+    .cart-container {
+        overflow-x: hidden;
+    }
+    
+    .hero-content {
+        overflow-x: hidden;
+        padding-left: 10px;
+        padding-right: 10px;
+    }
+}
+
+/* ========== MOBILE VIDEO FALLBACK ========== */
+@media (max-width: 768px) {
+    /* Replace video with static background image on mobile */
+    .hero-video-bg {
+        background: url('https://images.unsplash.com/photo-1442512595331-e89e73853f31?w=1920&h=1080&fit=crop');
+        background-size: cover;
+        background-position: center;
+    }
+    
+    .hero-video-bg video {
+        opacity: 0;
+        visibility: hidden;
+    }
+}
+
 /* ========== UTILITIES ========== */
 .loading {
     text-align: center;
@@ -2067,4 +2115,9 @@ h1, h2, h3, h4, h5, h6, .logo {
     15% { opacity: 1; transform: translateY(0); }
     85% { opacity: 1; transform: translateY(0); }
     100% { opacity: 0; transform: translateY(-20px); }
+}
+
+/* ========== TEMPORARY ========== */
+.seasonal-banner {
+    display: none;
 }
