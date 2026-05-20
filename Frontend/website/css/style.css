@@ -2131,6 +2131,23 @@ html, body {
     }
 }
 
+@media (max-width: 480px) {
+    .hero-buttons {
+        gap: 12px;
+    }
+    
+    .hero-buttons .btn {
+        width: 100%;
+        max-width: 220px;
+        padding: 12px 20px;
+        font-size: 14px;
+    }
+    
+    .hero h1 {
+        font-size: 28px;
+    }
+}
+
 /* ========== UTILITIES ========== */
 .loading {
     text-align: center;
