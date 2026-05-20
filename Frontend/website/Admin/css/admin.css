@@ -990,54 +990,117 @@ html, body {
     position: relative;
 }
 
-/* Sidebar - always visible like desktop */
-.sidebar {
-    width: 260px;
-    background: var(--admin-surface);
-    border-right: 1px solid var(--admin-border);
-    display: flex;
-    flex-direction: column;
-    transition: width 0.3s ease;
-    position: fixed;
-    height: 100vh;
-    z-index: 100;
-}
-
-/* Main content - adjusts based on sidebar */
-.main-content {
-    flex: 1;
-    margin-left: 260px;
-    padding: 24px;
-    transition: margin-left 0.3s ease;
-    overflow-x: hidden;
-}
-
-/* Hide mobile menu button completely */
+/* Hide mobile menu button on desktop */
 .mobile-menu-btn {
-    display: none !important;
+    display: none;
 }
 
-/* Responsive adjustments - sidebar stays visible */
-@media (max-width: 1024px) {
-    .sidebar {
-        width: 220px;
-    }
-    .main-content {
-        margin-left: 220px;
-    }
+/* Sidebar overlay for mobile */
+.sidebar-overlay {
+    position: fixed;
+    top: 0;
+    left: 0;
+    width: 100%;
+    height: 100%;
+    background: rgba(0, 0, 0, 0.5);
+    z-index: 998;
+    opacity: 0;
+    visibility: hidden;
+    transition: all 0.3s ease;
 }
 
-@media (max-width: 768px) {
-    .sidebar {
-        width: 200px;
-    }
-    .main-content {
-        margin-left: 200px;
-        padding: 20px 15px;
+.sidebar-overlay.active {
+    opacity: 1;
+    visibility: visible;
+}
+
+/* Desktop styles (769px and above) */
+@media (min-width: 769px) {
+    .mobile-menu-btn {
+        display: none !important;
     }
     
-    /* Admin header adjustments */
+    .sidebar-overlay {
+        display: none;
+    }
+    
+    .sidebar {
+        position: fixed;
+        width: 260px;
+        transform: translateX(0) !important;
+    }
+    
+    .sidebar.collapsed {
+        width: 70px;
+    }
+    
+    .sidebar.collapsed + .main-content {
+        margin-left: 70px;
+    }
+    
+    .main-content {
+        margin-left: 260px;
+    }
+}
+
+/* Mobile styles (768px and below) */
+@media (max-width: 768px) {
+    /* Show mobile menu button */
+    .mobile-menu-btn {
+        display: flex;
+        position: fixed;
+        top: 15px;
+        left: 15px;
+        z-index: 1001;
+        background: var(--admin-primary);
+        border: none;
+        width: 44px;
+        height: 44px;
+        border-radius: 12px;
+        color: #000;
+        font-size: 20px;
+        cursor: pointer;
+        align-items: center;
+        justify-content: center;
+        box-shadow: 0 2px 8px rgba(0,0,0,0.2);
+        transition: all 0.2s ease;
+    }
+    
+    .mobile-menu-btn:hover {
+        background: var(--admin-primary-dark);
+        transform: scale(1.02);
+    }
+    
+    /* Sidebar - hidden by default on mobile */
+    .sidebar {
+        position: fixed;
+        top: 0;
+        left: 0;
+        width: 280px;
+        height: 100vh;
+        transform: translateX(-100%);
+        transition: transform 0.3s ease-in-out;
+        z-index: 999;
+        background: var(--admin-surface);
+        overflow-y: auto;
+    }
+    
+    /* Sidebar when open on mobile */
+    .sidebar.mobile-open {
+        transform: translateX(0);
+    }
+    
+    /* Main content - full width on mobile */
+    .main-content {
+        margin-left: 0 !important;
+        padding: 20px 15px;
+        width: 100%;
+        overflow-x: hidden;
+    }
+    
+    /* Add padding to header for mobile menu button */
     .admin-header {
+        padding-left: 55px;
         flex-direction: column;
         align-items: flex-start;
         gap: 15px;
@@ -1056,7 +1119,7 @@ html, body {
         justify-content: flex-end;
     }
     
-    /* Stats grid - single column on mobile */
+    /* Stats grid - single column */
     .stats-grid-modern {
         grid-template-columns: 1fr;
         gap: 15px;
@@ -1181,54 +1244,16 @@ html, body {
         margin: 3px;
         font-size: 11px;
     }
-    
-    /* Sidebar text size on small screens */
-    .nav-item span {
-        font-size: 12px;
-    }
-    
-    .sidebar-header h2 {
-        font-size: 16px;
-    }
-    
-    .sidebar-header p {
-        font-size: 10px;
-    }
 }
 
-/* Extra small devices - keep sidebar but make content more compact */
-@media (max-width: 640px) {
-    .sidebar {
-        width: 180px;
-    }
+/* Extra small devices */
+@media (max-width: 480px) {
     .main-content {
-        margin-left: 180px;
         padding: 15px 12px;
     }
     
-    .sidebar.collapsed {
-        width: 60px;
-    }
-    
-    .sidebar.collapsed + .main-content {
-        margin-left: 60px;
-    }
-    
-    .nav-item i {
-        font-size: 14px;
-    }
-    
-    .logo-icon {
-        font-size: 24px;
-    }
-}
-
-@media (max-width: 480px) {
-    .sidebar {
-        width: 160px;
-    }
-    .main-content {
-        margin-left: 160px;
+    .admin-header {
+        padding-left: 50px;
     }
     
     .header-title h1 {
@@ -1266,14 +1291,6 @@ html, body {
     .product-image {
         width: 30px;
         height: 30px;
-    }
-    
-    .nav-item {
-        padding: 10px 12px;
-    }
-    
-    .nav-item span {
-        font-size: 11px;
     }
 }
 
