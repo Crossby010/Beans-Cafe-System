@@ -123,7 +123,7 @@ function showNotification(title, body) {
 
 async function loadOrders() {
     try {
-        const response = await fetch(`${API_URL}/orders`, {
+        const response = await fetch(`${APP_CONFIG.API_URL}/orders`, {
             headers: { 'Authorization': `Bearer ${token}` }
         });
         const data = await response.json();

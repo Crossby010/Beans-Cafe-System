@@ -1,11 +1,18 @@
 // Beans Cafe - Dark/Light Mode Toggle
 // Supports multiple themes with easy client customization
 
-// Helper function to get correct theme path based on current page location
 function getThemeCssPath(themeFile) {
     const path = window.location.pathname;
-    const basePath = (path.includes('/pages/') || path.includes('/admin/')) ? '../css/themes/' : 'css/themes/';
-    return basePath + themeFile;
+    // If we're in /pos/ folder, go up one level to root, then to website/css/themes/
+    if (path.includes('/pos/')) {
+        return '/website/css/themes/' + themeFile;
+    }
+    // If we're in /pages/ or /admin/ folder
+    if (path.includes('/pages/') || path.includes('/admin/')) {
+        return '../css/themes/' + themeFile;
+    }
+    // Root directory
+    return 'css/themes/' + themeFile;
 }
 
 // Theme definitions - ALL THREE THEMES (with dynamic paths)
