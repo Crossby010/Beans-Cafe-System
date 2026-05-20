@@ -62,6 +62,8 @@
                 </button>
             </div>
         </aside>
+
+        <div class="sidebar-overlay" id="sidebarOverlay"></div>
         
         <!-- Main Content -->
         <main class="main-content">
@@ -69,6 +71,7 @@
             <button class="mobile-menu-btn" id="mobileMenuBtn">
                 <i class="fas fa-bars"></i>
             </button>
+            
             <div class="admin-header">
                 <div class="header-title">
                     <h1 id="page-title">Dashboard</h1>
@@ -670,23 +673,69 @@
     <script src="script/admin-dashboard.js"></script>
 
     <script>
-    const mobileMenuBtn = document.getElementById('mobileMenuBtn');
-    const sidebar = document.getElementById('sidebar');
-    
-    if (mobileMenuBtn && sidebar) {
-        mobileMenuBtn.addEventListener('click', function() {
-            sidebar.classList.toggle('mobile-open');
-        });
+        // Mobile menu functionality
+        const mobileMenuBtn = document.getElementById('mobileMenuBtn');
+        const sidebar = document.getElementById('sidebar');
+        const sidebarOverlay = document.getElementById('sidebarOverlay');
         
-        // Close menu when clicking outside on mobile
-        document.addEventListener('click', function(e) {
-            if (window.innerWidth <= 768) {
-                if (!sidebar.contains(e.target) && !mobileMenuBtn.contains(e.target)) {
-                    sidebar.classList.remove('mobile-open');
+        function openMobileMenu() {
+            sidebar.classList.add('mobile-open');
+            if (sidebarOverlay) sidebarOverlay.classList.add('active');
+            document.body.style.overflow = 'hidden';
+        }
+        
+        function closeMobileMenu() {
+            sidebar.classList.remove('mobile-open');
+            if (sidebarOverlay) sidebarOverlay.classList.remove('active');
+            document.body.style.overflow = '';
+        }
+        
+        if (mobileMenuBtn && sidebar) {
+            mobileMenuBtn.addEventListener('click', function(e) {
+                e.stopPropagation();
+                if (sidebar.classList.contains('mobile-open')) {
+                    closeMobileMenu();
+                } else {
+                    openMobileMenu();
                 }
+            });
+            
+            // Close menu when clicking overlay
+            if (sidebarOverlay) {
+                sidebarOverlay.addEventListener('click', closeMobileMenu);
+            }
+            
+            // Close menu when clicking a link inside sidebar
+            const navLinks = sidebar.querySelectorAll('.nav-item');
+            navLinks.forEach(link => {
+                link.addEventListener('click', function() {
+                    if (window.innerWidth <= 768) {
+                        closeMobileMenu();
+                    }
+                });
+            });
+            
+            // Close menu on window resize (if resizing to desktop)
+            window.addEventListener('resize', function() {
+                if (window.innerWidth > 768 && sidebar.classList.contains('mobile-open')) {
+                    closeMobileMenu();
+                }
+            });
+            
+            // Close menu on escape key
+            document.addEventListener('keydown', function(e) {
+                if (e.key === 'Escape' && sidebar.classList.contains('mobile-open')) {
+                    closeMobileMenu();
+                }
+            });
+        }
+        
+        // Prevent horizontal scroll on all elements
+        document.querySelectorAll('*').forEach(el => {
+            if (el.style.overflowX === 'scroll') {
+                el.style.overflowX = 'auto';
             }
         });
-    }
-</script>
+    </script>
 </body>
 </html>

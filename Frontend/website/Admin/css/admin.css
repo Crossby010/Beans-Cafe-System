@@ -981,6 +981,290 @@ body {
     font-size: 14px;
 }
 
+/* ========== MOBILE FIXES FOR ADMIN DASHBOARD ========== */
+
+/* Prevent horizontal scroll on mobile */
+html, body {
+    overflow-x: hidden;
+    width: 100%;
+    position: relative;
+}
+
+/* Mobile Menu Button - Make sure it's visible and clickable */
+.mobile-menu-btn {
+    display: none;
+    position: fixed;
+    top: 15px;
+    left: 15px;
+    z-index: 1001;
+    background: var(--admin-primary);
+    border: none;
+    width: 44px;
+    height: 44px;
+    border-radius: 12px;
+    color: #000;
+    font-size: 20px;
+    cursor: pointer;
+    align-items: center;
+    justify-content: center;
+    box-shadow: 0 2px 8px rgba(0,0,0,0.2);
+    transition: all 0.2s ease;
+}
+
+.mobile-menu-btn:hover {
+    background: var(--admin-primary-dark);
+    transform: scale(1.02);
+}
+
+/* Mobile sidebar styling */
+@media (max-width: 768px) {
+    /* Show mobile menu button */
+    .mobile-menu-btn {
+        display: flex;
+    }
+    
+    /* Sidebar - hidden by default, slides in */
+    .sidebar {
+        position: fixed;
+        top: 0;
+        left: 0;
+        width: 280px;
+        height: 100vh;
+        transform: translateX(-100%);
+        transition: transform 0.3s ease-in-out;
+        z-index: 1000;
+        background: var(--admin-surface);
+        overflow-y: auto;
+    }
+    
+    /* Sidebar when open */
+    .sidebar.mobile-open {
+        transform: translateX(0);
+    }
+    
+    /* Overlay when sidebar is open */
+    .sidebar-overlay {
+        position: fixed;
+        top: 0;
+        left: 0;
+        width: 100%;
+        height: 100%;
+        background: rgba(0,0,0,0.5);
+        z-index: 999;
+        opacity: 0;
+        visibility: hidden;
+        transition: all 0.3s ease;
+    }
+    
+    .sidebar-overlay.active {
+        opacity: 1;
+        visibility: visible;
+    }
+    
+    /* Main content - full width on mobile */
+    .main-content {
+        margin-left: 0 !important;
+        padding: 20px 15px;
+        width: 100%;
+        overflow-x: hidden;
+    }
+    
+    /* Admin header adjustments */
+    .admin-header {
+        padding-left: 55px;
+        flex-direction: column;
+        align-items: flex-start;
+        gap: 15px;
+    }
+    
+    .header-title h1 {
+        font-size: 20px;
+    }
+    
+    .header-title p {
+        font-size: 12px;
+    }
+    
+    .header-actions {
+        width: 100%;
+        justify-content: flex-end;
+    }
+    
+    /* Stats grid - single column on mobile */
+    .stats-grid-modern {
+        grid-template-columns: 1fr;
+        gap: 15px;
+    }
+    
+    .stat-card-modern {
+        padding: 15px;
+    }
+    
+    .stat-value {
+        font-size: 20px;
+    }
+    
+    /* Dashboard grid - single column */
+    .dashboard-grid {
+        grid-template-columns: 1fr;
+        gap: 15px;
+    }
+    
+    /* Tables - horizontal scroll */
+    .table-responsive {
+        overflow-x: auto;
+        -webkit-overflow-scrolling: touch;
+        margin-bottom: 15px;
+    }
+    
+    .data-table {
+        min-width: 600px;
+    }
+    
+    .data-table th,
+    .data-table td {
+        padding: 10px 8px;
+        font-size: 12px;
+    }
+    
+    /* Section headers */
+    .section-header {
+        flex-direction: column;
+        align-items: flex-start;
+        gap: 10px;
+    }
+    
+    .section-header h2 {
+        font-size: 18px;
+    }
+    
+    /* Buttons */
+    .btn-primary, .btn-secondary {
+        padding: 8px 16px;
+        font-size: 13px;
+    }
+    
+    /* Quick actions */
+    .quick-actions-grid {
+        grid-template-columns: 1fr;
+        gap: 10px;
+    }
+    
+    .quick-action {
+        padding: 12px;
+        flex-direction: row;
+        justify-content: center;
+        gap: 12px;
+    }
+    
+    /* Forms */
+    .form-row {
+        grid-template-columns: 1fr;
+        gap: 10px;
+    }
+    
+    .settings-grid {
+        grid-template-columns: 1fr;
+        gap: 20px;
+    }
+    
+    /* Modal */
+    .modal-content {
+        width: 95%;
+        padding: 20px;
+        margin: 10px;
+    }
+    
+    .modal-content h3 {
+        font-size: 18px;
+    }
+    
+    /* Inventory tabs */
+    .inventory-tabs {
+        flex-wrap: wrap;
+    }
+    
+    .inventory-tab {
+        padding: 8px 16px;
+        font-size: 13px;
+    }
+    
+    /* Action buttons */
+    .action-buttons {
+        flex-direction: column;
+        gap: 5px;
+    }
+    
+    .action-buttons button {
+        width: 100%;
+    }
+    
+    /* Search bar */
+    .search-bar {
+        max-width: 100%;
+    }
+    
+    /* Low stock alert */
+    .low-stock-alert {
+        font-size: 12px;
+        padding: 10px;
+    }
+    
+    .low-stock-item {
+        display: inline-block;
+        margin: 3px;
+        font-size: 11px;
+    }
+}
+
+/* Extra small devices (phones under 480px) */
+@media (max-width: 480px) {
+    .main-content {
+        padding: 15px 12px;
+    }
+    
+    .admin-header {
+        padding-left: 50px;
+    }
+    
+    .header-title h1 {
+        font-size: 18px;
+    }
+    
+    .stat-card-modern {
+        padding: 12px;
+    }
+    
+    .stat-icon {
+        width: 40px;
+        height: 40px;
+        font-size: 18px;
+    }
+    
+    .stat-value {
+        font-size: 18px;
+    }
+    
+    .stat-label {
+        font-size: 11px;
+    }
+    
+    .card-header h3 {
+        font-size: 14px;
+    }
+    
+    .data-table th,
+    .data-table td {
+        padding: 8px 6px;
+        font-size: 11px;
+    }
+    
+    .product-image {
+        width: 30px;
+        height: 30px;
+    }
+}
+
 /* Responsive */
 @media (max-width: 1024px) {
     .stats-grid-modern {
