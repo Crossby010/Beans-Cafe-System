@@ -6,10 +6,9 @@
         }
     ],
     "routes": [
-        { "src": "/Frontend/website/(.*)", "dest": "/Frontend/website/$1" },
-        { "src": "/Admin/(.*)", "dest": "/Admin/$1" },
-        { "src": "/pos/(.*)", "dest": "/pos/$1" },
-        { "src": "/kiosk/(.*)", "dest": "/kiosk/$1" },
-        { "src": "/(.*)", "dest": "/Frontend/website/$1" }
+        {
+            "src": "/",
+            "dest": "/website/index.html"
+        }
     ]
 }
