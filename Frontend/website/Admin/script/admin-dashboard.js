@@ -1130,6 +1130,8 @@ async function submitAddInventory(e) {
         supplier: document.getElementById('inv-supplier')?.value,
         category: document.getElementById('inv-category')?.value
     };
+
+    console.log('Submitting inventory item:', itemData);
     
     if (!itemData.name || !itemData.unit) {
         showMessage('Please fill in name and unit', 'error');
@@ -1210,7 +1212,7 @@ function addRecipeIngredientRow() {
             ${allIngredientsList.map(i => `<option value="${i.id}" data-unit="${i.unit}">${escapeHtml(i.name)} (${i.stock_quantity} ${i.unit} left)</option>`).join('')}
         </select>
         <input type="number" class="recipe-ingredient-quantity" placeholder="Qty" style="flex: 1;" step="0.01" required>
-        <input type="text" class="recipe-ingredient-unit" placeholder="Unit" style="flex: 1;" readonly>
+        <input type="text" class="recipe-ingredient-unit" placeholder="Unit" style="flex: 1;">
         <button type="button" class="btn-danger" onclick="this.parentElement.remove()" style="padding: 5px 10px;">✕</button>
     `;
     
