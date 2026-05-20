@@ -60,6 +60,34 @@ app.use(express.urlencoded({ extended: true }));
 // Make io accessible to routes
 app.set('io', io);
 
+// ============ STATIC FILE SERVING ============
+// Determine the path to Frontend folder (adjust based on your structure)
+const frontendPath = path.join(__dirname, '../Frontend');
+
+// Serve static files from Frontend folders
+app.use(express.static(frontendPath));
+app.use('/website', express.static(path.join(frontendPath, 'website')));
+app.use('/Admin', express.static(path.join(frontendPath, 'Admin')));
+app.use('/pos', express.static(path.join(frontendPath, 'pos')));
+app.use('/kiosk', express.static(path.join(frontendPath, 'kiosk')));
+
+// Serve specific files at root level
+app.get('/', (req, res) => {
+    res.sendFile(path.join(frontendPath, 'website', 'index.html'));
+});
+
+app.get('/admin', (req, res) => {
+    res.redirect('/Admin/login.html');
+});
+
+app.get('/pos', (req, res) => {
+    res.sendFile(path.join(frontendPath, 'pos', 'index.html'));
+});
+
+app.get('/kiosk', (req, res) => {
+    res.sendFile(path.join(frontendPath, 'kiosk', 'index.html'));
+});
+
 // Test route
 app.get('/api/test', (req, res) => {
     res.json({ message: 'Beans Cafe API is running!' });
@@ -119,6 +147,16 @@ app.get('/api/db-test', async (req, res) => {
     }
 });
 
+// Catch-all route for SPA (single page app) - redirect unknown routes to website
+app.get('*', (req, res) => {
+    // Don't interfere with API routes
+    if (req.path.startsWith('/api/')) {
+        return res.status(404).json({ message: 'API endpoint not found' });
+    }
+    // For all other routes, serve the website index
+    res.sendFile(path.join(frontendPath, 'website', 'index.html'));
+});
+
 // Socket.io connection
 io.on('connection', (socket) => {
     console.log('🟢 Client connected:', socket.id);
@@ -133,4 +171,9 @@ const PORT = process.env.PORT || 5000;
 server.listen(PORT, '0.0.0.0', () => {
     console.log(`🚀 Server running on port ${PORT}`);
     console.log(`📍 http://localhost:${PORT}`);
+    console.log(`📁 Serving static files from: ${frontendPath}`);
+    console.log(`   - Website: http://localhost:${PORT}/website/`);
+    console.log(`   - Admin: http://localhost:${PORT}/Admin/`);
+    console.log(`   - POS: http://localhost:${PORT}/pos/`);
+    console.log(`   - Kiosk: http://localhost:${PORT}/kiosk/`);
 });
