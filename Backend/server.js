@@ -61,7 +61,7 @@ app.use(express.urlencoded({ extended: true }));
 app.set('io', io);
 
 // ============ STATIC FILE SERVING ============
-// Determine the path to Frontend folder (adjust based on your structure)
+// Determine the path to Frontend folder
 const frontendPath = path.join(__dirname, '../Frontend');
 
 // Serve static files from Frontend folders
@@ -145,16 +145,6 @@ app.get('/api/db-test', async (req, res) => {
     } catch (error) {
         res.status(500).json({ success: false, error: error.message });
     }
-});
-
-// Catch-all route for SPA (single page app) - redirect unknown routes to website
-app.get('*', (req, res) => {
-    // Don't interfere with API routes
-    if (req.path.startsWith('/api/')) {
-        return res.status(404).json({ message: 'API endpoint not found' });
-    }
-    // For all other routes, serve the website index
-    res.sendFile(path.join(frontendPath, 'website', 'index.html'));
 });
 
 // Socket.io connection
