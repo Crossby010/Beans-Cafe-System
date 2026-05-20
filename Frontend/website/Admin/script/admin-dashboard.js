@@ -1241,7 +1241,7 @@ function openAddRecipeModal() {
                     <option value="">Select Ingredient</option>
                 </select>
                 <input type="number" class="recipe-ingredient-quantity" placeholder="Qty" style="flex: 1;" step="0.01" required>
-                <input type="text" class="recipe-ingredient-unit" placeholder="Unit" style="flex: 1;" readonly>
+                <input type="text" class="recipe-ingredient-unit" placeholder="Unit" style="flex: 1;">
                 <button type="button" class="btn-danger" onclick="this.parentElement.remove()" style="padding: 5px 10px;">✕</button>
             </div>
         `;
