@@ -510,6 +510,81 @@
     padding: 40px;
 }
 
+/* Recipe Button */
+.recipe-btn {
+    background: none;
+    border: none;
+    color: var(--primary);
+    cursor: pointer;
+    font-size: 14px;
+    padding: 5px 8px;
+    margin-left: 10px;
+    transition: all 0.2s;
+    border-radius: 6px;
+    width: 32px;
+    height: 32px;
+    display: inline-flex;
+    align-items: center;
+    justify-content: center;
+}
+
+.recipe-btn:hover {
+    background: rgba(198, 164, 63, 0.15);
+    transform: scale(1.05);
+}
+
+.recipe-btn i {
+    font-size: 14px;
+}
+
+/* Recipe Modal Body */
+.recipe-ingredients-list {
+    margin: 10px 0 0 20px;
+    padding: 0;
+}
+
+.recipe-ingredients-list li {
+    margin-bottom: 5px;
+    font-size: 13px;
+}
+
+.recipe-instructions {
+    margin-top: 10px;
+    line-height: 1.6;
+    white-space: pre-wrap;
+    font-size: 13px;
+    background: var(--bg-secondary);
+    padding: 12px;
+    border-radius: 8px;
+}
+
+.recipe-info-row {
+    display: flex;
+    align-items: center;
+    gap: 10px;
+    margin-bottom: 15px;
+    padding: 10px;
+    background: var(--bg-secondary);
+    border-radius: 8px;
+}
+
+.recipe-info-row i {
+    color: var(--primary);
+    width: 20px;
+}
+
+.no-recipe {
+    text-align: center;
+    padding: 30px;
+    color: var(--text-muted);
+}
+
+.no-recipe i {
+    font-size: 48px;
+    margin-bottom: 15px;
+    opacity: 0.5;
+}
+
 /* Responsive */
 @media (max-width: 1024px) {
     .pos-sidebar {

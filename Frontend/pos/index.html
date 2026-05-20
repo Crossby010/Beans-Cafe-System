@@ -112,6 +112,19 @@
         </div>
     </div>
 
+    <!-- Recipe Modal -->
+    <div id="recipe-modal" class="pos-modal">
+        <div class="pos-modal-content" style="max-width: 500px;">
+            <div class="pos-modal-header">
+                <h3 id="recipe-modal-title">Recipe Details</h3>
+                <button class="close-modal" onclick="closeRecipeModal()">&times;</button>
+            </div>
+            <div id="recipe-modal-body" class="pos-modal-body">
+                <div class="loading">Loading recipe...</div>
+            </div>
+        </div>
+    </div>
+
     <!-- Audio for new order notification -->
     <audio id="notification-sound" preload="auto">
         <source src="https://www.soundjay.com/misc/sounds/bell-ringing-05.mp3" type="audio/mpeg">

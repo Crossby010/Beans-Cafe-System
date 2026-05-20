@@ -27,6 +27,10 @@ function checkAuth() {
 document.addEventListener('DOMContentLoaded', async function() {
     if (!checkAuth()) return;
     
+    // Ensure token is set
+    token = localStorage.getItem('admin_token');
+    console.log('🔑 Token exists:', !!token);
+    
     initSocket();
     await loadOrders();
     await loadTodayStats();
@@ -203,6 +207,9 @@ function displayOrderDetails(order) {
             </div>
             <div class="item-qty">x${item.quantity}</div>
             <div class="item-price">₱${(item.price * item.quantity).toFixed(2)}</div>
+            <button class="recipe-btn" onclick="event.stopPropagation(); viewRecipe(${item.id}, '${escapeHtml(item.name)}')" title="View Recipe">
+                <i class="fas fa-book-open"></i>
+            </button>
         </div>
     `).join('');
     
@@ -253,6 +260,90 @@ function displayOrderDetails(order) {
             </div>
         </div>
     `;
+}
+
+// View recipe for a product
+async function viewRecipe(productId, productName) {
+    try {
+        // Show loading state in modal
+        const modalBody = document.getElementById('recipe-modal-body');
+        const modalTitle = document.getElementById('recipe-modal-title');
+        modalTitle.textContent = `${productName} - Recipe`;
+        modalBody.innerHTML = '<div class="loading"><div class="spinner"></div><p>Loading recipe...</p></div>';
+        
+        // Open modal
+        document.getElementById('recipe-modal').classList.add('active');
+        
+        // Fetch recipes from API
+        const response = await fetch(`${APP_CONFIG.API_URL}/recipes`, {
+            headers: { 'Authorization': `Bearer ${token}` }
+        });
+        const data = await response.json();
+        
+        // Find recipe for this product
+        const recipes = data.recipes || [];
+        const recipe = recipes.find(r => r.product_id == productId);
+        
+        if (!recipe) {
+            modalBody.innerHTML = `
+                <div class="no-recipe">
+                    <i class="fas fa-book-open"></i>
+                    <h4>No Recipe Found</h4>
+                    <p>No recipe has been created for ${escapeHtml(productName)} yet.</p>
+                    <small>Please add a recipe in the admin panel.</small>
+                </div>
+            `;
+            return;
+        }
+        
+        // Build ingredients list
+        let ingredientsHtml = '';
+        if (recipe.ingredients && recipe.ingredients.length > 0) {
+            ingredientsHtml = '<ul class="recipe-ingredients-list">';
+            recipe.ingredients.forEach(ing => {
+                ingredientsHtml += `<li><strong>${escapeHtml(ing.ingredient_name)}</strong>: ${ing.quantity} ${ing.unit}</li>`;
+            });
+            ingredientsHtml += '</ul>';
+        } else {
+            ingredientsHtml = '<p class="no-ingredients">No ingredients listed for this recipe.</p>';
+        }
+        
+        // Build instructions
+        const instructionsHtml = recipe.instructions 
+            ? `<div class="recipe-instructions">${escapeHtml(recipe.instructions).replace(/\n/g, '<br>')}</div>`
+            : '<p class="no-instructions">No instructions provided.</p>';
+        
+        modalBody.innerHTML = `
+            <div class="recipe-info-row">
+                <i class="fas fa-clock"></i>
+                <span><strong>Prep Time:</strong> ${recipe.prep_time || 5} minutes</span>
+            </div>
+            <div>
+                <strong><i class="fas fa-list"></i> Ingredients:</strong>
+                ${ingredientsHtml}
+            </div>
+            <div style="margin-top: 20px;">
+                <strong><i class="fas fa-book"></i> Instructions:</strong>
+                ${instructionsHtml}
+            </div>
+        `;
+        
+    } catch (error) {
+        console.error('Error loading recipe:', error);
+        const modalBody = document.getElementById('recipe-modal-body');
+        modalBody.innerHTML = `
+            <div class="no-recipe">
+                <i class="fas fa-exclamation-triangle"></i>
+                <h4>Error Loading Recipe</h4>
+                <p>Could not load recipe for ${escapeHtml(productName)}.</p>
+                <small>Please try again later.</small>
+            </div>
+        `;
+    }
+}
+
+function closeRecipeModal() {
+    document.getElementById('recipe-modal').classList.remove('active');
 }
 
 async function updateOrderStatus(orderId, status) {
