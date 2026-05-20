@@ -1,5 +1,5 @@
 // Beans Cafe - Admin Login
-// Complete with loading states, error handling, and password toggle
+// Complete with loading states, error handling, and role-based redirect
 
 const API_URL = 'https://beans-cafe-backend.onrender.com/api';
 
@@ -8,8 +8,13 @@ document.addEventListener('DOMContentLoaded', function() {
     const token = localStorage.getItem('admin_token');
     const user = JSON.parse(localStorage.getItem('admin_user') || '{}');
     
-    if (token && user.role === 'admin') {
-        window.location.href = 'dashboard.html';
+    if (token && (user.role === 'admin' || user.role === 'staff')) {
+        // Redirect based on role
+        if (user.role === 'admin') {
+            window.location.href = 'Dashboard.html';
+        } else if (user.role === 'staff') {
+            window.location.href = '../pos/index.html';
+        }
         return;
     }
     
@@ -17,6 +22,19 @@ document.addEventListener('DOMContentLoaded', function() {
     const form = document.getElementById('admin-login-form');
     if (form) {
         form.addEventListener('submit', handleLogin);
+    }
+    
+    // Setup password visibility toggle
+    const passwordToggle = document.getElementById('passwordToggle');
+    const passwordInput = document.getElementById('admin-password');
+    
+    if (passwordToggle && passwordInput) {
+        passwordToggle.addEventListener('click', function() {
+            const type = passwordInput.type === 'password' ? 'text' : 'password';
+            passwordInput.type = type;
+            this.classList.toggle('fa-eye');
+            this.classList.toggle('fa-eye-slash');
+        });
     }
     
     // Add enter key support
@@ -71,9 +89,9 @@ async function handleLogin(e) {
         const result = await response.json();
         
         if (result.success && result.user) {
-            // Check if user is admin
-            if (result.user.role !== 'admin') {
-                showMessage('Access denied. Admin privileges required.', 'error');
+            // Check if user is admin OR staff
+            if (result.user.role !== 'admin' && result.user.role !== 'staff') {
+                showMessage('Access denied. Admin or Staff privileges required.', 'error');
                 submitBtn.innerHTML = originalText;
                 submitBtn.disabled = false;
                 return;
@@ -83,11 +101,15 @@ async function handleLogin(e) {
             localStorage.setItem('admin_token', result.token);
             localStorage.setItem('admin_user', JSON.stringify(result.user));
             
-            showMessage('Login successful! Redirecting to dashboard...', 'success');
+            showMessage(`Login successful! Redirecting to ${result.user.role === 'admin' ? 'Dashboard' : 'POS'}...`, 'success');
             
-            // Redirect to dashboard
+            // Redirect based on role
             setTimeout(() => {
-                window.location.href = 'Dashboard.html';
+                if (result.user.role === 'admin') {
+                    window.location.href = 'Dashboard.html';
+                } else {
+                    window.location.href = '../pos/index.html';
+                }
             }, 1000);
         } else {
             const errorMsg = result.message || 'Invalid email or password';

@@ -1,0 +1,142 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0, user-scalable=no">
+    <title>POS | Beans Cafe</title>
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+    <link rel="stylesheet" href="../website/css/style.css">
+    <link rel="stylesheet" href="../website/css/animations.css">
+    <link rel="stylesheet" href="css/pos.css">
+<body>
+
+    <!-- POS Container -->
+    <div class="pos-container">
+        
+        <!-- Header -->
+        <header class="pos-header">
+            <div class="pos-logo">
+                <i class="fas fa-mug-hot"></i>
+                <span>Beans Cafe POS</span>
+            </div>
+            <div class="pos-header-info">
+                <div class="pos-stats">
+                    <div class="stat-badge">
+                        <i class="fas fa-clock"></i>
+                        <span id="current-time">--:--</span>
+                    </div>
+                    <div class="stat-badge">
+                        <i class="fas fa-chart-line"></i>
+                        <span id="orders-count">0</span> active orders
+                    </div>
+                </div>
+                <button class="logout-pos-btn" onclick="logoutPOS()">
+                    <i class="fas fa-sign-out-alt"></i>
+                </button>
+            </div>
+        </header>
+
+        <button class="enable-sound-btn" id="enableSoundBtn" style="background: var(--primary); border: none; padding: 6px 12px; border-radius: 8px; cursor: pointer;">
+        <i class="fas fa-volume-up"></i> Enable Sound
+        </button>
+
+        <!-- Main Content -->
+        <div class="pos-main">
+            
+            <!-- Sidebar Order List -->
+            <aside class="pos-sidebar">
+                <div class="sidebar-search">
+                    <i class="fas fa-search"></i>
+                    <input type="text" id="search-orders" placeholder="Search by order # or customer...">
+                </div>
+                <div class="sidebar-filters">
+                    <button class="filter-chip active" data-status="all">All</button>
+                    <button class="filter-chip" data-status="pending">Pending</button>
+                    <button class="filter-chip" data-status="preparing">Preparing</button>
+                    <button class="filter-chip" data-status="ready">Ready</button>
+                    <button class="filter-chip" data-status="completed">Completed</button>
+                </div>
+                <div class="orders-list" id="orders-list">
+                    <div class="loading-orders">
+                        <div class="spinner"></div>
+                        <p>Loading orders...</p>
+                    </div>
+                </div>
+            </aside>
+
+            <!-- Main Order Details Panel -->
+            <main class="pos-details">
+                <div id="order-details-panel" class="order-details-panel">
+                    <div class="empty-state">
+                        <i class="fas fa-receipt"></i>
+                        <h3>Select an order</h3>
+                        <p>Click on any order from the left panel to view details</p>
+                    </div>
+                </div>
+            </main>
+
+            <!-- Right Panel - Quick Actions & Ready Queue -->
+            <aside class="pos-right">
+                <div class="ready-queue">
+                    <h3><i class="fas fa-bell"></i> Ready for Pickup</h3>
+                    <div id="ready-queue-list" class="ready-queue-list">
+                        <div class="empty-queue">No orders ready</div>
+                    </div>
+                </div>
+                <div class="pos-stats-summary">
+                    <h3><i class="fas fa-chart-simple"></i> Today's Stats</h3>
+                    <div class="stat-row">
+                        <span>Completed Orders:</span>
+                        <strong id="stats-completed">0</strong>
+                    </div>
+                    <div class="stat-row">
+                        <span>Total Revenue:</span>
+                        <strong id="stats-revenue">₱0</strong>
+                    </div>
+                    <div class="stat-row">
+                        <span>Peak Hour:</span>
+                        <strong id="stats-peak">--</strong>
+                    </div>
+                </div>
+            </aside>
+        </div>
+    </div>
+
+    <!-- Order Details Modal (for viewing full order) -->
+    <div id="order-modal" class="pos-modal">
+        <div class="pos-modal-content">
+            <div class="pos-modal-header">
+                <h3 id="modal-order-number">Order #</h3>
+                <button class="close-modal" onclick="closeOrderModal()">&times;</button>
+            </div>
+            <div id="modal-order-details" class="pos-modal-body">
+                <!-- Dynamic content -->
+            </div>
+        </div>
+    </div>
+
+    <!-- Audio for new order notification -->
+    <audio id="notification-sound" preload="auto">
+        <source src="https://www.soundjay.com/misc/sounds/bell-ringing-05.mp3" type="audio/mpeg">
+    </audio>
+
+    <script src="../website/script/config.js"></script>
+    <script src="../website/script/cart.js"></script>
+    <script src="../website/script/animations.js"></script>
+    <script src="../website/script/darkmode.js"></script>
+    <script src="script/pos.js"></script>
+
+    <script>
+        // Update current time every second
+        function updateTime() {
+            const now = new Date();
+            const timeString = now.toLocaleTimeString('en-US', { hour: '2-digit', minute: '2-digit' });
+            const timeElement = document.getElementById('current-time');
+            if (timeElement) timeElement.textContent = timeString;
+        }
+        updateTime();
+        setInterval(updateTime, 1000);
+    </script>
+
+</body>
+</html>
