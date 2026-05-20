@@ -10,6 +10,7 @@ const {
 } = require('../controllers/orderController');
 const authenticate = require('../middleware/auth');
 const adminAuth = require('../middleware/adminAuth');
+const staffAuth = require('../middleware/staffAuth');  // ← ADD THIS
 
 const router = express.Router();
 
@@ -22,10 +23,12 @@ router.get('/track/:orderNumber', getOrderByNumber);
 // Authenticated user routes
 router.get('/my-orders', authenticate, getUserOrders);
 
-// Admin/Staff routes
-router.get('/', authenticate, adminAuth, getOrders);
-router.get('/pending', authenticate, adminAuth, getPendingOrders);
-router.put('/:id/status', authenticate, adminAuth, updateOrderStatus);
-router.delete('/:id', authenticate, adminAuth, deleteOrder);
+// Staff routes (Admin + Staff can access)
+router.get('/', authenticate, staffAuth, getOrders);  // ← CHANGED from adminAuth to staffAuth
+router.get('/pending', authenticate, staffAuth, getPendingOrders);  // ← CHANGED
+router.put('/:id/status', authenticate, staffAuth, updateOrderStatus);  // ← CHANGED
+
+// Admin only routes
+router.delete('/:id', authenticate, adminAuth, deleteOrder);  // ← KEPT as adminAuth
 
 module.exports = router;
