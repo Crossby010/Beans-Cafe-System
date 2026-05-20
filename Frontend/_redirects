@@ -1,2 +1,35 @@
+# API routes
 /api/* https://beans-cafe-backend.onrender.com/api/:splat 200
+
+# CSS files
+/css/* /website/css/:splat 200
+/website/css/* /website/css/:splat 200
+
+# JavaScript files
+/script/* /website/script/:splat 200
+/website/script/* /website/script/:splat 200
+
+# Assets (images, videos, icons)
+/assets/* /website/assets/:splat 200
+/website/assets/* /website/assets/:splat 200
+/images/* /website/images/:splat 200
+/favicon.ico /website/favicon.ico 200
+/manifest.json /website/manifest.json 200
+/service-worker.js /website/service-worker.js 200
+
+# Pages
+/pages/* /website/pages/:splat 200
+/website/pages/* /website/pages/:splat 200
+
+# Admin (capital A)
+/Admin/* /Admin/:splat 200
+
+# POS and Kiosk
+/pos/* /pos/:splat 200
+/kiosk/* /kiosk/:splat 200
+
+# Root - serve website
 / /website/index.html 200
+
+# Catch-all for any other requests - serve website
+/* /website/:splat 200
