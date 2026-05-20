@@ -887,7 +887,28 @@ async function loadInventory() {
             tbody.innerHTML = '<tr><td colspan="5" class="loading-cell">No ingredients found</td></tr>';
             return;
         }
-        
+
+        // Make sure inventory tabs switch correctly
+        const tabs = document.querySelectorAll('.inventory-tab');
+        tabs.forEach(tab => {
+            tab.removeEventListener('click', handleTabClick);
+            tab.addEventListener('click', handleTabClick);
+        });
+
+        function handleTabClick() {
+            const tabName = this.getAttribute('data-tab');
+            switchInventoryTab(tabName);
+            
+            // Refresh data when tab changes
+            if (tabName === 'recipes') {
+                loadRecipes();
+            } else if (tabName === 'transactions') {
+                loadTransactions();
+            } else if (tabName === 'ingredients') {
+                loadInventory();
+            }
+        }
+                
         checkLowStock(items);
         
         var html = '';

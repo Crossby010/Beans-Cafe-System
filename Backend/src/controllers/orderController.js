@@ -1,6 +1,62 @@
 const Order = require('../models/Order');
 const pool = require('../config/database');
 
+// Deduct inventory when order is placed (DEFINE THIS FIRST)
+async function deductInventory(orderItems) {
+    const client = await pool.connect();
+    try {
+        await client.query('BEGIN');
+        
+        for (const item of orderItems) {
+            // Get recipe for this product
+            const recipeResult = await client.query(
+                `SELECT ri.*, i.unit 
+                 FROM recipe_ingredients ri
+                 JOIN inventory_items i ON ri.inventory_item_id = i.id
+                 WHERE ri.recipe_id = (SELECT id FROM recipes WHERE product_id = $1)`,
+                [item.id]
+            );
+            
+            const ingredients = recipeResult.rows;
+            
+            if (ingredients.length === 0) {
+                console.log(`⚠️ No recipe found for product ${item.id}, skipping inventory deduction`);
+                continue;
+            }
+            
+            for (const ing of ingredients) {
+                const quantityToDeduct = ing.quantity * item.quantity;
+                
+                // Update stock
+                await client.query(
+                    `UPDATE inventory_items 
+                     SET stock_quantity = stock_quantity - $1, updated_at = CURRENT_TIMESTAMP
+                     WHERE id = $2`,
+                    [quantityToDeduct, ing.inventory_item_id]
+                );
+                
+                // Create transaction record
+                await client.query(
+                    `INSERT INTO stock_transactions (inventory_item_id, transaction_type, quantity, note) 
+                     VALUES ($1, 'remove', $2, $3)`,
+                    [ing.inventory_item_id, quantityToDeduct, `Order placed - ${item.name}`]
+                );
+                
+                console.log(`📉 Deducted ${quantityToDeduct} ${ing.unit} of ${ing.inventory_item_id} for order`);
+            }
+        }
+        
+        await client.query('COMMIT');
+        return true;
+    } catch (error) {
+        await client.query('ROLLBACK');
+        console.error('Error deducting inventory:', error);
+        throw error;
+    } finally {
+        client.release();
+    }
+}
+
 // Create new order
 const createOrder = async (req, res) => {
     try {
@@ -66,6 +122,15 @@ const createOrder = async (req, res) => {
         const newOrder = await Order.create(orderData);
         
         console.log('✅ Order saved to database:', newOrder);
+        
+        // ============ DEDUCT INVENTORY AFTER ORDER IS SAVED ============
+        try {
+            await deductInventory(items);
+            console.log('✅ Inventory deducted for order');
+        } catch (error) {
+            console.error('❌ Failed to deduct inventory:', error);
+            // Don't block the order - just log the error
+        }
         
         const io = req.app.get('io');
         if (io) {
