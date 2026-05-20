@@ -380,7 +380,7 @@ function loadFeaturedTable(products) {
     if (!tbody) return;
     
     if (products.length === 0) {
-        tbody.innerHTML = '<tr><td colspan="6" class="loading-cell">No products found</td></tr>';
+        tbody.innerHTML = '<tr><td colspan="7" class="loading-cell">No products found</td></tr>';
         return;
     }
     
@@ -393,6 +393,7 @@ function loadFeaturedTable(products) {
         html += '<td>' + (product.category || '-') + '</td>';
         html += '<td><label class="checkbox-label"><input type="checkbox" class="featured-checkbox" data-id="' + product.id + '"' + (product.is_featured ? ' checked' : '') + '></label></td>';
         html += '<td><label class="checkbox-label"><input type="checkbox" class="new-checkbox" data-id="' + product.id + '"' + (product.is_new ? ' checked' : '') + '></label></td>';
+        html += '<td><label class="checkbox-label"><input type="checkbox" class="bestseller-checkbox" data-id="' + product.id + '"' + (product.is_best_seller ? ' checked' : '') + '></label></td>';
         html += '<td><button class="btn-success" onclick="updateProductFlags(' + product.id + ')"><i class="fas fa-save"></i> Save</button></td>';
         html += '</tr>';
     }
@@ -402,13 +403,15 @@ function loadFeaturedTable(products) {
 async function updateProductFlags(productId) {
     var featuredCheckbox = document.querySelector('.featured-checkbox[data-id="' + productId + '"]');
     var newCheckbox = document.querySelector('.new-checkbox[data-id="' + productId + '"]');
+    var bestsellerCheckbox = document.querySelector('.bestseller-checkbox[data-id="' + productId + '"]');
     
     try {
         await apiRequest('/products/' + productId, {
             method: 'PUT',
             body: JSON.stringify({
                 is_featured: featuredCheckbox ? featuredCheckbox.checked : false,
-                is_new: newCheckbox ? newCheckbox.checked : false
+                is_new: newCheckbox ? newCheckbox.checked : false,
+                is_best_seller: bestsellerCheckbox ? bestsellerCheckbox.checked : false
             })
         });
         showMessage('Product flags updated!', 'success');
@@ -427,7 +430,7 @@ async function loadOrders() {
         if (!tbody) return;
         
         if (orders.length === 0) {
-            tbody.innerHTML = '<tr><td colspan="6" class="loading-cell">No orders found</td></tr>';
+            tbody.innerHTML = '<tr><td colspan="6" class="loading-cell">No orders found</div></div>';
             return;
         }
         
@@ -437,17 +440,19 @@ async function loadOrders() {
             html += '<tr>';
             html += '<td><strong>' + order.order_number + '</strong></td>';
             html += '<td>' + escapeHtml(order.customer_name) + '<br><small>' + order.customer_phone + '</small></td>';
-            html += '<td>' + (order.items ? order.items.length : 0) + ' items</td>';
-            html += '<td>₱' + parseFloat(order.total).toFixed(2) + '</td>';
-            html += '<td><span class="status-badge status-' + order.status + '">' + order.status + '</span></td>';
-            html += '<td>';
-            html += '<select onchange="updateOrderStatus(' + order.id + ', this.value)" style="padding: 5px; border-radius: 6px;">';
+            html += '<td>' + (order.items ? order.items.length : 0) + ' items</div></td>';
+            html += '<td>₱' + parseFloat(order.total).toFixed(2) + '</div></td>';
+            html += '<td><span class="status-badge status-' + order.status + '">' + order.status + '</span></div></td>';
+            html += '<td class="action-buttons">';
+            html += '<select onchange="updateOrderStatus(' + order.id + ', this.value)" style="padding: 5px; border-radius: 6px; margin-right: 8px;">';
             html += '<option value="pending"' + (order.status === 'pending' ? ' selected' : '') + '>Pending</option>';
             html += '<option value="preparing"' + (order.status === 'preparing' ? ' selected' : '') + '>Preparing</option>';
             html += '<option value="ready"' + (order.status === 'ready' ? ' selected' : '') + '>Ready</option>';
             html += '<option value="completed"' + (order.status === 'completed' ? ' selected' : '') + '>Completed</option>';
             html += '</select>';
-            html += '</td>';
+            html += '<button class="btn-danger" onclick="deleteOrder(' + order.id + ', \'' + order.order_number + '\')" style="padding: 5px 10px; margin-left: 5px;">';
+            html += '<i class="fas fa-trash"></i> Delete</button>';
+            html += '</div>';
             html += '</tr>';
         }
         tbody.innerHTML = html;
@@ -468,6 +473,21 @@ async function updateOrderStatus(orderId, status) {
         loadModernDashboard();
     } catch (error) {
         showMessage('Error updating status', 'error');
+    }
+}
+
+async function deleteOrder(orderId, orderNumber) {
+    if (confirm(`Are you sure you want to delete order ${orderNumber}? This action cannot be undone.`)) {
+        try {
+            await apiRequest('/orders/' + orderId, { method: 'DELETE' });
+            showMessage('Order deleted successfully!', 'success');
+            loadOrders();
+            loadDashboardStats();
+            loadModernDashboard();
+        } catch (error) {
+            console.error('Error deleting order:', error);
+            showMessage('Error deleting order', 'error');
+        }
     }
 }
 

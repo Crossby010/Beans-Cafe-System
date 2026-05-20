@@ -65,6 +65,10 @@
         
         <!-- Main Content -->
         <main class="main-content">
+            <!-- Mobile Menu Toggle Button -->
+            <button class="mobile-menu-btn" id="mobileMenuBtn">
+                <i class="fas fa-bars"></i>
+            </button>
             <div class="admin-header">
                 <div class="header-title">
                     <h1 id="page-title">Dashboard</h1>
@@ -209,10 +213,18 @@
                 <div class="table-responsive">
                     <table class="data-table">
                         <thead>
-                            <tr><th>Image</th><th>Name</th><th>Category</th><th>Featured</th><th>New</th><th>Actions</th></tr>
+                            <tr>
+                                <th>Image</th>
+                                <th>Name</th>
+                                <th>Category</th>
+                                <th>Featured</th>
+                                <th>New</th>
+                                <th>Best Seller</th>
+                                <th>Actions</th>
+                            </tr>
                         </thead>
                         <tbody id="featured-table-body">
-                            <tr><td colspan="6" class="loading-cell">Loading...</td></tr>
+                            <tr><td colspan="7" class="loading-cell">Loading...</td></tr>
                         </tbody>
                     </table>
                 </div>
@@ -656,5 +668,25 @@
     <!-- Scripts -->
     <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
     <script src="script/admin-dashboard.js"></script>
+
+    <script>
+    const mobileMenuBtn = document.getElementById('mobileMenuBtn');
+    const sidebar = document.getElementById('sidebar');
+    
+    if (mobileMenuBtn && sidebar) {
+        mobileMenuBtn.addEventListener('click', function() {
+            sidebar.classList.toggle('mobile-open');
+        });
+        
+        // Close menu when clicking outside on mobile
+        document.addEventListener('click', function(e) {
+            if (window.innerWidth <= 768) {
+                if (!sidebar.contains(e.target) && !mobileMenuBtn.contains(e.target)) {
+                    sidebar.classList.remove('mobile-open');
+                }
+            }
+        });
+    }
+</script>
 </body>
 </html>
