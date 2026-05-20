@@ -11,9 +11,9 @@ document.addEventListener('DOMContentLoaded', function() {
     if (token && (user.role === 'admin' || user.role === 'staff')) {
         // Redirect based on role
         if (user.role === 'admin') {
-            window.location.href = 'Dashboard.html';
+            window.location.href = '/Admin/Dashboard.html';
         } else if (user.role === 'staff') {
-            window.location.href = '../pos/index.html';
+            window.location.href = '/pos/index.html';
         }
         return;
     }
@@ -103,12 +103,12 @@ async function handleLogin(e) {
             
             showMessage(`Login successful! Redirecting to ${result.user.role === 'admin' ? 'Dashboard' : 'POS'}...`, 'success');
             
-            // Redirect based on role
+            // Redirect based on role - USING ABSOLUTE PATHS
             setTimeout(() => {
                 if (result.user.role === 'admin') {
-                    window.location.href = 'Dashboard.html';
+                    window.location.href = '/Admin/Dashboard.html';
                 } else {
-                    window.location.href = '../pos/index.html';
+                    window.location.href = '/pos/index.html';
                 }
             }, 1000);
         } else {

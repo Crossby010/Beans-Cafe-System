@@ -17,7 +17,7 @@ function checkAuth() {
     
     // Allow both admin and staff to access POS
     if (!token || (user.role !== 'admin' && user.role !== 'staff')) {
-        window.location.href = '../Admin/login.html';  // Capital A
+        window.location.href = '/Admin/login.html';  // Capital A
         return false;
     }
     return true;
@@ -396,7 +396,7 @@ function closeOrderModal() {
 function logoutPOS() {
     localStorage.removeItem('admin_token');
     localStorage.removeItem('admin_user');
-    window.location.href = '../Admin/login.html';  // Capital A
+    window.location.href = '/Admin/login.html';  // Capital A
 }
 
 function escapeHtml(text) {
