@@ -9,6 +9,11 @@
 </head>
 <body>
     <div class="admin-container">
+        <!-- Mobile Menu Toggle Button -->
+        <button class="mobile-menu-btn" id="mobileMenuBtn">
+            <i class="fas fa-bars"></i>
+        </button>
+        
         <!-- Sidebar - Minimalist -->
         <aside class="sidebar" id="sidebar">
             <div class="sidebar-header">
@@ -62,17 +67,9 @@
                 </button>
             </div>
         </aside>
-
-        <!-- Sidebar Overlay for mobile -->
-        <div class="sidebar-overlay" id="sidebarOverlay"></div>
         
         <!-- Main Content -->
         <main class="main-content">
-            <!-- Mobile Menu Toggle Button -->
-            <button class="mobile-menu-btn" id="mobileMenuBtn">
-                <i class="fas fa-bars"></i>
-            </button>
-
             <div class="admin-header">
                 <div class="header-title">
                     <h1 id="page-title">Dashboard</h1>
@@ -200,10 +197,18 @@
                 <div class="table-responsive">
                     <table class="data-table">
                         <thead>
-                            <tr><th>Image</th><th>Name</th><th>Category</th><th>Price</th><th>Stock</th><th>Best Seller</th><th>Actions</th></tr>
+                            <tr>
+                                <th>Image</th>
+                                <th>Name</th>
+                                <th>Category</th>
+                                <th>Price</th>
+                                <th>Stock</th>
+                                <th>Best Seller</th>
+                                <th>Actions</th>
+                            </tr>
                         </thead>
                         <tbody id="products-table-body">
-                            <tr><td colspan="6" class="loading-cell">Loading...</td></tr>
+                            <tr><td colspan="7" class="loading-cell">Loading...</div></div>
                         </tbody>
                     </table>
                 </div>
@@ -228,7 +233,7 @@
                             </tr>
                         </thead>
                         <tbody id="featured-table-body">
-                            <tr><td colspan="7" class="loading-cell">Loading...</td></tr>
+                            <tr><td colspan="7" class="loading-cell">Loading...</div></div>
                         </tbody>
                     </table>
                 </div>
@@ -251,10 +256,17 @@
                 <div class="table-responsive">
                     <table class="data-table">
                         <thead>
-                            <tr><th>Order #</th><th>Customer</th><th>Items</th><th>Total</th><th>Status</th><th>Actions</th></tr>
+                            <tr>
+                                <th>Order #</th>
+                                <th>Customer</th>
+                                <th>Items</th>
+                                <th>Total</th>
+                                <th>Status</th>
+                                <th>Actions</th>
+                            </tr>
                         </thead>
                         <tbody id="orders-table-body">
-                            <tr><td colspan="6" class="loading-cell">Loading...</td></tr>
+                            <tr><td colspan="6" class="loading-cell">Loading...</div></div>
                         </tbody>
                     </table>
                 </div>
@@ -275,10 +287,15 @@
                 <div class="table-responsive">
                     <table class="data-table">
                         <thead>
-                            <tr><th>Name</th><th>Email</th><th>Role</th><th>Actions</th></tr>
+                            <tr>
+                                <th>Name</th>
+                                <th>Email</th>
+                                <th>Role</th>
+                                <th>Actions</th>
+                            </tr>
                         </thead>
                         <tbody id="users-table-body">
-                            <tr><td colspan="4" class="loading-cell">Loading...</td></tr>
+                            <tr><td colspan="4" class="loading-cell">Loading...</div></div>
                         </tbody>
                     </table>
                 </div>
@@ -307,10 +324,16 @@
                     <div class="table-responsive">
                         <table class="data-table">
                             <thead>
-                                <tr><th>Ingredient</th><th>Stock</th><th>Min Level</th><th>Status</th><th>Actions</th></tr>
+                                <tr>
+                                    <th>Ingredient</th>
+                                    <th>Stock</th>
+                                    <th>Min Level</th>
+                                    <th>Status</th>
+                                    <th>Actions</th>
+                                </tr>
                             </thead>
                             <tbody id="inventory-table-body">
-                                <tr><td colspan="5" class="loading-cell">Loading...</td></tr>
+                                <tr><td colspan="5" class="loading-cell">Loading...</div></div>
                             </tbody>
                         </table>
                     </div>
@@ -319,10 +342,15 @@
                     <div class="table-responsive">
                         <table class="data-table">
                             <thead>
-                                <tr><th>Drink</th><th>Ingredients</th><th>Prep Time</th><th>Actions</th></tr>
+                                <tr>
+                                    <th>Drink</th>
+                                    <th>Ingredients</th>
+                                    <th>Prep Time</th>
+                                    <th>Actions</th>
+                                </tr>
                             </thead>
                             <tbody id="recipes-table-body">
-                                <tr><td colspan="4" class="loading-cell">Loading...</td></tr>
+                                <tr><td colspan="4" class="loading-cell">Loading...</div></div>
                             </tbody>
                         </table>
                     </div>
@@ -331,10 +359,15 @@
                     <div class="table-responsive">
                         <table class="data-table">
                             <thead>
-                                <tr><th>Date</th><th>Item</th><th>Type</th><th>Quantity</th></tr>
+                                <tr>
+                                    <th>Date</th>
+                                    <th>Item</th>
+                                    <th>Type</th>
+                                    <th>Quantity</th>
+                                </tr>
                             </thead>
                             <tbody id="transactions-table-body">
-                                <tr><td colspan="4" class="loading-cell">Loading...</td></tr>
+                                <tr><td colspan="4" class="loading-cell">Loading...</div></div>
                             </tbody>
                         </table>
                     </div>
@@ -674,84 +707,24 @@
     <script src="script/admin-dashboard.js"></script>
 
     <script>
-        // Sidebar collapse/expand functionality (desktop only)
-        const sidebarToggle = document.getElementById('sidebarToggle');
-        const sidebar = document.getElementById('sidebar');
+    // Mobile menu toggle
+    const mobileMenuBtn = document.getElementById('mobileMenuBtn');
+    const sidebar = document.getElementById('sidebar');
+    
+    if (mobileMenuBtn && sidebar) {
+        mobileMenuBtn.addEventListener('click', function() {
+            sidebar.classList.toggle('mobile-open');
+        });
         
-        if (sidebarToggle && sidebar) {
-            sidebarToggle.addEventListener('click', function() {
-                sidebar.classList.toggle('collapsed');
-                const icon = sidebarToggle.querySelector('i');
-                if (icon) {
-                    icon.classList.toggle('fa-chevron-left');
-                    icon.classList.toggle('fa-chevron-right');
+        // Close menu when clicking outside on mobile
+        document.addEventListener('click', function(e) {
+            if (window.innerWidth <= 768) {
+                if (!sidebar.contains(e.target) && !mobileMenuBtn.contains(e.target)) {
+                    sidebar.classList.remove('mobile-open');
                 }
-            });
-        }
-        
-        // Mobile menu functionality
-        const mobileMenuBtn = document.getElementById('mobileMenuBtn');
-        const sidebarOverlay = document.getElementById('sidebarOverlay');
-        
-        function openMobileMenu() {
-            sidebar.classList.add('mobile-open');
-            if (sidebarOverlay) sidebarOverlay.classList.add('active');
-            document.body.style.overflow = 'hidden';
-        }
-        
-        function closeMobileMenu() {
-            sidebar.classList.remove('mobile-open');
-            if (sidebarOverlay) sidebarOverlay.classList.remove('active');
-            document.body.style.overflow = '';
-        }
-        
-        if (mobileMenuBtn && sidebar) {
-            mobileMenuBtn.addEventListener('click', function(e) {
-                e.stopPropagation();
-                if (sidebar.classList.contains('mobile-open')) {
-                    closeMobileMenu();
-                } else {
-                    openMobileMenu();
-                }
-            });
-            
-            // Close menu when clicking overlay
-            if (sidebarOverlay) {
-                sidebarOverlay.addEventListener('click', closeMobileMenu);
-            }
-            
-            // Close menu when clicking a link inside sidebar (on mobile)
-            const navLinks = sidebar.querySelectorAll('.nav-item');
-            navLinks.forEach(link => {
-                link.addEventListener('click', function() {
-                    if (window.innerWidth <= 768) {
-                        closeMobileMenu();
-                    }
-                });
-            });
-            
-            // Close menu on escape key
-            document.addEventListener('keydown', function(e) {
-                if (e.key === 'Escape' && sidebar.classList.contains('mobile-open')) {
-                    closeMobileMenu();
-                }
-            });
-            
-            // Handle window resize - reset mobile menu state
-            window.addEventListener('resize', function() {
-                if (window.innerWidth > 768 && sidebar.classList.contains('mobile-open')) {
-                    closeMobileMenu();
-                }
-            });
-        }
-        
-        // Prevent horizontal scroll
-        const allElements = document.querySelectorAll('*');
-        allElements.forEach(el => {
-            if (el.style.overflowX === 'scroll') {
-                el.style.overflowX = 'auto';
             }
         });
+    }
     </script>
 </body>
 </html>
