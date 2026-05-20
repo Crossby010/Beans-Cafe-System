@@ -1,0 +1,282 @@
+/* Beans Cafe - Coffee Theme */
+/* Warm, cozy, traditional coffee shop feel */
+
+:root {
+    /* Primary Colors - Rich Coffee Browns */
+    --primary: #6F4E37;
+    --primary-light: #8B5E3C;
+    --primary-dark: #4A3222;
+    
+    /* Background Colors - Warm Creams */
+    --bg-primary: #FFF9F2;
+    --bg-secondary: #F5E6D3;
+    --bg-tertiary: #FFFFFF;
+    --bg-card: #FFFFFF;
+    
+    /* Text Colors */
+    --text-primary: #2C1810;
+    --text-secondary: #5C4033;
+    --text-muted: #8B7A6B;
+    
+    /* Border & Accent */
+    --border: #E8DDD0;
+    --border-light: #F0E8DF;
+    --shadow: 0 8px 32px rgba(0, 0, 0, 0.08);
+    --shadow-hover: 0 12px 40px rgba(111, 78, 55, 0.15);
+    
+    /* Gradients */
+    --gradient-primary: linear-gradient(135deg, #6F4E37 0%, #4A3222 100%);
+    --gradient-warm: linear-gradient(135deg, #F5E6D3 0%, #FFF9F2 100%);
+    
+    /* Typography */
+    --font-heading: 'Playfair Display', serif;
+    --font-body: 'Inter', sans-serif;
+    
+    /* Border Radius */
+    --radius-sm: 8px;
+    --radius-md: 12px;
+    --radius-lg: 16px;
+    --radius-xl: 24px;
+    --radius-full: 9999px;
+    
+    /* Transitions */
+    --transition-fast: 0.2s ease;
+    --transition: 0.3s ease;
+    --transition-slow: 0.5s ease;
+}
+
+/* Global Styles */
+body {
+    background: var(--bg-primary);
+    color: var(--text-primary);
+}
+
+/* Navigation */
+.navbar {
+    background: rgba(255, 249, 242, 0.95);
+    backdrop-filter: blur(10px);
+    border-bottom: 1px solid var(--border);
+}
+
+.logo {
+    color: var(--primary);
+}
+
+.logo span {
+    color: var(--primary-dark);
+}
+
+.nav-links a {
+    color: var(--text-primary);
+}
+
+.nav-links a:hover,
+.nav-links a.active {
+    color: var(--primary);
+}
+
+.nav-links a::after {
+    background: var(--primary);
+}
+
+/* Buttons */
+.btn-primary {
+    background: var(--primary);
+    color: white;
+}
+
+.btn-primary:hover {
+    background: var(--primary-dark);
+    transform: translateY(-2px);
+    box-shadow: var(--shadow-md);
+}
+
+.btn-secondary {
+    background: transparent;
+    color: var(--primary);
+    border: 2px solid var(--primary);
+}
+
+.btn-secondary:hover {
+    background: var(--primary);
+    color: white;
+}
+
+/* Hero Section */
+.hero {
+    background: linear-gradient(135deg, rgba(0,0,0,0.65), rgba(0,0,0,0.45)), url('../assets/images/hero-bg.jpg');
+    background-size: cover;
+    background-position: center;
+}
+
+.hero h1 {
+    color: white;
+}
+
+.hero-badge {
+    background: rgba(111, 78, 55, 0.9);
+}
+
+/* Cards */
+.step-card,
+.product-card,
+.dashboard-card {
+    background: var(--bg-card);
+    border: 1px solid var(--border);
+    border-radius: var(--radius-lg);
+    box-shadow: var(--shadow);
+}
+
+.step-card:hover,
+.product-card:hover {
+    transform: translateY(-5px);
+    border-color: var(--primary);
+    box-shadow: var(--shadow-hover);
+}
+
+.step-card::before {
+    background: var(--primary);
+}
+
+.step-icon {
+    background: var(--bg-secondary);
+    color: var(--primary);
+}
+
+/* Section Titles */
+.section-title {
+    color: var(--text-primary);
+}
+
+.section-tag {
+    background: rgba(111, 78, 55, 0.1);
+    color: var(--primary);
+}
+
+/* How It Works Section */
+.how-it-works {
+    background: var(--bg-secondary);
+}
+
+/* Featured Products */
+.featured-products {
+    background: var(--bg-primary);
+}
+
+/* About Section */
+.about-section {
+    background: var(--bg-secondary);
+}
+
+.about-content h3 {
+    color: var(--text-primary);
+}
+
+.owner-info, .location-info {
+    border-top-color: var(--border);
+}
+
+.about-feature i {
+    color: var(--primary);
+}
+
+.about-experience {
+    background: var(--primary);
+}
+
+/* Testimonials */
+.testimonial-card {
+    background: var(--bg-card);
+}
+
+.testimonial-rating {
+    color: #f59e0b;
+}
+
+/* Footer */
+.footer {
+    background: var(--primary-dark);
+    color: white;
+}
+
+.footer-logo {
+    color: white;
+}
+
+.footer-links a {
+    color: rgba(255,255,255,0.7);
+}
+
+.footer-links a:hover {
+    color: var(--primary-light);
+}
+
+.footer-social a:hover {
+    background: var(--primary);
+}
+
+/* Form Elements */
+input, textarea, select {
+    background: var(--bg-tertiary);
+    border: 1px solid var(--border);
+    color: var(--text-primary);
+}
+
+input:focus, textarea:focus, select:focus {
+    border-color: var(--primary);
+    outline: none;
+}
+
+/* Modal */
+.modal-content {
+    background: var(--bg-card);
+    border: 1px solid var(--border);
+}
+
+/* Admin Dashboard - Coffee Theme */
+.sidebar {
+    background: linear-gradient(180deg, #4A3222 0%, #6F4E37 100%);
+    border-right: 1px solid var(--border);
+}
+
+.sidebar-header h2 {
+    color: #F5E6D3;
+}
+
+.nav-item {
+    color: rgba(255,255,255,0.7);
+}
+
+.nav-item:hover,
+.nav-item.active {
+    background: rgba(245, 230, 211, 0.1);
+    color: #F5E6D3;
+}
+
+.dashboard-stat-card,
+.dashboard-card {
+    background: var(--bg-card);
+    border: 1px solid var(--border);
+}
+
+.stat-value {
+    color: var(--primary);
+}
+
+/* Scrollbar */
+::-webkit-scrollbar {
+    width: 8px;
+}
+
+::-webkit-scrollbar-track {
+    background: var(--bg-secondary);
+}
+
+::-webkit-scrollbar-thumb {
+    background: var(--primary);
+    border-radius: 4px;
+}
+
+::-webkit-scrollbar-thumb:hover {
+    background: var(--primary-dark);
+}

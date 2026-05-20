@@ -1,9 +1,10 @@
-// Beans Cafe - Admin Dashboard
+// Beans Cafe - Admin Dashboard (COMPLETE)
+// Modern admin panel with full functionality
 
 const API_URL = 'https://beans-cafe-backend.onrender.com/api';
 let token = null;
 
-// Check authentication
+// ============ AUTHENTICATION ============
 function checkAuth() {
     token = localStorage.getItem('admin_token');
     const user = JSON.parse(localStorage.getItem('admin_user') || '{}');
@@ -14,9 +15,9 @@ function checkAuth() {
     }
     
     const adminNameSpan = document.getElementById('admin-name');
-    if (adminNameSpan) {
-        adminNameSpan.textContent = user.firstName || 'Admin';
-    }
+    const adminNameHeader = document.getElementById('admin-name-header');
+    if (adminNameSpan) adminNameSpan.textContent = user.firstName || 'Admin';
+    if (adminNameHeader) adminNameHeader.textContent = user.firstName || 'Admin';
     return true;
 }
 
@@ -39,22 +40,18 @@ async function apiRequest(endpoint, options = {}) {
     return response.json();
 }
 
-// Load dashboard stats - FIXED: Only completed orders count for revenue
+// ============ DASHBOARD STATS ============
 async function loadDashboardStats() {
     try {
         const products = await apiRequest('/products');
         const orders = await apiRequest('/orders');
         
         const totalProducts = (products.products || []).length;
-        
-        // Count pending orders
         const pendingOrders = (orders.orders || []).filter(function(o) { 
             return o.status === 'pending' || o.status === 'preparing'; 
         }).length;
-        
         const totalOrders = (orders.orders || []).length;
         
-        // ONLY count revenue from completed/delivered orders
         let totalRevenue = 0;
         if (orders.orders && orders.orders.length > 0) {
             totalRevenue = orders.orders.reduce(function(sum, o) { 
@@ -76,19 +73,9 @@ async function loadDashboardStats() {
         if (totalRevenueEl) totalRevenueEl.textContent = '₱' + totalRevenue.toFixed(2);
     } catch (error) {
         console.error('Error loading stats:', error);
-        const totalProductsEl = document.getElementById('total-products');
-        const pendingOrdersEl = document.getElementById('pending-orders');
-        const totalOrdersEl = document.getElementById('total-orders');
-        const totalRevenueEl = document.getElementById('total-revenue');
-        
-        if (totalProductsEl) totalProductsEl.textContent = '0';
-        if (pendingOrdersEl) pendingOrdersEl.textContent = '0';
-        if (totalOrdersEl) totalOrdersEl.textContent = '0';
-        if (totalRevenueEl) totalRevenueEl.textContent = '₱0.00';
     }
 }
 
-// Load modern dashboard data - FIXED: Only completed orders for revenue
 async function loadModernDashboard() {
     try {
         const orders = await apiRequest('/orders');
@@ -100,7 +87,6 @@ async function loadModernDashboard() {
         const todayOrders = orderList.filter(function(o) {
             return new Date(o.created_at).toDateString() === today;
         });
-        // Only count completed orders for today's sales
         const todaySales = todayOrders.reduce(function(sum, o) { 
             if (o.status === 'completed' || o.status === 'delivered') {
                 return sum + (parseFloat(o.total) || 0);
@@ -113,7 +99,6 @@ async function loadModernDashboard() {
         const weekOrders = orderList.filter(function(o) {
             return new Date(o.created_at) >= weekAgo;
         });
-        // Only count completed orders for week sales
         const weekSales = weekOrders.reduce(function(sum, o) { 
             if (o.status === 'completed' || o.status === 'delivered') {
                 return sum + (parseFloat(o.total) || 0);
@@ -121,7 +106,6 @@ async function loadModernDashboard() {
             return sum;
         }, 0);
         
-        // Total revenue from completed orders only
         const totalRevenue = orderList.reduce(function(sum, o) { 
             if (o.status === 'completed' || o.status === 'delivered') {
                 return sum + (parseFloat(o.total) || 0);
@@ -146,17 +130,15 @@ async function loadModernDashboard() {
         loadTopItems(products.products || [], orderList);
         loadPeakHours(orderList);
         loadWeeklyChart(orderList);
+        loadSalesChart();
         
     } catch (error) {
         console.error('Error loading modern dashboard:', error);
     }
 }
 
-// Load top items - FIXED: Only count completed orders
 function loadTopItems(products, orders) {
     var salesCount = {};
-    
-    // Only count completed orders for top items
     var completedOrders = orders.filter(function(o) {
         return o.status === 'completed' || o.status === 'delivered';
     });
@@ -189,7 +171,7 @@ function loadTopItems(products, orders) {
     if (!container) return;
     
     if (topItems.length === 0) {
-        container.innerHTML = '<li style="text-align: center; color: #666;">No sales data yet</li>';
+        container.innerHTML = '<li class="loading-item">No sales data yet</li>';
         return;
     }
     
@@ -208,7 +190,6 @@ function loadTopItems(products, orders) {
     container.innerHTML = html;
 }
 
-// Load peak hours - counts all orders (pending/completed for staffing insights)
 function loadPeakHours(orders) {
     var hourCount = {};
     for (var i = 0; i < 24; i++) {
@@ -247,7 +228,6 @@ function loadPeakHours(orders) {
     if (!container) return;
     
     var html = '';
-    
     for (var i = 0; i < peakHours.length; i++) {
         var percent = maxCount > 0 ? (peakHours[i].count / maxCount) * 100 : 0;
         var icon = '☕';
@@ -266,16 +246,12 @@ function loadPeakHours(orders) {
         html += '</div>';
         html += '</div>';
     }
-    
     container.innerHTML = html;
 }
 
-// Load weekly chart - FIXED: Only completed orders for revenue chart
 function loadWeeklyChart(orders) {
     var days = ['Mon', 'Tue', 'Wed', 'Thu', 'Fri', 'Sat', 'Sun'];
     var dailySales = [0, 0, 0, 0, 0, 0, 0];
-    
-    // Only count completed orders for the chart
     var completedOrders = orders.filter(function(o) {
         return o.status === 'completed' || o.status === 'delivered';
     });
@@ -288,12 +264,10 @@ function loadWeeklyChart(orders) {
     }
     
     var maxSale = Math.max.apply(null, dailySales);
-    
     var container = document.getElementById('sales-chart');
     if (!container) return;
     
     var html = '';
-    
     for (var i = 0; i < days.length; i++) {
         var percent = maxSale > 0 ? (dailySales[i] / maxSale) * 100 : 0;
         var height = Math.max(percent, 4);
@@ -304,11 +278,65 @@ function loadWeeklyChart(orders) {
         html += '<div class="chart-label">' + days[i] + '</div>';
         html += '</div>';
     }
-    
     container.innerHTML = html;
 }
 
-// Load products
+async function loadSalesChart() {
+    try {
+        const orders = await apiRequest('/orders');
+        const orderList = orders.orders || [];
+        
+        const days = ['Mon', 'Tue', 'Wed', 'Thu', 'Fri', 'Sat', 'Sun'];
+        const dailySales = [0, 0, 0, 0, 0, 0, 0];
+        
+        const completedOrders = orderList.filter(o => o.status === 'completed' || o.status === 'delivered');
+        
+        completedOrders.forEach(order => {
+            const date = new Date(order.created_at);
+            const dayIndex = date.getDay();
+            const adjustedIndex = dayIndex === 0 ? 6 : dayIndex - 1;
+            dailySales[adjustedIndex] += parseFloat(order.total) || 0;
+        });
+        
+        const ctx = document.getElementById('salesChart')?.getContext('2d');
+        if (ctx && window.Chart) {
+            new Chart(ctx, {
+                type: 'line',
+                data: {
+                    labels: days,
+                    datasets: [{
+                        label: 'Sales (₱)',
+                        data: dailySales,
+                        borderColor: '#C6A43F',
+                        backgroundColor: 'rgba(198, 164, 63, 0.1)',
+                        borderWidth: 2,
+                        fill: true,
+                        tension: 0.4,
+                        pointBackgroundColor: '#C6A43F',
+                        pointBorderColor: '#fff',
+                        pointRadius: 4,
+                        pointHoverRadius: 6
+                    }]
+                },
+                options: {
+                    responsive: true,
+                    maintainAspectRatio: true,
+                    plugins: {
+                        legend: { labels: { color: '#B0B0B0' } }
+                    },
+                    scales: {
+                        y: { ticks: { color: '#B0B0B0' }, grid: { color: '#2A2A2A' } },
+                        x: { ticks: { color: '#B0B0B0' }, grid: { color: '#2A2A2A' } }
+                    }
+                }
+            });
+        }
+    } catch (error) {
+        console.error('Error loading sales chart:', error);
+    }
+}
+
+// ============ PRODUCT MANAGEMENT ============
 async function loadProducts() {
     try {
         const data = await apiRequest('/products');
@@ -316,6 +344,11 @@ async function loadProducts() {
         
         const tbody = document.getElementById('products-table-body');
         if (!tbody) return;
+        
+        if (products.length === 0) {
+            tbody.innerHTML = '<tr><td colspan="6" class="loading-cell">No products found</td></tr>';
+            return;
+        }
         
         var html = '';
         for (var i = 0; i < products.length; i++) {
@@ -327,9 +360,10 @@ async function loadProducts() {
             html += '<td>' + (product.category || '-') + '</td>';
             html += '<td>₱' + roundedPrice.toFixed(2) + '</td>';
             html += '<td>' + (product.stock_quantity || 0) + '</td>';
+            html += '<td>' + (product.is_best_seller ? '<span style="color:#C6A43F; font-size:18px;">⭐</span>' : '-') + '<td>';
             html += '<td class="action-buttons">';
-            html += '<button class="btn-edit" onclick="editProduct(' + product.id + ')">Edit</button>';
-            html += '<button class="btn-danger" onclick="deleteProduct(' + product.id + ')">Delete</button>';
+            html += '<button class="btn-edit" onclick="editProduct(' + product.id + ')"><i class="fas fa-edit"></i> Edit</button> ';
+            html += '<button class="btn-danger" onclick="deleteProduct(' + product.id + ')"><i class="fas fa-trash"></i> Delete</button>';
             html += '</td>';
             html += '</tr>';
         }
@@ -341,10 +375,14 @@ async function loadProducts() {
     }
 }
 
-// Load featured table
 function loadFeaturedTable(products) {
     var tbody = document.getElementById('featured-table-body');
     if (!tbody) return;
+    
+    if (products.length === 0) {
+        tbody.innerHTML = '<tr><td colspan="6" class="loading-cell">No products found</td></tr>';
+        return;
+    }
     
     var html = '';
     for (var i = 0; i < products.length; i++) {
@@ -355,13 +393,12 @@ function loadFeaturedTable(products) {
         html += '<td>' + (product.category || '-') + '</td>';
         html += '<td><label class="checkbox-label"><input type="checkbox" class="featured-checkbox" data-id="' + product.id + '"' + (product.is_featured ? ' checked' : '') + '></label></td>';
         html += '<td><label class="checkbox-label"><input type="checkbox" class="new-checkbox" data-id="' + product.id + '"' + (product.is_new ? ' checked' : '') + '></label></td>';
-        html += '<td><button class="btn-success" onclick="updateProductFlags(' + product.id + ')">Save</button></td>';
-        html += '</table>';
+        html += '<td><button class="btn-success" onclick="updateProductFlags(' + product.id + ')"><i class="fas fa-save"></i> Save</button></td>';
+        html += '</tr>';
     }
     tbody.innerHTML = html;
 }
 
-// Update product flags
 async function updateProductFlags(productId) {
     var featuredCheckbox = document.querySelector('.featured-checkbox[data-id="' + productId + '"]');
     var newCheckbox = document.querySelector('.new-checkbox[data-id="' + productId + '"]');
@@ -380,7 +417,7 @@ async function updateProductFlags(productId) {
     }
 }
 
-// Load orders
+// ============ ORDER MANAGEMENT ============
 async function loadOrders() {
     try {
         var data = await apiRequest('/orders');
@@ -389,21 +426,28 @@ async function loadOrders() {
         var tbody = document.getElementById('orders-table-body');
         if (!tbody) return;
         
+        if (orders.length === 0) {
+            tbody.innerHTML = '<tr><td colspan="6" class="loading-cell">No orders found</td></tr>';
+            return;
+        }
+        
         var html = '';
         for (var i = 0; i < orders.length; i++) {
             var order = orders[i];
             html += '<tr>';
             html += '<td><strong>' + order.order_number + '</strong></td>';
             html += '<td>' + escapeHtml(order.customer_name) + '<br><small>' + order.customer_phone + '</small></td>';
-            html += '<td>' + (order.items ? order.items.length : 0) + ' items</div></td>';
-            html += '<td>₱' + parseFloat(order.total).toFixed(2) + '</div></td>';
+            html += '<td>' + (order.items ? order.items.length : 0) + ' items</td>';
+            html += '<td>₱' + parseFloat(order.total).toFixed(2) + '</td>';
             html += '<td><span class="status-badge status-' + order.status + '">' + order.status + '</span></td>';
-            html += '<td><select onchange="updateOrderStatus(' + order.id + ', this.value)" style="padding: 5px; border-radius: 6px;">';
+            html += '<td>';
+            html += '<select onchange="updateOrderStatus(' + order.id + ', this.value)" style="padding: 5px; border-radius: 6px;">';
             html += '<option value="pending"' + (order.status === 'pending' ? ' selected' : '') + '>Pending</option>';
             html += '<option value="preparing"' + (order.status === 'preparing' ? ' selected' : '') + '>Preparing</option>';
             html += '<option value="ready"' + (order.status === 'ready' ? ' selected' : '') + '>Ready</option>';
             html += '<option value="completed"' + (order.status === 'completed' ? ' selected' : '') + '>Completed</option>';
-            html += '</select></td>';
+            html += '</select>';
+            html += '</td>';
             html += '</tr>';
         }
         tbody.innerHTML = html;
@@ -412,7 +456,6 @@ async function loadOrders() {
     }
 }
 
-// Update order status - REFRESH ALL DASHBOARDS
 async function updateOrderStatus(orderId, status) {
     try {
         await apiRequest('/orders/' + orderId + '/status', {
@@ -428,7 +471,24 @@ async function updateOrderStatus(orderId, status) {
     }
 }
 
-// Load users
+function filterOrdersByStatus(status) {
+    const rows = document.querySelectorAll('#orders-table-body tr');
+    if (status === 'all') {
+        rows.forEach(row => row.style.display = '');
+        return;
+    }
+    
+    rows.forEach(row => {
+        const statusCell = row.querySelector('.status-badge');
+        if (statusCell && statusCell.textContent === status) {
+            row.style.display = '';
+        } else {
+            row.style.display = 'none';
+        }
+    });
+}
+
+// ============ USER MANAGEMENT ============
 async function loadUsers() {
     try {
         var data = await apiRequest('/users');
@@ -439,7 +499,7 @@ async function loadUsers() {
         if (!tbody) return;
         
         if (users.length === 0) {
-            tbody.innerHTML = '<tr><td colspan="4" style="text-align: center;">No users found</div></div>';
+            tbody.innerHTML = '<tr><td colspan="4" class="loading-cell">No users found</td></tr>';
             return;
         }
         
@@ -448,17 +508,17 @@ async function loadUsers() {
             var user = users[i];
             var isCurrentUser = user.id === currentUser.id;
             html += '<tr>';
-            html += '<td>' + escapeHtml(user.first_name) + ' ' + escapeHtml(user.last_name) + (isCurrentUser ? ' <span style="color:#6F4E37; font-size:11px;">(You)</span>' : '') + '</div>';
-            html += '<td>' + user.email + '</div>';
-            html += '<td><span class="role-badge role-' + user.role + '">' + user.role + '</span></div>';
-            html += '<td>';
-            html += '<button class="btn-edit" onclick="editUser(' + user.id + ')">Edit</button> ';
+            html += '<td>' + escapeHtml(user.first_name) + ' ' + escapeHtml(user.last_name) + (isCurrentUser ? ' <span style="color:#C6A43F; font-size:11px;">(You)</span>' : '') + '</td>';
+            html += '<td>' + user.email + '</td>';
+            html += '<td><span class="role-badge role-' + user.role + '">' + user.role + '</span></td>';
+            html += '<td class="action-buttons">';
+            html += '<button class="btn-edit" onclick="editUser(' + user.id + ')"><i class="fas fa-edit"></i> Edit</button> ';
             if (!isCurrentUser) {
-                html += '<button class="btn-danger" onclick="deleteUser(' + user.id + ')">Delete</button>';
+                html += '<button class="btn-danger" onclick="deleteUser(' + user.id + ')"><i class="fas fa-trash"></i> Delete</button>';
             } else {
-                html += '<span style="color:#999; font-size:12px;">Cannot delete self</span>';
+                html += '<span style="color:#666; font-size:12px;">Cannot delete self</span>';
             }
-            html += '</div>';
+            html += '</td>';
             html += '</tr>';
         }
         tbody.innerHTML = html;
@@ -467,136 +527,30 @@ async function loadUsers() {
     }
 }
 
-// ============ IMAGE UPLOAD ============
-function setupImageUpload() {
-    var uploadArea = document.getElementById('upload-area');
-    if (!uploadArea) return;
-    
-    var fileInput = document.createElement('input');
-    fileInput.type = 'file';
-    fileInput.accept = 'image/*';
-    fileInput.style.display = 'none';
-    fileInput.setAttribute('data-upload', 'true');
-    document.body.appendChild(fileInput);
-    
-    var newArea = uploadArea.cloneNode(true);
-    uploadArea.parentNode.replaceChild(newArea, uploadArea);
-    
-    newArea.onclick = function(clickEvent) {
-        clickEvent.preventDefault();
-        clickEvent.stopPropagation();
-        fileInput.click();
-    };
-    
-    fileInput.onchange = function(changeEvent) {
-        changeEvent.preventDefault();
-        changeEvent.stopPropagation();
-        
-        var file = changeEvent.target.files[0];
-        if (file) {
-            uploadImageSimple(file);
-        }
-        fileInput.value = '';
-    };
-}
-
-function uploadImageSimple(file) {
-    if (file.size > 5 * 1024 * 1024) {
-        showMessage('Image too large. Max 5MB', 'error');
-        return;
-    }
-    
-    if (!file.type.startsWith('image/')) {
-        showMessage('Please upload an image file', 'error');
-        return;
-    }
-    
-    var formData = new FormData();
-    formData.append('image', file);
-    
-    showMessage('Uploading...', 'success');
-    
-    fetch(API_URL + '/upload', {
-        method: 'POST',
-        headers: {
-            'Authorization': 'Bearer ' + token
-        },
-        body: formData
-    })
-    .then(function(response) { 
-        return response.json(); 
-    })
-    .then(function(result) {
-        if (result.success) {
-            var imageUrlHidden = document.getElementById('product-image-url');
-            var imageUrlInput = document.getElementById('product-image-url-input');
-            
-            if (imageUrlHidden) {
-                imageUrlHidden.value = result.url;
-            }
-            if (imageUrlInput) {
-                imageUrlInput.value = result.url;
-            }
-            
-            var previewContainer = document.getElementById('image-preview-container');
-            var previewImg = document.getElementById('upload-preview');
-            var placeholder = document.querySelector('.upload-placeholder');
-            
-            if (previewImg) {
-                previewImg.src = result.url;
-                previewImg.style.display = 'block';
-            }
-            if (previewContainer) {
-                previewContainer.style.display = 'inline-block';
-            }
-            if (placeholder) {
-                placeholder.style.display = 'none';
-            }
-            
-            showMessage('Image uploaded! Click Save to finish.', 'success');
-        } else {
-            showMessage('Upload failed', 'error');
-        }
-    })
-    .catch(function(error) {
-        console.error('Upload error:', error);
-        showMessage('Error uploading image', 'error');
-    });
-}
-
-function removeImage() {
-    var imageUrlHidden = document.getElementById('product-image-url');
-    var imageUrlInput = document.getElementById('product-image-url-input');
-    var previewContainer = document.getElementById('image-preview-container');
-    var placeholder = document.querySelector('.upload-placeholder');
-    var previewImg = document.getElementById('upload-preview');
-    
-    if (imageUrlHidden) imageUrlHidden.value = '';
-    if (imageUrlInput) imageUrlInput.value = '';
-    if (previewContainer) previewContainer.style.display = 'none';
-    if (placeholder) placeholder.style.display = 'block';
-    if (previewImg) previewImg.src = '';
-}
-
 // ============ PRODUCT MODAL ============
-window.openProductModal = function(product) {
-    product = product || null;
+let currentProductId = null;
+
+function openProductModal(product = null) {
+    const modal = document.getElementById('product-modal');
+    if (!modal) return;
     
-    var modal = document.getElementById('product-modal');
-    if (!modal) {
-        console.error('Modal not found!');
-        return;
-    }
+    const title = document.getElementById('product-modal-title');
+    const productId = document.getElementById('product-id');
+    const productName = document.getElementById('product-name');
+    const productDesc = document.getElementById('product-description');
+    const productPrice = document.getElementById('product-price');
+    const productStock = document.getElementById('product-stock');
+    const productCategory = document.getElementById('product-category');
+    const productFeatured = document.getElementById('product-featured');
+    const productNew = document.getElementById('product-new');
+    const productBestSeller = document.getElementById('product-bestseller'); 
+    const imageUrlHidden = document.getElementById('product-image-url');
+    const imageUrlInput = document.getElementById('product-image-url-input');
+    const previewImg = document.getElementById('upload-preview');
+    const previewContainer = document.getElementById('image-preview-container');
+    const placeholder = document.querySelector('.upload-placeholder');
     
-    var productId = document.getElementById('product-id');
-    var productName = document.getElementById('product-name');
-    var productDesc = document.getElementById('product-description');
-    var productPrice = document.getElementById('product-price');
-    var productStock = document.getElementById('product-stock');
-    var productCategory = document.getElementById('product-category');
-    var productFeatured = document.getElementById('product-featured');
-    var productNew = document.getElementById('product-new');
-    
+    // Reset form
     if (productId) productId.value = '';
     if (productName) productName.value = '';
     if (productDesc) productDesc.value = '';
@@ -605,123 +559,79 @@ window.openProductModal = function(product) {
     if (productCategory) productCategory.value = 'Coffee';
     if (productFeatured) productFeatured.checked = false;
     if (productNew) productNew.checked = false;
-    
-    removeImage();
+    if (productBestSeller) productBestSeller.checked = false;
+    if (imageUrlHidden) imageUrlHidden.value = '';
+    if (imageUrlInput) imageUrlInput.value = '';
+    if (previewImg) previewImg.src = '';
+    if (previewContainer) previewContainer.style.display = 'none';
+    if (placeholder) placeholder.style.display = 'block';
     
     if (product) {
-        var title = document.getElementById('product-modal-title');
         if (title) title.textContent = 'Edit Product';
-        if (productId) productId.value = product.id || '';
-        if (productName) productName.value = product.name || '';
+        if (productId) productId.value = product.id;
+        if (productName) productName.value = product.name;
         if (productDesc) productDesc.value = product.description || '';
-        if (productPrice) productPrice.value = product.price || '';
+        if (productPrice) productPrice.value = product.price;
         if (productStock) productStock.value = product.stock_quantity || 100;
         if (productCategory) productCategory.value = product.category || 'Coffee';
         if (productFeatured) productFeatured.checked = product.is_featured || false;
         if (productNew) productNew.checked = product.is_new || false;
+        if (productBestSeller) productBestSeller.checked = product.is_best_seller || false;
         
         if (product.image_url) {
-            var imageUrlHidden = document.getElementById('product-image-url');
-            var imageUrlInput = document.getElementById('product-image-url-input');
-            var previewImg = document.getElementById('upload-preview');
-            var previewContainer = document.getElementById('image-preview-container');
-            var placeholder = document.querySelector('.upload-placeholder');
-            
             if (imageUrlHidden) imageUrlHidden.value = product.image_url;
             if (imageUrlInput) imageUrlInput.value = product.image_url;
-            if (previewImg) {
-                previewImg.src = product.image_url;
-                previewImg.style.display = 'block';
-            }
+            if (previewImg) previewImg.src = product.image_url;
             if (previewContainer) previewContainer.style.display = 'inline-block';
             if (placeholder) placeholder.style.display = 'none';
         }
     } else {
-        var title = document.getElementById('product-modal-title');
         if (title) title.textContent = 'Add Product';
     }
     
-    setupImageUpload();
-    setupFormValidation();
     modal.classList.add('active');
-};
+    setupImageUpload();
+}
 
 function closeProductModal() {
-    var modal = document.getElementById('product-modal');
+    const modal = document.getElementById('product-modal');
     if (modal) modal.classList.remove('active');
 }
 
-function setupFormValidation() {
-    var productName = document.getElementById('product-name');
-    var productPrice = document.getElementById('product-price');
-    var saveBtn = document.querySelector('#product-form .btn-primary');
-    
-    if (!saveBtn) return;
-    
-    function validateForm() {
-        var name = productName ? productName.value.trim() : '';
-        var price = productPrice ? productPrice.value : '';
-        var valid = name && price && parseFloat(price) > 0;
-        saveBtn.disabled = !valid;
-        saveBtn.style.opacity = valid ? '1' : '0.5';
-        saveBtn.style.cursor = valid ? 'pointer' : 'not-allowed';
-    }
-    
-    if (productName) productName.addEventListener('input', validateForm);
-    if (productPrice) productPrice.addEventListener('input', validateForm);
-    validateForm();
-}
-
-// Save product
 async function saveProduct() {
-    var productNameInput = document.getElementById('product-name');
-    var productPriceInput = document.getElementById('product-price');
-    
-    var productName = productNameInput ? productNameInput.value.trim() : '';
-    var productPrice = productPriceInput ? productPriceInput.value : '';
+    const productId = document.getElementById('product-id')?.value;
+    const productName = document.getElementById('product-name')?.value.trim();
+    const productPrice = document.getElementById('product-price')?.value;
+    const imageUrl = document.getElementById('product-image-url')?.value || '';
+    const manualUrl = document.getElementById('product-image-url-input')?.value || '';
+    const finalImageUrl = imageUrl || manualUrl;
     
     if (!productName || !productPrice || parseFloat(productPrice) <= 0) {
         showMessage('Please fill in product name and price', 'error');
         return false;
     }
     
-    var imageUrl = document.getElementById('product-image-url') ? document.getElementById('product-image-url').value : '';
-    var manualUrl = document.getElementById('product-image-url-input') ? document.getElementById('product-image-url-input').value : '';
-    
-    var finalImageUrl = imageUrl || manualUrl;
-    
-    var submitBtn = document.querySelector('#product-form .btn-primary');
-    var originalText = submitBtn ? submitBtn.textContent : 'Save Product';
-    if (submitBtn) {
-        submitBtn.disabled = true;
-        submitBtn.textContent = 'Saving...';
-    }
-    
-    var roundedPrice = Math.round(parseFloat(productPrice) * 100) / 100;
-    
-    var productData = {
+    const productData = {
         name: productName,
-        description: document.getElementById('product-description') ? document.getElementById('product-description').value : '',
-        price: roundedPrice,
-        stock_quantity: parseInt(document.getElementById('product-stock') ? document.getElementById('product-stock').value : 0) || 0,
-        category: document.getElementById('product-category') ? document.getElementById('product-category').value : 'Coffee',
+        description: document.getElementById('product-description')?.value || '',
+        price: parseFloat(productPrice),
+        stock_quantity: parseInt(document.getElementById('product-stock')?.value) || 0,
+        category: document.getElementById('product-category')?.value || 'Coffee',
         image_url: finalImageUrl,
-        is_featured: document.getElementById('product-featured') ? document.getElementById('product-featured').checked : false,
-        is_new: document.getElementById('product-new') ? document.getElementById('product-new').checked : false
+        is_featured: document.getElementById('product-featured')?.checked || false,
+        is_new: document.getElementById('product-new')?.checked || false,
+        is_best_seller: document.getElementById('product-bestseller')?.checked || false 
     };
     
-    var productId = document.getElementById('product-id') ? document.getElementById('product-id').value : '';
-    
     try {
-        var response;
         if (productId) {
-            response = await apiRequest('/products/' + productId, {
+            await apiRequest('/products/' + productId, {
                 method: 'PUT',
                 body: JSON.stringify(productData)
             });
             showMessage('Product updated!', 'success');
         } else {
-            response = await apiRequest('/products', {
+            await apiRequest('/products', {
                 method: 'POST',
                 body: JSON.stringify(productData)
             });
@@ -735,23 +645,20 @@ async function saveProduct() {
     } catch (error) {
         console.error('Error saving product:', error);
         showMessage('Error saving product', 'error');
-    } finally {
-        if (submitBtn) {
-            submitBtn.disabled = false;
-            submitBtn.textContent = originalText;
-        }
     }
     return false;
 }
 
-// Edit product
-window.editProduct = async function(productId) {
-    var data = await apiRequest('/products/' + productId);
-    if (data.product) window.openProductModal(data.product);
-};
+async function editProduct(productId) {
+    try {
+        const data = await apiRequest('/products/' + productId);
+        if (data.product) openProductModal(data.product);
+    } catch (error) {
+        showMessage('Error loading product', 'error');
+    }
+}
 
-// Delete product
-window.deleteProduct = async function(productId) {
+async function deleteProduct(productId) {
     if (confirm('Are you sure you want to delete this product?')) {
         try {
             await apiRequest('/products/' + productId, { method: 'DELETE' });
@@ -763,21 +670,201 @@ window.deleteProduct = async function(productId) {
             showMessage('Error deleting product', 'error');
         }
     }
-};
+}
+
+// ============ IMAGE UPLOAD ============
+function setupImageUpload() {
+    const uploadArea = document.getElementById('upload-area');
+    if (!uploadArea) return;
+    
+    const fileInput = document.createElement('input');
+    fileInput.type = 'file';
+    fileInput.accept = 'image/*';
+    fileInput.style.display = 'none';
+    document.body.appendChild(fileInput);
+    
+    const newArea = uploadArea.cloneNode(true);
+    uploadArea.parentNode.replaceChild(newArea, uploadArea);
+    
+    newArea.onclick = function(e) {
+        e.preventDefault();
+        fileInput.click();
+    };
+    
+    fileInput.onchange = function(e) {
+        const file = e.target.files[0];
+        if (file) uploadImage(file);
+        fileInput.value = '';
+    };
+}
+
+function uploadImage(file) {
+    if (file.size > 5 * 1024 * 1024) {
+        showMessage('Image too large. Max 5MB', 'error');
+        return;
+    }
+    
+    if (!file.type.startsWith('image/')) {
+        showMessage('Please upload an image file', 'error');
+        return;
+    }
+    
+    const formData = new FormData();
+    formData.append('image', file);
+    
+    showMessage('Uploading...', 'success');
+    
+    fetch(API_URL + '/upload', {
+        method: 'POST',
+        headers: { 'Authorization': 'Bearer ' + token },
+        body: formData
+    })
+    .then(response => response.json())
+    .then(result => {
+        if (result.success) {
+            const imageUrlHidden = document.getElementById('product-image-url');
+            const imageUrlInput = document.getElementById('product-image-url-input');
+            const previewImg = document.getElementById('upload-preview');
+            const previewContainer = document.getElementById('image-preview-container');
+            const placeholder = document.querySelector('.upload-placeholder');
+            
+            if (imageUrlHidden) imageUrlHidden.value = result.url;
+            if (imageUrlInput) imageUrlInput.value = result.url;
+            if (previewImg) previewImg.src = result.url;
+            if (previewContainer) previewContainer.style.display = 'inline-block';
+            if (placeholder) placeholder.style.display = 'none';
+            
+            showMessage('Image uploaded! Click Save to finish.', 'success');
+        } else {
+            showMessage('Upload failed', 'error');
+        }
+    })
+    .catch(error => {
+        console.error('Upload error:', error);
+        showMessage('Error uploading image', 'error');
+    });
+}
+
+function removeImage() {
+    const imageUrlHidden = document.getElementById('product-image-url');
+    const imageUrlInput = document.getElementById('product-image-url-input');
+    const previewContainer = document.getElementById('image-preview-container');
+    const placeholder = document.querySelector('.upload-placeholder');
+    const previewImg = document.getElementById('upload-preview');
+    
+    if (imageUrlHidden) imageUrlHidden.value = '';
+    if (imageUrlInput) imageUrlInput.value = '';
+    if (previewContainer) previewContainer.style.display = 'none';
+    if (placeholder) placeholder.style.display = 'block';
+    if (previewImg) previewImg.src = '';
+}
+
+// ============ USER MODAL ============
+function openUserModal(user = null) {
+    const modal = document.getElementById('user-modal');
+    if (!modal) return;
+    
+    const title = document.getElementById('user-modal-title');
+    const userId = document.getElementById('user-id');
+    const firstName = document.getElementById('user-firstname');
+    const lastName = document.getElementById('user-lastname');
+    const email = document.getElementById('user-email');
+    const password = document.getElementById('user-password');
+    const role = document.getElementById('user-role');
+    
+    if (title) title.textContent = user ? 'Edit User' : 'Add Staff Account';
+    if (userId) userId.value = user?.id || '';
+    if (firstName) firstName.value = user?.first_name || '';
+    if (lastName) lastName.value = user?.last_name || '';
+    if (email) email.value = user?.email || '';
+    if (password) { password.value = ''; password.required = !user; }
+    if (role) role.value = user?.role || 'staff';
+    
+    modal.classList.add('active');
+}
+
+function closeUserModal() {
+    const modal = document.getElementById('user-modal');
+    if (modal) modal.classList.remove('active');
+}
+
+async function saveUser() {
+    const userId = document.getElementById('user-id')?.value;
+    const userData = {
+        first_name: document.getElementById('user-firstname')?.value,
+        last_name: document.getElementById('user-lastname')?.value,
+        email: document.getElementById('user-email')?.value,
+        password: document.getElementById('user-password')?.value,
+        role: document.getElementById('user-role')?.value
+    };
+    
+    if (!userData.first_name || !userData.last_name || !userData.email) {
+        showMessage('Please fill in all required fields', 'error');
+        return;
+    }
+    
+    if (!userId && !userData.password) {
+        showMessage('Password is required for new users', 'error');
+        return;
+    }
+    
+    try {
+        if (userId) {
+            await apiRequest('/users/' + userId, {
+                method: 'PUT',
+                body: JSON.stringify(userData)
+            });
+            showMessage('User updated!', 'success');
+        } else {
+            await apiRequest('/users', {
+                method: 'POST',
+                body: JSON.stringify(userData)
+            });
+            showMessage('User added!', 'success');
+        }
+        
+        closeUserModal();
+        loadUsers();
+    } catch (error) {
+        showMessage('Error saving user', 'error');
+    }
+}
+
+async function editUser(userId) {
+    try {
+        const data = await apiRequest('/users/' + userId);
+        if (data.user) openUserModal(data.user);
+    } catch (error) {
+        showMessage('Error loading user', 'error');
+    }
+}
+
+async function deleteUser(userId) {
+    if (confirm('Are you sure you want to delete this user?')) {
+        try {
+            await apiRequest('/users/' + userId, { method: 'DELETE' });
+            showMessage('User deleted', 'success');
+            loadUsers();
+        } catch (error) {
+            showMessage('Error deleting user', 'error');
+        }
+    }
+}
 
 // ============ INVENTORY MANAGEMENT ============
+let inventoryItems = [];
 
-// Load all inventory items
 async function loadInventory() {
     try {
         const response = await apiRequest('/inventory');
         const items = response.items || [];
+        inventoryItems = items;
         
         const tbody = document.getElementById('inventory-table-body');
         if (!tbody) return;
         
         if (items.length === 0) {
-            tbody.innerHTML = '<tr><td colspan="7" style="text-align: center;">No ingredients found</div></div>';
+            tbody.innerHTML = '<tr><td colspan="5" class="loading-cell">No ingredients found</td></tr>';
             return;
         }
         
@@ -786,13 +873,11 @@ async function loadInventory() {
         var html = '';
         for (var i = 0; i < items.length; i++) {
             var item = items[i];
-            var stockStatus = '';
-            var statusText = '';
-            
             var stockQty = parseFloat(item.stock_quantity) || 0;
             var minStock = parseFloat(item.min_stock_level) || 0;
-            var costPerUnit = parseFloat(item.cost_per_unit) || 0;
             
+            var stockStatus = '';
+            var statusText = '';
             if (stockQty <= 0) {
                 stockStatus = 'stock-critical';
                 statusText = '⚠️ Out of Stock';
@@ -809,13 +894,11 @@ async function loadInventory() {
             html += '<td>' + stockQty + ' ' + escapeHtml(item.unit) + '</td>';
             html += '<td>' + minStock + ' ' + escapeHtml(item.unit) + '</td>';
             html += '<td><span class="stock-badge ' + stockStatus + '">' + statusText + '</span></td>';
-            html += '<td>₱' + costPerUnit.toFixed(2) + '</td>';
-            html += '<td>' + escapeHtml(item.supplier || '-') + '</td>';
             html += '<td class="action-buttons">';
-            html += '<button class="btn-edit" onclick="openAddStockModal(' + item.id + ', \'' + escapeHtml(item.name) + '\', ' + stockQty + ', \'' + escapeHtml(item.unit) + '\')">➕ Add Stock</button>';
-            html += '<button class="btn-danger" onclick="deleteInventoryItem(' + item.id + ')">Delete</button>';
+            html += '<button class="btn-edit" onclick="openAddStockModal(' + item.id + ', \'' + escapeHtml(item.name) + '\', ' + stockQty + ', \'' + escapeHtml(item.unit) + '\')"><i class="fas fa-plus"></i> Add Stock</button> ';
+            html += '<button class="btn-danger" onclick="deleteInventoryItem(' + item.id + ')"><i class="fas fa-trash"></i> Delete</button>';
             html += '</td>';
-            html += '</tr>';
+            html += '<tr>';
         }
         tbody.innerHTML = html;
         
@@ -824,10 +907,6 @@ async function loadInventory() {
         
     } catch (error) {
         console.error('Error loading inventory:', error);
-        var tbody = document.getElementById('inventory-table-body');
-        if (tbody) {
-            tbody.innerHTML = '<tr><td colspan="7" style="text-align: center;">Error loading inventory. Please refresh.</div></div>';
-        }
     }
 }
 
@@ -851,15 +930,13 @@ function checkLowStock(items) {
     if (!alertContainer) return;
     
     var html = '';
-    
     if (outOfStockItems.length > 0) {
         html += '<div class="low-stock-alert warning">';
         html += '<div><strong>⚠️ Out of Stock!</strong> These items need immediate restock:<br>';
         for (var i = 0; i < outOfStockItems.length; i++) {
             html += '<span class="low-stock-item">' + escapeHtml(outOfStockItems[i].name) + '</span>';
         }
-        html += '</div>';
-        html += '</div>';
+        html += '</div></div>';
     }
     
     if (lowStockItems.length > 0) {
@@ -869,112 +946,428 @@ function checkLowStock(items) {
             var stockQty = parseFloat(lowStockItems[i].stock_quantity) || 0;
             html += '<span class="low-stock-item">' + escapeHtml(lowStockItems[i].name) + ' (' + stockQty + ' ' + lowStockItems[i].unit + ' left)</span>';
         }
-        html += '</div>';
-        html += '</div>';
+        html += '</div></div>';
     }
     
     alertContainer.innerHTML = html;
 }
 
-// [REST OF INVENTORY FUNCTIONS REMAIN THE SAME...]
-// (loadRecipes, loadTransactions, openAddStockModal, updateStockPreview, closeAddStockModal, 
-//  openAddInventoryModal, closeAddInventoryModal, loadProductsForRecipe, loadIngredientsForRecipe,
-//  addRecipeIngredientRow, openAddRecipeModal, closeAddRecipeModal, viewRecipe, closeViewRecipeModal,
-//  deleteInventoryItem, deleteRecipe, form submissions, switchInventoryTab, etc.)
+async function loadRecipes() {
+    try {
+        const response = await apiRequest('/recipes');
+        const recipes = response.recipes || [];
+        
+        const tbody = document.getElementById('recipes-table-body');
+        if (!tbody) return;
+        
+        if (recipes.length === 0) {
+            tbody.innerHTML = '<tr><td colspan="4" class="loading-cell">No recipes found</div></div>';
+            return;
+        }
+        
+        var html = '';
+        for (var i = 0; i < recipes.length; i++) {
+            var recipe = recipes[i];
+            var ingredientsCount = recipe.ingredients ? recipe.ingredients.length : 0;
+            html += '<tr>';
+            html += '<td><strong>' + escapeHtml(recipe.name) + '</strong></td>';
+            html += '<td>' + ingredientsCount + ' ingredients</div></td>';
+            html += '<td>' + (recipe.prep_time || 5) + ' min</div></td>';
+            html += '<td class="action-buttons">';
+            html += '<button class="btn-edit" onclick="viewRecipe(' + recipe.id + ')"><i class="fas fa-eye"></i> View</button> ';
+            html += '<button class="btn-danger" onclick="deleteRecipe(' + recipe.id + ')"><i class="fas fa-trash"></i> Delete</button>';
+            html += '</div>';
+            html += '</tr>';
+        }
+        tbody.innerHTML = html;
+    } catch (error) {
+        console.error('Error loading recipes:', error);
+    }
+}
 
-// ============ USER MODAL ============
-window.openUserModal = function(user) {
-    user = user || null;
-    var modal = document.getElementById('user-modal');
+async function loadTransactions() {
+    try {
+        const response = await apiRequest('/inventory/transactions/all');
+        const transactions = response.transactions || [];
+        
+        const tbody = document.getElementById('transactions-table-body');
+        if (!tbody) return;
+        
+        if (transactions.length === 0) {
+            tbody.innerHTML = '<tr><td colspan="4" class="loading-cell">No transactions found</div></div>';
+            return;
+        }
+        
+        var html = '';
+        for (var i = 0; i < transactions.length; i++) {
+            var trans = transactions[i];
+            var date = new Date(trans.created_at).toLocaleString();
+            var typeIcon = trans.transaction_type === 'add' ? '+' : '-';
+            var typeColor = trans.transaction_type === 'add' ? '#10b981' : '#ef4444';
+            html += '<tr>';
+            html += '<td>' + date + '</div>';
+            html += '<td>' + escapeHtml(trans.item_name) + '</div>';
+            html += '<td><span style="color: ' + typeColor + ';">' + typeIcon + ' ' + trans.transaction_type + '</span></div>';
+            html += '<td>' + trans.quantity + '</div>';
+            html += '</tr>';
+        }
+        tbody.innerHTML = html;
+    } catch (error) {
+        console.error('Error loading transactions:', error);
+    }
+}
+
+let currentStockItem = null;
+
+function openAddStockModal(itemId, itemName, currentStock, unit) {
+    currentStockItem = { id: itemId, name: itemName, currentStock: currentStock, unit: unit };
+    
+    const modal = document.getElementById('add-stock-modal');
     if (!modal) return;
     
-    if (user) {
-        var title = document.getElementById('user-modal-title');
-        var userId = document.getElementById('user-id');
-        var firstName = document.getElementById('user-firstname');
-        var lastName = document.getElementById('user-lastname');
-        var email = document.getElementById('user-email');
-        var password = document.getElementById('user-password');
-        var role = document.getElementById('user-role');
-        
-        if (title) title.textContent = 'Edit User';
-        if (userId) userId.value = user.id;
-        if (firstName) firstName.value = user.first_name;
-        if (lastName) lastName.value = user.last_name;
-        if (email) email.value = user.email;
-        if (password) { password.value = ''; password.required = false; }
-        if (role) role.value = user.role;
-    } else {
-        var title = document.getElementById('user-modal-title');
-        var form = document.getElementById('user-form');
-        var userId = document.getElementById('user-id');
-        var password = document.getElementById('user-password');
-        var role = document.getElementById('user-role');
-        
-        if (title) title.textContent = 'Add Staff Account';
-        if (form) form.reset();
-        if (userId) userId.value = '';
-        if (password) password.required = true;
-        if (role) role.value = 'staff';
-    }
+    document.getElementById('stock-item-id').value = itemId;
+    document.getElementById('stock-item-name').value = itemName;
+    document.getElementById('stock-current').value = currentStock + ' ' + unit;
+    document.getElementById('stock-boxes').value = '1';
+    document.getElementById('stock-per-box').value = '1';
+    document.getElementById('stock-cost-box').value = '';
     
+    updateStockPreview();
     modal.classList.add('active');
-};
+}
 
-window.closeUserModal = function() {
-    var modal = document.getElementById('user-modal');
-    if (modal) modal.classList.remove('active');
-};
-
-window.saveUser = async function() {
-    var userData = {
-        first_name: document.getElementById('user-firstname') ? document.getElementById('user-firstname').value : '',
-        last_name: document.getElementById('user-lastname') ? document.getElementById('user-lastname').value : '',
-        email: document.getElementById('user-email') ? document.getElementById('user-email').value : '',
-        password: document.getElementById('user-password') ? document.getElementById('user-password').value : '',
-        role: document.getElementById('user-role') ? document.getElementById('user-role').value : ''
-    };
+function updateStockPreview() {
+    const boxes = parseFloat(document.getElementById('stock-boxes')?.value) || 0;
+    const perBox = parseFloat(document.getElementById('stock-per-box')?.value) || 0;
+    const totalToAdd = boxes * perBox;
+    const currentStock = currentStockItem?.currentStock || 0;
+    const newStock = currentStock + totalToAdd;
+    const costBox = parseFloat(document.getElementById('stock-cost-box')?.value) || 0;
+    const totalCost = boxes * costBox;
     
-    var userId = document.getElementById('user-id') ? document.getElementById('user-id').value : '';
+    const totalAddEl = document.getElementById('stock-total-add');
+    const newStockEl = document.getElementById('stock-new');
+    const totalCostEl = document.getElementById('stock-total-cost');
+    
+    if (totalAddEl) totalAddEl.value = totalToAdd;
+    if (newStockEl) newStockEl.value = newStock + ' ' + (currentStockItem?.unit || '');
+    if (totalCostEl) totalCostEl.value = '₱' + totalCost.toFixed(2);
+}
+
+function closeAddStockModal() {
+    const modal = document.getElementById('add-stock-modal');
+    if (modal) modal.classList.remove('active');
+    currentStockItem = null;
+}
+
+async function submitAddStock(e) {
+    e.preventDefault();
+    const itemId = document.getElementById('stock-item-id')?.value;
+    const boxes = parseFloat(document.getElementById('stock-boxes')?.value) || 0;
+    const perBox = parseFloat(document.getElementById('stock-per-box')?.value) || 0;
+    const quantity = boxes * perBox;
+    const cost = parseFloat(document.getElementById('stock-cost-box')?.value) || 0;
+    
+    if (quantity <= 0) {
+        showMessage('Please enter a valid quantity', 'error');
+        return;
+    }
     
     try {
-        if (userId) {
-            await apiRequest('/users/' + userId, {
-                method: 'PUT',
-                body: JSON.stringify(userData)
+        await apiRequest('/inventory/' + itemId + '/add-stock', {
+            method: 'POST',
+            body: JSON.stringify({ quantity: quantity, cost: cost, note: 'Added via admin panel' })
+        });
+        showMessage('Stock added successfully!', 'success');
+        closeAddStockModal();
+        loadInventory();
+    } catch (error) {
+        showMessage('Error adding stock', 'error');
+    }
+}
+
+function openAddInventoryModal() {
+    const modal = document.getElementById('add-inventory-modal');
+    if (modal) {
+        document.getElementById('add-inventory-form')?.reset();
+        modal.classList.add('active');
+    }
+}
+
+function closeAddInventoryModal() {
+    const modal = document.getElementById('add-inventory-modal');
+    if (modal) modal.classList.remove('active');
+}
+
+async function submitAddInventory(e) {
+    e.preventDefault();
+    const itemData = {
+        name: document.getElementById('inv-name')?.value,
+        unit: document.getElementById('inv-unit')?.value,
+        stock_quantity: parseFloat(document.getElementById('inv-stock')?.value) || 0,
+        min_stock_level: parseFloat(document.getElementById('inv-min-stock')?.value) || 0,
+        cost_per_unit: parseFloat(document.getElementById('inv-cost')?.value) || 0,
+        supplier: document.getElementById('inv-supplier')?.value,
+        category: document.getElementById('inv-category')?.value
+    };
+    
+    if (!itemData.name || !itemData.unit) {
+        showMessage('Please fill in name and unit', 'error');
+        return;
+    }
+    
+    try {
+        await apiRequest('/inventory', {
+            method: 'POST',
+            body: JSON.stringify(itemData)
+        });
+        showMessage('Ingredient added!', 'success');
+        closeAddInventoryModal();
+        loadInventory();
+    } catch (error) {
+        showMessage('Error adding ingredient', 'error');
+    }
+}
+
+async function deleteInventoryItem(itemId) {
+    if (confirm('Are you sure you want to delete this ingredient?')) {
+        try {
+            await apiRequest('/inventory/' + itemId, { method: 'DELETE' });
+            showMessage('Ingredient deleted', 'success');
+            loadInventory();
+        } catch (error) {
+            showMessage('Error deleting ingredient', 'error');
+        }
+    }
+}
+
+// ============ RECIPE MODAL ============
+let allProductsList = [];
+let allIngredientsList = [];
+
+async function loadProductsForRecipe() {
+    try {
+        const data = await apiRequest('/products');
+        allProductsList = data.products || [];
+        
+        const select = document.getElementById('recipe-product-id');
+        if (select) {
+            select.innerHTML = '<option value="">Select a product</option>' + 
+                allProductsList.map(p => `<option value="${p.id}">${escapeHtml(p.name)} (₱${p.price})</option>`).join('');
+        }
+    } catch (error) {
+        console.error('Error loading products:', error);
+    }
+}
+
+async function loadIngredientsForRecipe() {
+    try {
+        const data = await apiRequest('/inventory');
+        allIngredientsList = data.items || [];
+        
+        const selects = document.querySelectorAll('.recipe-ingredient-select');
+        selects.forEach(select => {
+            if (select && select.options.length <= 1) {
+                select.innerHTML = '<option value="">Select Ingredient</option>' + 
+                    allIngredientsList.map(i => `<option value="${i.id}" data-unit="${i.unit}">${escapeHtml(i.name)} (${i.stock_quantity} ${i.unit} left)</option>`).join('');
+            }
+        });
+    } catch (error) {
+        console.error('Error loading ingredients:', error);
+    }
+}
+
+function addRecipeIngredientRow() {
+    const container = document.getElementById('recipe-ingredients-list');
+    if (!container) return;
+    
+    const row = document.createElement('div');
+    row.className = 'recipe-ingredient-row';
+    row.style.cssText = 'display: flex; gap: 10px; margin-bottom: 10px;';
+    row.innerHTML = `
+        <select class="recipe-ingredient-select" style="flex: 2;" required>
+            <option value="">Select Ingredient</option>
+            ${allIngredientsList.map(i => `<option value="${i.id}" data-unit="${i.unit}">${escapeHtml(i.name)} (${i.stock_quantity} ${i.unit} left)</option>`).join('')}
+        </select>
+        <input type="number" class="recipe-ingredient-quantity" placeholder="Qty" style="flex: 1;" step="0.01" required>
+        <input type="text" class="recipe-ingredient-unit" placeholder="Unit" style="flex: 1;" readonly>
+        <button type="button" class="btn-danger" onclick="this.parentElement.remove()" style="padding: 5px 10px;">✕</button>
+    `;
+    
+    const quantityInput = row.querySelector('.recipe-ingredient-quantity');
+    const unitInput = row.querySelector('.recipe-ingredient-unit');
+    const select = row.querySelector('.recipe-ingredient-select');
+    
+    select.addEventListener('change', function() {
+        const selectedOption = this.options[this.selectedIndex];
+        const unit = selectedOption.getAttribute('data-unit');
+        if (unitInput) unitInput.value = unit || '';
+    });
+    
+    container.appendChild(row);
+}
+
+function openAddRecipeModal() {
+    const modal = document.getElementById('add-recipe-modal');
+    if (!modal) return;
+    
+    const container = document.getElementById('recipe-ingredients-list');
+    if (container) {
+        container.innerHTML = `
+            <div class="recipe-ingredient-row" style="display: flex; gap: 10px; margin-bottom: 10px;">
+                <select class="recipe-ingredient-select" style="flex: 2;" required>
+                    <option value="">Select Ingredient</option>
+                </select>
+                <input type="number" class="recipe-ingredient-quantity" placeholder="Qty" style="flex: 1;" step="0.01" required>
+                <input type="text" class="recipe-ingredient-unit" placeholder="Unit" style="flex: 1;" readonly>
+                <button type="button" class="btn-danger" onclick="this.parentElement.remove()" style="padding: 5px 10px;">✕</button>
+            </div>
+        `;
+    }
+    
+    document.getElementById('add-recipe-form')?.reset();
+    document.getElementById('recipe-name').value = '';
+    document.getElementById('recipe-instructions').value = '';
+    document.getElementById('recipe-prep-time').value = '5';
+    
+    loadProductsForRecipe();
+    loadIngredientsForRecipe();
+    
+    modal.classList.add('active');
+}
+
+function closeAddRecipeModal() {
+    const modal = document.getElementById('add-recipe-modal');
+    if (modal) modal.classList.remove('active');
+}
+
+async function submitAddRecipe(e) {
+    e.preventDefault();
+    
+    const productId = document.getElementById('recipe-product-id')?.value;
+    const recipeName = document.getElementById('recipe-name')?.value.trim();
+    const instructions = document.getElementById('recipe-instructions')?.value;
+    const prepTime = document.getElementById('recipe-prep-time')?.value;
+    
+    if (!productId || !recipeName) {
+        showMessage('Please select a product and enter recipe name', 'error');
+        return;
+    }
+    
+    const ingredientRows = document.querySelectorAll('#recipe-ingredients-list .recipe-ingredient-row');
+    const ingredients = [];
+    
+    for (var i = 0; i < ingredientRows.length; i++) {
+        const row = ingredientRows[i];
+        const ingredientId = row.querySelector('.recipe-ingredient-select')?.value;
+        const quantity = row.querySelector('.recipe-ingredient-quantity')?.value;
+        
+        if (ingredientId && quantity && parseFloat(quantity) > 0) {
+            ingredients.push({
+                inventory_item_id: parseInt(ingredientId),
+                quantity: parseFloat(quantity)
             });
-            showMessage('User updated!', 'success');
-        } else {
-            await apiRequest('/users', {
-                method: 'POST',
-                body: JSON.stringify(userData)
-            });
-            showMessage('User added!', 'success');
+        }
+    }
+    
+    if (ingredients.length === 0) {
+        showMessage('Please add at least one ingredient', 'error');
+        return;
+    }
+    
+    try {
+        await apiRequest('/recipes', {
+            method: 'POST',
+            body: JSON.stringify({
+                product_id: productId,
+                name: recipeName,
+                instructions: instructions,
+                prep_time: prepTime || 5,
+                ingredients: ingredients
+            })
+        });
+        showMessage('Recipe added successfully!', 'success');
+        closeAddRecipeModal();
+        loadInventory();
+    } catch (error) {
+        showMessage('Error adding recipe', 'error');
+    }
+}
+
+async function viewRecipe(recipeId) {
+    try {
+        const response = await apiRequest('/recipes/' + recipeId);
+        const recipe = response.recipe;
+        
+        if (!recipe) {
+            showMessage('Recipe not found', 'error');
+            return;
         }
         
-        closeUserModal();
-        loadUsers();
+        const modal = document.getElementById('view-recipe-modal');
+        const title = document.getElementById('recipe-modal-title');
+        const details = document.getElementById('recipe-details');
+        
+        if (title) title.textContent = recipe.name;
+        
+        let ingredientsHtml = '<ul style="margin-top: 10px;">';
+        if (recipe.ingredients && recipe.ingredients.length > 0) {
+            for (var i = 0; i < recipe.ingredients.length; i++) {
+                var ing = recipe.ingredients[i];
+                ingredientsHtml += '<li>' + escapeHtml(ing.ingredient_name) + ' - ' + ing.quantity + ' ' + ing.unit + '</li>';
+            }
+        } else {
+            ingredientsHtml += '<li>No ingredients listed</li>';
+        }
+        ingredientsHtml += '</ul>';
+        
+        if (details) {
+            details.innerHTML = `
+                <p><strong>Product:</strong> ${escapeHtml(recipe.product_name || 'N/A')}</p>
+                <p><strong>Prep Time:</strong> ${recipe.prep_time || 5} minutes</p>
+                <p><strong>Instructions:</strong></p>
+                <p>${escapeHtml(recipe.instructions || 'No instructions provided')}</p>
+                <p><strong>Ingredients:</strong></p>
+                ${ingredientsHtml}
+            `;
+        }
+        
+        modal.classList.add('active');
     } catch (error) {
-        showMessage('Error saving user', 'error');
+        showMessage('Error loading recipe', 'error');
     }
-};
+}
 
-window.editUser = async function(userId) {
-    var data = await apiRequest('/users/' + userId);
-    if (data.user) openUserModal(data.user);
-};
+function closeViewRecipeModal() {
+    const modal = document.getElementById('view-recipe-modal');
+    if (modal) modal.classList.remove('active');
+}
 
-window.deleteUser = async function(userId) {
-    if (confirm('Are you sure you want to delete this user?')) {
+async function deleteRecipe(recipeId) {
+    if (confirm('Are you sure you want to delete this recipe?')) {
         try {
-            await apiRequest('/users/' + userId, { method: 'DELETE' });
-            showMessage('User deleted', 'success');
-            loadUsers();
+            await apiRequest('/recipes/' + recipeId, { method: 'DELETE' });
+            showMessage('Recipe deleted', 'success');
+            loadInventory();
         } catch (error) {
-            showMessage('Error deleting user', 'error');
+            showMessage('Error deleting recipe', 'error');
         }
     }
-};
+}
+
+function switchInventoryTab(tabName) {
+    const tabs = document.querySelectorAll('.inventory-tab');
+    const contents = document.querySelectorAll('.inventory-tab-content');
+    
+    tabs.forEach(tab => tab.classList.remove('active'));
+    contents.forEach(content => content.classList.remove('active'));
+    
+    const activeTab = document.querySelector(`.inventory-tab[data-tab="${tabName}"]`);
+    if (activeTab) activeTab.classList.add('active');
+    
+    const activeContent = document.getElementById(`${tabName}-tab`);
+    if (activeContent) activeContent.classList.add('active');
+}
 
 // ============ SETTINGS ============
 async function loadSettings() {
@@ -982,15 +1375,16 @@ async function loadSettings() {
         var response = await apiRequest('/settings');
         var settings = response.settings || {};
         
-        var cafeName = document.getElementById('setting_cafe_name');
-        var cafeAddress = document.getElementById('setting_cafe_address');
-        var cafePhone = document.getElementById('setting_cafe_phone');
-        var cafeEmail = document.getElementById('setting_cafe_email');
-        var cafeHours = document.getElementById('setting_cafe_hours');
-        var prepTime = document.getElementById('setting_prep_time');
-        var ordersEnabled = document.getElementById('setting_orders_enabled');
-        var facebookUrl = document.getElementById('setting_facebook_url');
-        var instagramUrl = document.getElementById('setting_instagram_url');
+        const cafeName = document.getElementById('setting_cafe_name');
+        const cafeAddress = document.getElementById('setting_cafe_address');
+        const cafePhone = document.getElementById('setting_cafe_phone');
+        const cafeEmail = document.getElementById('setting_cafe_email');
+        const cafeHours = document.getElementById('setting_cafe_hours');
+        const prepTime = document.getElementById('setting_prep_time');
+        const ordersEnabled = document.getElementById('setting_orders_enabled');
+        const facebookUrl = document.getElementById('setting_facebook_url');
+        const instagramUrl = document.getElementById('setting_instagram_url');
+        const twitterUrl = document.getElementById('setting_twitter_url');
         
         if (cafeName) cafeName.value = settings.cafe_name || '';
         if (cafeAddress) cafeAddress.value = settings.cafe_address || '';
@@ -1001,6 +1395,7 @@ async function loadSettings() {
         if (ordersEnabled) ordersEnabled.checked = settings.orders_enabled === 'true';
         if (facebookUrl) facebookUrl.value = settings.facebook_url || '';
         if (instagramUrl) instagramUrl.value = settings.instagram_url || '';
+        if (twitterUrl) twitterUrl.value = settings.twitter_url || '';
     } catch (error) {
         console.error('Error loading settings:', error);
     }
@@ -1010,15 +1405,16 @@ async function saveSettings(e) {
     e.preventDefault();
     
     var settingsData = {
-        cafe_name: document.getElementById('setting_cafe_name') ? document.getElementById('setting_cafe_name').value : '',
-        cafe_address: document.getElementById('setting_cafe_address') ? document.getElementById('setting_cafe_address').value : '',
-        cafe_phone: document.getElementById('setting_cafe_phone') ? document.getElementById('setting_cafe_phone').value : '',
-        cafe_email: document.getElementById('setting_cafe_email') ? document.getElementById('setting_cafe_email').value : '',
-        cafe_hours: document.getElementById('setting_cafe_hours') ? document.getElementById('setting_cafe_hours').value : '',
-        prep_time: document.getElementById('setting_prep_time') ? document.getElementById('setting_prep_time').value : '15',
-        orders_enabled: (document.getElementById('setting_orders_enabled') ? document.getElementById('setting_orders_enabled').checked : false).toString(),
-        facebook_url: document.getElementById('setting_facebook_url') ? document.getElementById('setting_facebook_url').value : '',
-        instagram_url: document.getElementById('setting_instagram_url') ? document.getElementById('setting_instagram_url').value : ''
+        cafe_name: document.getElementById('setting_cafe_name')?.value || '',
+        cafe_address: document.getElementById('setting_cafe_address')?.value || '',
+        cafe_phone: document.getElementById('setting_cafe_phone')?.value || '',
+        cafe_email: document.getElementById('setting_cafe_email')?.value || '',
+        cafe_hours: document.getElementById('setting_cafe_hours')?.value || '',
+        prep_time: document.getElementById('setting_prep_time')?.value || '15',
+        orders_enabled: (document.getElementById('setting_orders_enabled')?.checked || false).toString(),
+        facebook_url: document.getElementById('setting_facebook_url')?.value || '',
+        instagram_url: document.getElementById('setting_instagram_url')?.value || '',
+        twitter_url: document.getElementById('setting_twitter_url')?.value || ''
     };
     
     try {
@@ -1040,6 +1436,8 @@ async function saveSettings(e) {
 // ============ NAVIGATION ============
 function setupNavigation() {
     var navItems = document.querySelectorAll('.nav-item');
+    var pageTitle = document.getElementById('page-title');
+    
     for (var i = 0; i < navItems.length; i++) {
         navItems[i].addEventListener('click', function() {
             var section = this.dataset.section;
@@ -1056,6 +1454,17 @@ function setupNavigation() {
             }
             var targetSection = document.getElementById(section + '-section');
             if (targetSection) targetSection.classList.add('active');
+            
+            var titles = {
+                dashboard: 'Dashboard',
+                products: 'Products',
+                featured: 'Featured Items',
+                orders: 'Orders',
+                users: 'Users',
+                inventory: 'Inventory',
+                settings: 'Settings'
+            };
+            if (pageTitle) pageTitle.textContent = titles[section] || 'Dashboard';
             
             if (section === 'products') loadProducts();
             if (section === 'featured') loadProducts();
@@ -1095,24 +1504,48 @@ function setupSearch() {
         });
     }
     
-    var searchIngredients = document.getElementById('search-ingredients');
-    if (searchIngredients) {
-        searchIngredients.addEventListener('input', function(e) {
-            var term = e.target.value.toLowerCase();
-            var rows = document.querySelectorAll('#inventory-table-body tr');
-            for (var i = 0; i < rows.length; i++) {
-                var name = rows[i].cells[0] ? rows[i].cells[0].textContent.toLowerCase() : '';
-                rows[i].style.display = name.indexOf(term) !== -1 ? '' : 'none';
+    var orderFilter = document.getElementById('order-status-filter');
+    if (orderFilter) {
+        orderFilter.addEventListener('change', function() {
+            filterOrdersByStatus(this.value);
+        });
+    }
+}
+
+// ============ SIDEBAR TOGGLE ============
+function setupSidebarToggle() {
+    const sidebarToggle = document.getElementById('sidebarToggle');
+    const sidebar = document.getElementById('sidebar');
+    
+    if (sidebarToggle && sidebar) {
+        sidebarToggle.addEventListener('click', function() {
+            sidebar.classList.toggle('collapsed');
+            const icon = sidebarToggle.querySelector('i');
+            if (icon) {
+                icon.classList.toggle('fa-chevron-left');
+                icon.classList.toggle('fa-chevron-right');
             }
         });
     }
+}
+
+// ============ REFRESH ALL DATA ============
+async function refreshAllData() {
+    showMessage('Refreshing data...', 'success');
+    await loadDashboardStats();
+    await loadModernDashboard();
+    await loadProducts();
+    await loadOrders();
+    await loadUsers();
+    await loadInventory();
+    await loadSettings();
 }
 
 // ============ UTILITIES ============
 function showMessage(message, type) {
     var msgDiv = document.createElement('div');
     msgDiv.className = 'admin-message message-' + type;
-    msgDiv.textContent = message;
+    msgDiv.innerHTML = `<i class="fas fa-${type === 'success' ? 'check-circle' : 'exclamation-circle'}"></i> ${message}`;
     document.body.appendChild(msgDiv);
     
     setTimeout(function() {
@@ -1139,6 +1572,7 @@ document.addEventListener('DOMContentLoaded', function() {
     
     setupNavigation();
     setupSearch();
+    setupSidebarToggle();
     loadDashboardStats();
     loadProducts();
     loadOrders();
@@ -1174,7 +1608,33 @@ document.addEventListener('DOMContentLoaded', function() {
         });
     }
     
-    // Stock input event listeners
+    var addStockForm = document.getElementById('add-stock-form');
+    if (addStockForm) {
+        addStockForm.addEventListener('submit', function(e) {
+            e.preventDefault();
+            submitAddStock(e);
+            return false;
+        });
+    }
+    
+    var addInventoryForm = document.getElementById('add-inventory-form');
+    if (addInventoryForm) {
+        addInventoryForm.addEventListener('submit', function(e) {
+            e.preventDefault();
+            submitAddInventory(e);
+            return false;
+        });
+    }
+    
+    var addRecipeForm = document.getElementById('add-recipe-form');
+    if (addRecipeForm) {
+        addRecipeForm.addEventListener('submit', function(e) {
+            e.preventDefault();
+            submitAddRecipe(e);
+            return false;
+        });
+    }
+    
     var stockBoxes = document.getElementById('stock-boxes');
     var stockPerBox = document.getElementById('stock-per-box');
     var stockCostBox = document.getElementById('stock-cost-box');

@@ -4,7 +4,11 @@
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>Order Confirmation | Beans Cafe</title>
+    
+    <!-- Stylesheets -->
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
     <link rel="stylesheet" href="../css/style.css">
+    <link rel="stylesheet" href="../css/animations.css">
     <script src="https://cdn.jsdelivr.net/npm/qrcodejs@1.0.0/qrcode.min.js"></script>
 </head>
 <body>
@@ -12,14 +16,21 @@
 <!-- Navigation -->
 <nav class="navbar">
     <div class="nav-container">
-        <a href="../index.html" class="logo cafe-name">Beans<span>Cafe</span></a>
+        <a href="../index.html" class="logo cafe-name">
+            <i class="fas fa-mug-hot"></i>
+            Beans<span>Cafe</span>
+        </a>
         
         <div class="nav-links">
             <a href="../index.html">Home</a>
-            <a href="menu.html" class="active">Menu</a>
+            <a href="menu.html">Menu</a>
             <a href="../index.html#howto">How to Order</a>
             <a href="../index.html#about">About</a>
-            <a href="cart.html" class="cart-link">🛒 Cart <span id="cart-count">0</span></a>
+            <a href="../index.html#gallery">Gallery</a>
+            <a href="cart.html" class="cart-link">
+                <i class="fas fa-shopping-cart"></i>
+                <span id="cart-count">0</span>
+            </a>
         </div>
         
         <div class="Mobile-Menu" id="Mobile_Menu_Toggle">
@@ -38,58 +49,132 @@
         <li><a href="menu.html">Menu</a></li>
         <li><a href="../index.html#howto">How to Order</a></li>
         <li><a href="../index.html#about">About</a></li>
+        <li><a href="../index.html#gallery">Gallery</a></li>
         <li><a href="cart.html">Cart</a></li>
     </ul>
 </div>
 
-<section style="padding-top: 100px; min-height: 70vh;">
-    <div class="container" style="max-width: 600px; margin: 0 auto; text-align: center;">
-        
-        <div style="background: white; border-radius: 16px; padding: 40px; box-shadow: var(--shadow-sm);">
-            <div style="font-size: 60px; margin-bottom: 20px;">🎉</div>
-            <h2 style="color: var(--primary-brown); margin-bottom: 10px;">Order Placed Successfully!</h2>
-            <p style="color: #666; margin-bottom: 30px;">Thank you for ordering from Beans Cafe</p>
-            
-            <div style="background: var(--cream); border-radius: 12px; padding: 20px; margin-bottom: 30px;">
-                <p style="font-size: 14px; color: #666; margin-bottom: 5px;">Your Order Number</p>
-                <h1 id="order-number" style="color: var(--primary-brown); font-size: 32px; letter-spacing: 2px;">---</h1>
+<!-- Overlay -->
+<div class="Overlay" id="Overlay"></div>
+
+<!-- Order Confirmation Section -->
+<section class="confirmation-section">
+    <div class="container">
+        <div class="confirmation-card" data-aos="zoom-in">
+            <!-- Success Animation -->
+            <div class="success-animation">
+                <div class="success-checkmark">
+                    <div class="check-icon">
+                        <span class="icon-line line-tip"></span>
+                        <span class="icon-line line-long"></span>
+                        <div class="icon-circle"></div>
+                        <div class="icon-fix"></div>
+                    </div>
+                </div>
             </div>
             
-            <div style="margin-bottom: 30px;">
-                <p style="margin-bottom: 15px; font-weight: bold;">📱 Your Pickup QR Code</p>
-                <div id="qrcode" style="display: flex; justify-content: center; margin-bottom: 10px; min-height: 200px;"></div>
-                <p style="font-size: 12px; color: #666;">Show this QR code when picking up your order</p>
+            <h1>Order Placed Successfully!</h1>
+            <p class="success-message">Thank you for ordering from Beans Cafe</p>
+            
+            <!-- Order Number -->
+            <div class="order-number-container">
+                <span class="order-label">Your Order Number</span>
+                <h2 id="order-number" class="order-number">---</h2>
+                <span class="order-status-badge">Pending</span>
             </div>
             
-            <div style="background: var(--light-beige); border-radius: 12px; padding: 20px; margin-bottom: 30px; text-align: left;">
-                <h4 style="text-align: center; margin-bottom: 15px;">🧾 Virtual Receipt</h4>
-                <div id="receipt-content"></div>
-                <button onclick="downloadReceipt()" style="margin-top: 15px; width: 100%; padding: 10px; background: var(--primary-brown); color: white; border: none; border-radius: 8px; cursor: pointer;">
-                    📥 Download Receipt
+            <!-- Estimated Time -->
+            <div class="estimated-time">
+                <i class="fas fa-clock"></i>
+                <div>
+                    <span>Estimated Pickup Time</span>
+                    <strong id="estimated-time">15-20 minutes</strong>
+                </div>
+            </div>
+            
+            <!-- QR Code -->
+            <div class="qrcode-container">
+                <p><i class="fas fa-qrcode"></i> Your Pickup QR Code</p>
+                <div id="qrcode" class="qrcode"></div>
+                <small>Show this QR code when picking up your order</small>
+            </div>
+            
+            <!-- Order Details Tabs -->
+            <div class="order-tabs">
+                <button class="tab-btn active" data-tab="receipt">Receipt</button>
+                <button class="tab-btn" data-tab="instructions">Pickup Instructions</button>
+            </div>
+            
+            <!-- Receipt Tab -->
+            <div id="receipt-tab" class="tab-content active">
+                <div class="receipt-card" id="receipt-content">
+                    <div class="loading">Loading receipt...</div>
+                </div>
+                <div class="receipt-actions">
+                    <button onclick="downloadReceipt()" class="btn-secondary">
+                        <i class="fas fa-download"></i> Download Receipt
+                    </button>
+                    <button onclick="window.print()" class="btn-secondary">
+                        <i class="fas fa-print"></i> Print Receipt
+                    </button>
+                </div>
+            </div>
+            
+            <!-- Instructions Tab -->
+            <div id="instructions-tab" class="tab-content">
+                <div class="instructions-card">
+                    <h3><i class="fas fa-map-marker-alt"></i> Pickup Instructions</h3>
+                    <ol>
+                        <li>Go to the pickup counter at Beans Cafe</li>
+                        <li>Show your order number or QR code to our staff</li>
+                        <li>Wait for your order to be prepared</li>
+                        <li>Enjoy your coffee!</li>
+                    </ol>
+                    
+                    <div class="cafe-info">
+                        <p><i class="fas fa-store"></i> <strong>Beans Cafe</strong></p>
+                        <p class="cafe-address">📍 123 Coffee Street, Barangay Kapitolyo, Pasig City</p>
+                        <p class="cafe-phone">📞 (02) 1234 5678</p>
+                    </div>
+                    
+                    <div class="hours-info">
+                        <p><i class="far fa-clock"></i> <strong>Opening Hours:</strong></p>
+                        <p>Monday - Friday: 7:00 AM - 9:00 PM</p>
+                        <p>Saturday - Sunday: 8:00 AM - 10:00 PM</p>
+                    </div>
+                </div>
+            </div>
+            
+            <!-- Action Buttons -->
+            <div class="confirmation-actions">
+                <a href="menu.html" class="btn btn-primary">
+                    <i class="fas fa-shopping-bag"></i> Order More
+                </a>
+                <a href="../index.html" class="btn btn-secondary">
+                    <i class="fas fa-home"></i> Back to Home
+                </a>
+                <button onclick="shareOrder()" class="btn btn-secondary">
+                    <i class="fab fa-whatsapp"></i> Share Order
                 </button>
-            </div>
-            
-            <div style="background: var(--cream); border-radius: 12px; padding: 20px; margin-bottom: 30px;">
-                <p style="font-weight: bold; margin-bottom: 10px;">📍 Pickup Instructions:</p>
-                <p>Show this QR code or your order number to our staff when picking up.</p>
-                <p style="margin-top: 10px; font-size: 14px;" class="cafe-address">📍 123 Coffee Street, Barangay Kapitolyo, Pasig City</p>
-            </div>
-            
-            <div style="display: flex; gap: 15px; justify-content: center; flex-wrap: wrap;">
-                <a href="menu.html" class="btn btn-primary">Order More</a>
-                <a href="../index.html" class="btn btn-secondary">Back to Home</a>
-                <button onclick="window.print()" class="btn btn-secondary">🖨️ Print Receipt</button>
             </div>
         </div>
     </div>
 </section>
 
+<!-- Footer -->
 <footer class="footer">
     <div class="container">
         <div class="footer-content">
-            <div>
-                <a href="../index.html" class="footer-logo cafe-name">Beans<span>Cafe</span></a>
-                <p style="margin-top: 15px;">Premium coffee experience crafted with passion.</p>
+            <div class="footer-brand">
+                <a href="../index.html" class="footer-logo cafe-name">
+                    <i class="fas fa-mug-hot"></i> Beans<span>Cafe</span>
+                </a>
+                <p>Premium coffee experience crafted with passion.</p>
+                <div class="footer-social">
+                    <a href="#" class="social-facebook"><i class="fab fa-facebook-f"></i></a>
+                    <a href="#" class="social-instagram"><i class="fab fa-instagram"></i></a>
+                    <a href="#" class="social-twitter"><i class="fab fa-twitter"></i></a>
+                </div>
             </div>
             <div class="footer-links">
                 <h4>Quick Links</h4>
@@ -101,7 +186,7 @@
             </div>
             <div class="footer-links">
                 <h4>Contact</h4>
-                <a href="#" class="cafe-address">📍 123 Coffee Street, Manila</a>
+                <a href="#" class="cafe-address">📍 123 Coffee Street, Pasig</a>
                 <a href="#" class="cafe-phone">📞 (02) 1234 5678</a>
                 <a href="#" class="cafe-email">✉️ hello@beanscafe.com</a>
             </div>
@@ -117,42 +202,48 @@
     </div>
 </footer>
 
+<!-- Scripts -->
+<script src="../script/config.js"></script>
 <script src="../script/main.js"></script>
 <script src="../script/cart.js"></script>
 <script src="../script/order-confirmation.js"></script>
+<script src="../script/animations.js"></script>
+<script src="../script/darkmode.js"></script>
+<script src="../script/whatsapp.js"></script>
+<script src="../script/cookie-consent.js"></script>
+<script src="../script/backtotop.js"></script>
+<script src="../script/pwa.js"></script>
 
 <script>
     document.addEventListener('DOMContentLoaded', function() {
-        const urlParams = new URLSearchParams(window.location.search);
-        const orderNumber = urlParams.get('order');
-        if (orderNumber) {
-            document.getElementById('order-number').textContent = orderNumber;
-            
-            const qrData = JSON.stringify({
-                orderNumber: orderNumber,
-                cafe: "Beans Cafe",
-                timestamp: new Date().toISOString()
-            });
-            
-            new QRCode(document.getElementById("qrcode"), {
-                text: qrData,
-                width: 200,
-                height: 200,
-                colorDark: "#6F4E37",
-                colorLight: "#ffffff",
-                correctLevel: QRCode.CorrectLevel.H
-            });
-        }
-        
-        const lastOrder = localStorage.getItem('last_order');
-        if (lastOrder) {
-            const order = JSON.parse(lastOrder);
-            displayReceipt(order);
-        }
-        
         updateCartCount();
         loadCafeSettings();
+        
+        // Tab switching
+        const tabBtns = document.querySelectorAll('.tab-btn');
+        tabBtns.forEach(btn => {
+            btn.addEventListener('click', function() {
+                const tabName = this.getAttribute('data-tab');
+                
+                tabBtns.forEach(b => b.classList.remove('active'));
+                this.classList.add('active');
+                
+                document.querySelectorAll('.tab-content').forEach(content => {
+                    content.classList.remove('active');
+                });
+                document.getElementById(`${tabName}-tab`).classList.add('active');
+            });
+        });
     });
+    
+    // Make shareOrder globally available
+    window.shareOrder = function() {
+        const orderNumber = document.getElementById('order-number')?.textContent || '';
+        const businessName = (typeof APP_CONFIG !== 'undefined' && APP_CONFIG.BUSINESS) ? APP_CONFIG.BUSINESS.name : 'Beans Cafe';
+        const message = `🎉 I just placed an order at ${businessName}!%0a%0aOrder #: ${orderNumber}%0aReady for pickup in 15-20 minutes!%0a%0a☕ ${businessName}`;
+        const url = `https://wa.me/?text=${message}`;
+        window.open(url, '_blank');
+    };
 </script>
 
 </body>

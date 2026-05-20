@@ -4,156 +4,173 @@
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>Admin Dashboard | Beans Cafe</title>
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
     <link rel="stylesheet" href="css/admin.css">
 </head>
 <body>
     <div class="admin-container">
-        <!-- Sidebar -->
-        <aside class="sidebar">
+        <!-- Sidebar - Minimalist -->
+        <aside class="sidebar" id="sidebar">
             <div class="sidebar-header">
+                <div class="logo-icon">
+                    <i class="fas fa-mug-hot"></i>
+                </div>
                 <h2>Beans Cafe</h2>
                 <p>Admin Panel</p>
+                <button class="sidebar-toggle" id="sidebarToggle">
+                    <i class="fas fa-chevron-left"></i>
+                </button>
             </div>
             <nav class="sidebar-nav">
                 <div class="nav-item active" data-section="dashboard">
-                    <span class="icon">📊</span>
+                    <i class="fas fa-chart-line"></i>
                     <span>Dashboard</span>
                 </div>
                 <div class="nav-item" data-section="products">
-                    <span class="icon">☕</span>
+                    <i class="fas fa-mug-hot"></i>
                     <span>Products</span>
                 </div>
                 <div class="nav-item" data-section="featured">
-                    <span class="icon">⭐</span>
+                    <i class="fas fa-star"></i>
                     <span>Featured Items</span>
                 </div>
                 <div class="nav-item" data-section="orders">
-                    <span class="icon">📦</span>
+                    <i class="fas fa-truck"></i>
                     <span>Orders</span>
                 </div>
                 <div class="nav-item" data-section="users">
-                    <span class="icon">👥</span>
+                    <i class="fas fa-users"></i>
                     <span>Users</span>
                 </div>
                 <div class="nav-item" data-section="inventory">
-                    <span class="icon">📦</span>
+                    <i class="fas fa-boxes"></i>
                     <span>Inventory</span>
                 </div>
                 <div class="nav-item" data-section="settings">
-                    <span class="icon">⚙️</span>
+                    <i class="fas fa-cog"></i>
                     <span>Settings</span>
                 </div>
             </nav>
+            <div class="sidebar-footer">
+                <div class="user-info">
+                    <i class="fas fa-user-circle"></i>
+                    <span id="admin-name">Admin</span>
+                </div>
+                <button class="logout-btn" onclick="logout()">
+                    <i class="fas fa-sign-out-alt"></i>
+                    <span>Logout</span>
+                </button>
+            </div>
         </aside>
         
         <!-- Main Content -->
         <main class="main-content">
             <div class="admin-header">
                 <div class="header-title">
-                    <h1>Dashboard</h1>
-                    <p>Welcome back, <span id="admin-name">Admin</span></p>
+                    <h1 id="page-title">Dashboard</h1>
+                    <p>Welcome back, <span id="admin-name-header">Admin</span></p>
                 </div>
-                <button class="logout-btn" onclick="logout()">Logout</button>
+                <div class="header-actions">
+                    <button class="theme-toggle-admin" id="adminThemeToggle">
+                        <i class="fas fa-moon"></i>
+                    </button>
+                    <button class="refresh-btn" onclick="refreshAllData()">
+                        <i class="fas fa-sync-alt"></i>
+                    </button>
+                </div>
             </div>
             
             <!-- Dashboard Section -->
             <div id="dashboard-section" class="section active">
-                <!-- Stats Grid -->
-                <div class="dashboard-stats-grid">
-                    <div class="dashboard-stat-card">
-                        <div class="stat-header">
-                            <span class="stat-title">Today's Sales</span>
-                            <span class="stat-icon">💰</span>
+                <div class="stats-grid-modern">
+                    <div class="stat-card-modern">
+                        <div class="stat-icon">
+                            <i class="fas fa-chart-simple"></i>
                         </div>
-                        <div class="stat-value" id="today-sales">₱0</div>
-                        <div class="stat-change up" id="today-change">↑ +0%</div>
+                        <div class="stat-info">
+                            <span class="stat-label">Today's Sales</span>
+                            <span class="stat-value" id="today-sales">₱0</span>
+                        </div>
                     </div>
-                    
-                    <div class="dashboard-stat-card">
-                        <div class="stat-header">
-                            <span class="stat-title">This Week</span>
-                            <span class="stat-icon">📅</span>
+                    <div class="stat-card-modern">
+                        <div class="stat-icon">
+                            <i class="fas fa-calendar-week"></i>
                         </div>
-                        <div class="stat-value" id="week-sales">₱0</div>
-                        <div class="stat-change up" id="week-change">↑ +0%</div>
+                        <div class="stat-info">
+                            <span class="stat-label">This Week</span>
+                            <span class="stat-value" id="week-sales">₱0</span>
+                        </div>
                     </div>
-                    
-                    <div class="dashboard-stat-card">
-                        <div class="stat-header">
-                            <span class="stat-title">Pending Orders</span>
-                            <span class="stat-icon">⏳</span>
+                    <div class="stat-card-modern">
+                        <div class="stat-icon">
+                            <i class="fas fa-clock"></i>
                         </div>
-                        <div class="stat-value" id="pending-orders">0</div>
-                        <div class="stat-change neutral">Ready for pickup</div>
+                        <div class="stat-info">
+                            <span class="stat-label">Pending Orders</span>
+                            <span class="stat-value" id="pending-orders">0</span>
+                        </div>
                     </div>
-                    
-                    <div class="dashboard-stat-card">
-                        <div class="stat-header">
-                            <span class="stat-title">Total Revenue</span>
-                            <span class="stat-icon">🏆</span>
+                    <div class="stat-card-modern">
+                        <div class="stat-icon">
+                            <i class="fas fa-trophy"></i>
                         </div>
-                        <div class="stat-value" id="total-revenue">₱0</div>
-                        <div class="stat-change up" id="revenue-change">↑ +0%</div>
+                        <div class="stat-info">
+                            <span class="stat-label">Total Revenue</span>
+                            <span class="stat-value" id="total-revenue">₱0</span>
+                        </div>
                     </div>
                 </div>
                 
-                <!-- Two Column Layout -->
-                <div class="dashboard-two-column">
+                <div class="dashboard-grid">
                     <div class="dashboard-card">
-                        <div class="dashboard-card-header">
-                            <h3>📈 Weekly Sales</h3>
-                            <select id="chart-period" style="padding: 5px; border-radius: 8px; border: 1px solid #E8DDD0;">
+                        <div class="card-header">
+                            <h3><i class="fas fa-chart-line"></i> Weekly Sales</h3>
+                            <select id="chart-period">
                                 <option value="week">This Week</option>
                                 <option value="month">This Month</option>
                             </select>
                         </div>
                         <div class="chart-container">
-                            <div class="chart-bars" id="sales-chart">
-                                <div style="text-align: center; width: 100%;">Loading...</div>
-                            </div>
+                            <canvas id="salesChart" height="200"></canvas>
                         </div>
                     </div>
                     
                     <div class="dashboard-card">
-                        <div class="dashboard-card-header">
-                            <h3>🍽️ Top Selling Items</h3>
-                            <span>This Month</span>
+                        <div class="card-header">
+                            <h3><i class="fas fa-fire"></i> Top Items</h3>
                         </div>
                         <ul class="top-items-list" id="top-items-list">
-                            <li style="text-align: center; color: #666;">Loading...</li>
+                            <li class="loading-item">Loading...</li>
                         </ul>
-                    </div>
-                </div>
-                
-                <!-- Second Row -->
-                <div class="dashboard-two-column">
-                    <div class="dashboard-card">
-                        <div class="dashboard-card-header">
-                            <h3>⏰ Peak Hours</h3>
-                            <span>Most orders time</span>
-                        </div>
-                        <div id="peak-hours-container">
-                            <div style="text-align: center; color: #666;">Loading...</div>
-                        </div>
                     </div>
                     
                     <div class="dashboard-card">
-                        <div class="dashboard-card-header">
-                            <h3>⚡ Quick Actions</h3>
-                            <span>Shortcuts</span>
+                        <div class="card-header">
+                            <h3><i class="fas fa-chart-simple"></i> Peak Hours</h3>
                         </div>
-                        <div class="quick-actions">
-                            <button class="quick-action-btn" onclick="document.querySelector('[data-section=\'products\']').click();">
-                                <span>➕</span>
+                        <div id="peak-hours-container"></div>
+                    </div>
+                    
+                    <div class="dashboard-card">
+                        <div class="card-header">
+                            <h3><i class="fas fa-bolt"></i> Quick Actions</h3>
+                        </div>
+                        <div class="quick-actions-grid">
+                            <button class="quick-action" onclick="document.querySelector('[data-section=\'products\']').click()">
+                                <i class="fas fa-plus-circle"></i>
                                 <span>Add Product</span>
                             </button>
-                            <button class="quick-action-btn" onclick="document.querySelector('[data-section=\'orders\']').click();">
-                                <span>📦</span>
+                            <button class="quick-action" onclick="document.querySelector('[data-section=\'orders\']').click()">
+                                <i class="fas fa-eye"></i>
                                 <span>View Orders</span>
                             </button>
-                            <button class="quick-action-btn" onclick="window.open('../pages/menu.html', '_blank');">
-                                <span>🛒</span>
-                                <span>View Menu</span>
+                            <button class="quick-action" onclick="window.open('../pages/menu.html', '_blank')">
+                                <i class="fas fa-store"></i>
+                                <span>View Store</span>
+                            </button>
+                            <button class="quick-action" onclick="window.location.href='../pages/menu.html'">
+                                <i class="fas fa-shopping-cart"></i>
+                                <span>Test Order</span>
                             </button>
                         </div>
                     </div>
@@ -163,40 +180,39 @@
             <!-- Products Section -->
             <div id="products-section" class="section">
                 <div class="section-header">
-                    <h2>Product Management</h2>
-                    <button class="btn-primary" onclick="openProductModal()">+ Add Product</button>
+                    <h2><i class="fas fa-mug-hot"></i> Products</h2>
+                    <button class="btn-primary" onclick="openProductModal()">
+                        <i class="fas fa-plus"></i> Add Product
+                    </button>
                 </div>
-                <div class="search-box">
-                    <input type="text" id="search-products" placeholder="Search products by name...">
+                <div class="search-bar">
+                    <i class="fas fa-search"></i>
+                    <input type="text" id="search-products" placeholder="Search products...">
                 </div>
-                <div style="overflow-x: auto;">
+                <div class="table-responsive">
                     <table class="data-table">
                         <thead>
-                            <tr><th>Image</th><th>Name</th><th>Category</th><th>Price</th><th>Stock</th><th>Actions</th></tr>
+                            <tr><th>Image</th><th>Name</th><th>Category</th><th>Price</th><th>Stock</th><th>Best Seller</th><th>Actions</th></tr>
                         </thead>
                         <tbody id="products-table-body">
-                            <tr><td colspan="7" style="text-align: center;">Loading...</div></div></tr>
+                            <tr><td colspan="6" class="loading-cell">Loading...</td></tr>
                         </tbody>
                     </table>
                 </div>
             </div>
             
-            <!-- Featured Items Section -->
+            <!-- Featured Section -->
             <div id="featured-section" class="section">
                 <div class="section-header">
-                    <h2>Featured & New Items</h2>
-                    <p>Toggle which products appear as "Featured" or "New" on the website</p>
+                    <h2><i class="fas fa-star"></i> Featured & New Items</h2>
                 </div>
-                <div class="search-box">
-                    <input type="text" id="search-featured" placeholder="Search products...">
-                </div>
-                <div style="overflow-x: auto;">
+                <div class="table-responsive">
                     <table class="data-table">
                         <thead>
                             <tr><th>Image</th><th>Name</th><th>Category</th><th>Featured</th><th>New</th><th>Actions</th></tr>
                         </thead>
                         <tbody id="featured-table-body">
-                            <tr><td colspan="6" style="text-align: center;">Loading...</div></div></tr>
+                            <tr><td colspan="6" class="loading-cell">Loading...</td></tr>
                         </tbody>
                     </table>
                 </div>
@@ -205,15 +221,24 @@
             <!-- Orders Section -->
             <div id="orders-section" class="section">
                 <div class="section-header">
-                    <h2>Order Management</h2>
+                    <h2><i class="fas fa-truck"></i> Orders</h2>
+                    <div class="order-filters">
+                        <select id="order-status-filter">
+                            <option value="all">All Orders</option>
+                            <option value="pending">Pending</option>
+                            <option value="preparing">Preparing</option>
+                            <option value="ready">Ready</option>
+                            <option value="completed">Completed</option>
+                        </select>
+                    </div>
                 </div>
-                <div style="overflow-x: auto;">
+                <div class="table-responsive">
                     <table class="data-table">
                         <thead>
                             <tr><th>Order #</th><th>Customer</th><th>Items</th><th>Total</th><th>Status</th><th>Actions</th></tr>
                         </thead>
                         <tbody id="orders-table-body">
-                            <tr><td colspan="6" style="text-align: center;">Loading...</div></div><tr>
+                            <tr><td colspan="6" class="loading-cell">Loading...</td></tr>
                         </tbody>
                     </table>
                 </div>
@@ -222,19 +247,22 @@
             <!-- Users Section -->
             <div id="users-section" class="section">
                 <div class="section-header">
-                    <h2>User Management</h2>
-                    <button class="btn-primary" onclick="openUserModal()">+ Add Staff</button>
+                    <h2><i class="fas fa-users"></i> Users</h2>
+                    <button class="btn-primary" onclick="openUserModal()">
+                        <i class="fas fa-user-plus"></i> Add Staff
+                    </button>
                 </div>
-                <div class="search-box">
+                <div class="search-bar">
+                    <i class="fas fa-search"></i>
                     <input type="text" id="search-users" placeholder="Search users...">
                 </div>
-                <div style="overflow-x: auto;">
+                <div class="table-responsive">
                     <table class="data-table">
                         <thead>
                             <tr><th>Name</th><th>Email</th><th>Role</th><th>Actions</th></tr>
                         </thead>
                         <tbody id="users-table-body">
-                            <tr><td colspan="4" style="text-align: center;">Loading...</div></div></tr>
+                            <tr><td colspan="4" class="loading-cell">Loading...</td></tr>
                         </tbody>
                     </table>
                 </div>
@@ -243,61 +271,54 @@
             <!-- Inventory Section -->
             <div id="inventory-section" class="section">
                 <div class="section-header">
-                    <h2>📦 Inventory Management</h2>
+                    <h2><i class="fas fa-boxes"></i> Inventory</h2>
                     <div>
-                        <button class="btn-primary" onclick="openAddInventoryModal()">+ Add Ingredient</button>
-                        <button class="btn-primary" onclick="openAddRecipeModal()" style="background: #D4A373; margin-left: 10px;">📖 Add Recipe</button>
+                        <button class="btn-primary" onclick="openAddInventoryModal()">
+                            <i class="fas fa-plus"></i> Add Item
+                        </button>
+                        <button class="btn-primary" onclick="openAddRecipeModal()">
+                            <i class="fas fa-book"></i> Add Recipe
+                        </button>
                     </div>
                 </div>
-                
-                <div id="low-stock-alert" style="margin-bottom: 20px;"></div>
-                
-                <div style="display: flex; gap: 10px; margin-bottom: 20px; border-bottom: 1px solid #E8DDD0;">
-                    <button class="inventory-tab active" data-tab="ingredients" onclick="switchInventoryTab('ingredients')">📦 Ingredients</button>
-                    <button class="inventory-tab" data-tab="recipes" onclick="switchInventoryTab('recipes')">📖 Recipe Book</button>
-                    <button class="inventory-tab" data-tab="transactions" onclick="switchInventoryTab('transactions')">📋 Transactions</button>
+                <div id="low-stock-alert"></div>
+                <div class="inventory-tabs">
+                    <button class="inventory-tab active" data-tab="ingredients">Ingredients</button>
+                    <button class="inventory-tab" data-tab="recipes">Recipes</button>
+                    <button class="inventory-tab" data-tab="transactions">Transactions</button>
                 </div>
-                
                 <div id="ingredients-tab" class="inventory-tab-content active">
-                    <div class="search-box">
-                        <input type="text" id="search-ingredients" placeholder="Search ingredients...">
-                    </div>
-                    <div style="overflow-x: auto;">
+                    <div class="table-responsive">
                         <table class="data-table">
                             <thead>
-                                <tr><th>Ingredient</th><th>Stock</th><th>Min Level</th><th>Status</th><th>Cost/Unit</th><th>Supplier</th><th>Actions</th></tr>
+                                <tr><th>Ingredient</th><th>Stock</th><th>Min Level</th><th>Status</th><th>Actions</th></tr>
                             </thead>
                             <tbody id="inventory-table-body">
-                                <tr><td colspan="7" style="text-align: center;">Loading...</div></div></tr>
+                                <tr><td colspan="5" class="loading-cell">Loading...</td></tr>
                             </tbody>
                         </table>
                     </div>
                 </div>
-                
                 <div id="recipes-tab" class="inventory-tab-content">
-                    <div class="search-box">
-                        <input type="text" id="search-recipes" placeholder="Search recipes...">
-                    </div>
-                    <div style="overflow-x: auto;">
+                    <div class="table-responsive">
                         <table class="data-table">
                             <thead>
-                                <tr><th>Drink</th><th>Ingredients</th><th>Prep Time</th><th>Cost per Cup</th><th>Selling Price</th><th>Profit</th><th>Actions</th></tr>
+                                <tr><th>Drink</th><th>Ingredients</th><th>Prep Time</th><th>Actions</th></tr>
                             </thead>
                             <tbody id="recipes-table-body">
-                                <tr><td colspan="7" style="text-align: center;">Loading...</div></div></tr>
+                                <tr><td colspan="4" class="loading-cell">Loading...</td></tr>
                             </tbody>
                         </table>
                     </div>
                 </div>
-                
                 <div id="transactions-tab" class="inventory-tab-content">
-                    <div style="overflow-x: auto;">
+                    <div class="table-responsive">
                         <table class="data-table">
                             <thead>
-                                <tr><th>Date</th><th>Ingredient</th><th>Type</th><th>Quantity</th><th>Note</th></tr>
+                                <tr><th>Date</th><th>Item</th><th>Type</th><th>Quantity</th></tr>
                             </thead>
                             <tbody id="transactions-table-body">
-                                <tr><td colspan="5" style="text-align: center;">Loading...</div></div></tr>
+                                <tr><td colspan="4" class="loading-cell">Loading...</td></tr>
                             </tbody>
                         </table>
                     </div>
@@ -307,65 +328,64 @@
             <!-- Settings Section -->
             <div id="settings-section" class="section">
                 <div class="section-header">
-                    <h2>Cafe Settings</h2>
-                    <p>Manage your cafe information</p>
+                    <h2><i class="fas fa-cog"></i> Settings</h2>
                 </div>
-                <form id="settings-form">
-                    <div style="margin-bottom: 30px;">
-                        <h3 style="margin-bottom: 15px; color: #3E2723;">Cafe Information</h3>
-                        <div class="form-row">
+                <form id="settings-form" class="settings-form">
+                    <div class="settings-grid">
+                        <div class="settings-group">
+                            <h3>Cafe Information</h3>
                             <div class="form-group">
                                 <label>Cafe Name</label>
-                                <input type="text" id="setting_cafe_name" class="setting-input">
+                                <input type="text" id="setting_cafe_name">
                             </div>
                             <div class="form-group">
-                                <label>Phone Number</label>
-                                <input type="text" id="setting_cafe_phone" class="setting-input">
+                                <label>Phone</label>
+                                <input type="text" id="setting_cafe_phone">
                             </div>
-                        </div>
-                        <div class="form-group">
-                            <label>Email Address</label>
-                            <input type="email" id="setting_cafe_email" class="setting-input">
-                        </div>
-                        <div class="form-group">
-                            <label>Address</label>
-                            <textarea id="setting_cafe_address" rows="2" class="setting-input"></textarea>
-                        </div>
-                        <div class="form-group">
-                            <label>Business Hours</label>
-                            <input type="text" id="setting_cafe_hours" class="setting-input">
-                        </div>
-                    </div>
-                    
-                    <div style="margin-bottom: 30px;">
-                        <h3 style="margin-bottom: 15px; color: #3E2723;">Order Settings</h3>
-                        <div class="form-row">
                             <div class="form-group">
-                                <label>Preparation Time (minutes)</label>
-                                <input type="number" id="setting_prep_time" class="setting-input" min="5" max="60">
+                                <label>Email</label>
+                                <input type="email" id="setting_cafe_email">
+                            </div>
+                            <div class="form-group">
+                                <label>Address</label>
+                                <textarea id="setting_cafe_address" rows="2"></textarea>
+                            </div>
+                            <div class="form-group">
+                                <label>Hours</label>
+                                <input type="text" id="setting_cafe_hours">
                             </div>
                         </div>
-                        <div class="form-group">
-                            <label class="checkbox-label">
-                                <input type="checkbox" id="setting_orders_enabled"> Enable Online Ordering
-                            </label>
+                        <div class="settings-group">
+                            <h3>Social Media</h3>
+                            <div class="form-group">
+                                <label><i class="fab fa-facebook"></i> Facebook</label>
+                                <input type="url" id="setting_facebook_url">
+                            </div>
+                            <div class="form-group">
+                                <label><i class="fab fa-instagram"></i> Instagram</label>
+                                <input type="url" id="setting_instagram_url">
+                            </div>
+                            <div class="form-group">
+                                <label><i class="fab fa-twitter"></i> Twitter</label>
+                                <input type="url" id="setting_twitter_url">
+                            </div>
+                        </div>
+                        <div class="settings-group">
+                            <h3>Order Settings</h3>
+                            <div class="form-group">
+                                <label>Prep Time (minutes)</label>
+                                <input type="number" id="setting_prep_time" min="5" max="60">
+                            </div>
+                            <div class="form-group checkbox">
+                                <label>
+                                    <input type="checkbox" id="setting_orders_enabled">
+                                    Enable Online Ordering
+                                </label>
+                            </div>
                         </div>
                     </div>
-                    
-                    <div style="margin-bottom: 30px;">
-                        <h3 style="margin-bottom: 15px; color: #3E2723;">Social Media</h3>
-                        <div class="form-group">
-                            <label>Facebook URL</label>
-                            <input type="url" id="setting_facebook_url" class="setting-input">
-                        </div>
-                        <div class="form-group">
-                            <label>Instagram URL</label>
-                            <input type="url" id="setting_instagram_url" class="setting-input">
-                        </div>
-                    </div>
-                    
-                    <div class="modal-buttons">
-                        <button type="submit" class="btn-primary">Save Settings</button>
+                    <div class="form-actions">
+                        <button type="submit" class="btn-primary">Save Changes</button>
                         <button type="button" class="btn-secondary" onclick="loadSettings()">Reset</button>
                     </div>
                 </form>
@@ -377,28 +397,25 @@
     <div id="product-modal" class="modal">
         <div class="modal-content">
             <h3 id="product-modal-title">Add Product</h3>
-            
             <div class="form-group">
                 <label>Product Image</label>
-                <div id="upload-area" style="border: 2px dashed #E8DDD0; border-radius: 12px; padding: 30px; text-align: center; cursor: pointer; background: #FFF9F2;">
+                <div id="upload-area" class="upload-area">
                     <div class="upload-placeholder">
-                        <span style="font-size: 48px;">📸</span>
+                        <i class="fas fa-cloud-upload-alt upload-icon"></i>
                         <p>Click to upload image</p>
                         <small>JPG, PNG, GIF (Max 5MB)</small>
                     </div>
-                    <div id="image-preview-container" style="display: none; position: relative;">
-                        <img id="upload-preview" style="max-width: 200px; max-height: 200px; border-radius: 8px;">
-                        <button type="button" onclick="removeImage(); event.stopPropagation();" style="position: absolute; top: -10px; right: -10px; background: #ef4444; color: white; border: none; border-radius: 50%; width: 30px; height: 30px; cursor: pointer; font-weight: bold;">✕</button>
+                    <div id="image-preview-container" class="image-preview-container" style="display: none;">
+                        <img id="upload-preview" class="upload-preview">
+                        <button type="button" class="remove-image-btn" onclick="removeImage()">✕</button>
                     </div>
                 </div>
                 <input type="hidden" id="product-image-url">
             </div>
-            
             <div class="form-group">
                 <label>Or enter image URL</label>
                 <input type="text" id="product-image-url-input" placeholder="https://example.com/image.jpg">
             </div>
-            
             <form id="product-form">
                 <input type="hidden" id="product-id">
                 <div class="form-group">
@@ -429,7 +446,6 @@
                         <option value="Food">Food</option>
                     </select>
                 </div>
-                
                 <div class="form-row">
                     <div class="form-group">
                         <label class="checkbox-label">
@@ -441,8 +457,12 @@
                             <input type="checkbox" id="product-new"> Mark as New
                         </label>
                     </div>
+                    <div class="form-group">
+                        <label class="checkbox-label">
+                            <input type="checkbox" id="product-bestseller"> Mark as Best Seller
+                        </label>
+                    </div>
                 </div>
-                
                 <div class="modal-buttons">
                     <button type="submit" class="btn-primary">Save Product</button>
                     <button type="button" class="btn-secondary" onclick="closeProductModal()">Cancel</button>
@@ -472,8 +492,9 @@
                     <input type="email" id="user-email" required>
                 </div>
                 <div class="form-group">
-                    <label>Password *</label>
-                    <input type="password" id="user-password" required>
+                    <label>Password <span id="password-required">*</span></label>
+                    <input type="password" id="user-password">
+                    <small id="password-hint">Required for new users</small>
                 </div>
                 <div class="form-group">
                     <label>Role</label>
@@ -492,13 +513,13 @@
     
     <!-- Add Stock Modal -->
     <div id="add-stock-modal" class="modal">
-        <div class="modal-content" style="max-width: 450px;">
-            <h3>➕ Add Stock</h3>
+        <div class="modal-content">
+            <h3><i class="fas fa-plus-circle"></i> Add Stock</h3>
             <form id="add-stock-form">
                 <input type="hidden" id="stock-item-id">
                 <div class="form-group">
                     <label>Ingredient</label>
-                    <input type="text" id="stock-item-name" readonly style="background: #F5E6D3;">
+                    <input type="text" id="stock-item-name" readonly>
                 </div>
                 <div class="form-group">
                     <label>How many BOXES?</label>
@@ -511,15 +532,15 @@
                 </div>
                 <div class="form-group">
                     <label>Total to add</label>
-                    <input type="text" id="stock-total-add" readonly style="background: #F5E6D3;">
+                    <input type="text" id="stock-total-add" readonly>
                 </div>
                 <div class="form-group">
                     <label>Current stock</label>
-                    <input type="text" id="stock-current" readonly style="background: #F5E6D3;">
+                    <input type="text" id="stock-current" readonly>
                 </div>
                 <div class="form-group">
                     <label>New stock</label>
-                    <input type="text" id="stock-new" readonly style="background: #F5E6D3; font-weight: bold;">
+                    <input type="text" id="stock-new" readonly>
                 </div>
                 <div class="form-group">
                     <label>Cost per box (₱)</label>
@@ -527,7 +548,7 @@
                 </div>
                 <div class="form-group">
                     <label>Total cost</label>
-                    <input type="text" id="stock-total-cost" readonly style="background: #F5E6D3;">
+                    <input type="text" id="stock-total-cost" readonly>
                 </div>
                 <div class="modal-buttons">
                     <button type="submit" class="btn-primary">Add Stock</button>
@@ -537,21 +558,10 @@
         </div>
     </div>
     
-    <!-- View Recipe Modal -->
-    <div id="view-recipe-modal" class="modal">
-        <div class="modal-content" style="max-width: 600px;">
-            <h3 id="recipe-modal-title">Recipe Details</h3>
-            <div id="recipe-details"></div>
-            <div class="modal-buttons">
-                <button class="btn-secondary" onclick="closeViewRecipeModal()">Close</button>
-            </div>
-        </div>
-    </div>
-    
     <!-- Add Inventory Item Modal -->
     <div id="add-inventory-modal" class="modal">
-        <div class="modal-content" style="max-width: 450px;">
-            <h3>➕ Add Ingredient</h3>
+        <div class="modal-content">
+            <h3><i class="fas fa-plus-circle"></i> Add Ingredient</h3>
             <form id="add-inventory-form">
                 <div class="form-group">
                     <label>Ingredient Name</label>
@@ -598,8 +608,8 @@
     
     <!-- Add Recipe Modal -->
     <div id="add-recipe-modal" class="modal">
-        <div class="modal-content" style="max-width: 500px;">
-            <h3>📖 Add Recipe</h3>
+        <div class="modal-content">
+            <h3><i class="fas fa-book"></i> Add Recipe</h3>
             <form id="add-recipe-form">
                 <div class="form-group">
                     <label>Select Product/Drink</label>
@@ -619,17 +629,10 @@
                 </div>
                 <div class="form-group">
                     <label>Ingredients</label>
-                    <div id="recipe-ingredients-list">
-                        <div class="recipe-ingredient-row" style="display: flex; gap: 10px; margin-bottom: 10px;">
-                            <select class="recipe-ingredient-select" style="flex: 2;" required>
-                                <option value="">Select Ingredient</option>
-                            </select>
-                            <input type="number" class="recipe-ingredient-quantity" placeholder="Qty" style="flex: 1;" step="0.01" required>
-                            <input type="text" class="recipe-ingredient-unit" placeholder="Unit" style="flex: 1;" readonly>
-                            <button type="button" class="btn-danger" onclick="this.parentElement.remove()" style="padding: 5px 10px;">✕</button>
-                        </div>
-                    </div>
-                    <button type="button" class="btn-secondary" onclick="addRecipeIngredientRow()" style="margin-top: 10px;">+ Add Ingredient</button>
+                    <div id="recipe-ingredients-list"></div>
+                    <button type="button" class="btn-secondary" onclick="addRecipeIngredientRow()" style="margin-top: 10px;">
+                        <i class="fas fa-plus"></i> Add Ingredient
+                    </button>
                 </div>
                 <div class="modal-buttons">
                     <button type="submit" class="btn-primary">Save Recipe</button>
@@ -638,7 +641,20 @@
             </form>
         </div>
     </div>
-
+    
+    <!-- View Recipe Modal -->
+    <div id="view-recipe-modal" class="modal">
+        <div class="modal-content">
+            <h3 id="recipe-modal-title">Recipe Details</h3>
+            <div id="recipe-details"></div>
+            <div class="modal-buttons">
+                <button class="btn-secondary" onclick="closeViewRecipeModal()">Close</button>
+            </div>
+        </div>
+    </div>
+    
+    <!-- Scripts -->
+    <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
     <script src="script/admin-dashboard.js"></script>
 </body>
 </html>

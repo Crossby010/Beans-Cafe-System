@@ -1,4 +1,4 @@
-// Beans Cafe - Cart JavaScript
+// Beans Cafe - Cart JavaScript (FIXED)
 
 function getCart() {
     const cart = localStorage.getItem('beans_cart');
@@ -74,33 +74,27 @@ function updateCartCount() {
         el.textContent = totalItems;
     });
     
-    // Hide/show cart link based on items in cart
     updateCartVisibility();
 }
 
-// NEW FUNCTION: Hide cart link when cart is empty
 function updateCartVisibility() {
     const cart = getCart();
     const cartLink = document.querySelector('.cart-link');
     const mobileCartLink = document.querySelector('.Mobile-Nav-Contents a[href*="cart.html"]');
     
     if (cart.length === 0) {
-        // Hide on desktop
         if (cartLink) {
-            cartLink.style.display = 'none';
+            cartLink.style.setProperty('display', 'none', 'important');
         }
-        // Hide on mobile
         if (mobileCartLink && mobileCartLink.parentElement) {
-            mobileCartLink.parentElement.style.display = 'none';
+            mobileCartLink.parentElement.style.setProperty('display', 'none', 'important');
         }
     } else {
-        // Show on desktop
         if (cartLink) {
-            cartLink.style.display = 'flex';
+            cartLink.style.setProperty('display', 'flex', 'important');
         }
-        // Show on mobile
         if (mobileCartLink && mobileCartLink.parentElement) {
-            mobileCartLink.parentElement.style.display = 'block';
+            mobileCartLink.parentElement.style.setProperty('display', 'block', 'important');
         }
     }
 }
@@ -126,20 +120,25 @@ function loadCartPage() {
     
     if (cart.length === 0) {
         cartContainer.innerHTML = `
-            <div style="text-align: center; padding: 60px;">
+            <div class="empty-cart">
+                <i class="fas fa-shopping-cart"></i>
                 <h3>Your cart is empty</h3>
                 <p>Add some delicious drinks to get started!</p>
-                <a href="menu.html" class="btn btn-primary" style="margin-top: 20px;">Browse Menu</a>
+                <a href="menu.html" class="btn btn-primary">Browse Menu</a>
             </div>
         `;
         if (cartSummary) cartSummary.style.display = 'none';
+        const recommendedSection = document.querySelector('.recommended-section');
+        if (recommendedSection) recommendedSection.style.display = 'none';
         return;
     }
     
     if (cartSummary) cartSummary.style.display = 'block';
     
+    const placeholderImage = 'https://images.unsplash.com/photo-1509042239860-f550ce710b93?w=80&h=80&fit=crop';
+    
     cartContainer.innerHTML = cart.map((item, index) => {
-        let imagePath = item.image || '../assets/images/coffee-placeholder.jpg';
+        let imagePath = item.image || placeholderImage;
         if (imagePath && !imagePath.startsWith('http') && !imagePath.startsWith('/')) {
             imagePath = '../' + imagePath;
         }
@@ -149,19 +148,21 @@ function loadCartPage() {
                 <img src="${imagePath}" 
                      alt="${escapeHtml(item.name)}" 
                      class="cart-item-image" 
-                     onerror="this.src='https://placehold.co/80x80/F5E6D3/6F4E37?text=Coffee'">
+                     onerror="this.src='${placeholderImage}'">
                 <div class="cart-item-details">
                     <div class="cart-item-name">${escapeHtml(item.name)}</div>
                     <div class="cart-item-price">₱${parseFloat(item.price).toFixed(2)}</div>
-                    ${item.customizations ? `<div style="font-size: 12px; color: #8B5E3C;">${escapeHtml(item.customizations)}</div>` : ''}
+                    ${item.customizations ? `<div class="cart-item-custom">${escapeHtml(item.customizations)}</div>` : ''}
                 </div>
                 <div class="cart-item-quantity">
-                    <button class="quantity-btn" onclick="updateQuantity(${index}, ${(item.quantity || 1) - 1})">-</button>
+                    <button class="quantity-btn" onclick="updateQuantity(${index}, ${(item.quantity || 1) - 1})">−</button>
                     <span>${item.quantity || 1}</span>
                     <button class="quantity-btn" onclick="updateQuantity(${index}, ${(item.quantity || 1) + 1})">+</button>
                 </div>
                 <div class="cart-item-total">₱${(parseFloat(item.price) * (item.quantity || 1)).toFixed(2)}</div>
-                <div class="remove-item" onclick="removeFromCart(${index})">🗑️</div>
+                <button class="remove-item" onclick="removeFromCart(${index})">
+                    <i class="fas fa-trash-alt"></i>
+                </button>
             </div>
         `;
     }).join('');
@@ -172,6 +173,11 @@ function loadCartPage() {
     
     if (subtotalEl) subtotalEl.textContent = `₱${subtotal.toFixed(2)}`;
     if (totalEl) totalEl.textContent = `₱${subtotal.toFixed(2)}`;
+    
+    // Refresh animations for new content
+    if (typeof refreshAnimations === 'function') {
+        refreshAnimations();
+    }
 }
 
 function proceedToCheckout() {
@@ -185,17 +191,22 @@ function proceedToCheckout() {
 
 function showMessage(message, type) {
     const msgDiv = document.createElement('div');
-    msgDiv.textContent = message;
+    msgDiv.className = `toast-message toast-${type}`;
+    msgDiv.innerHTML = `<i class="fas fa-${type === 'success' ? 'check-circle' : 'exclamation-circle'}"></i> ${message}`;
     msgDiv.style.cssText = `
         position: fixed;
         bottom: 20px;
         right: 20px;
-        background: ${type === 'success' ? '#6F4E37' : '#dc3545'};
+        background: ${type === 'success' ? '#10b981' : '#ef4444'};
         color: white;
-        padding: 12px 24px;
+        padding: 12px 20px;
         border-radius: 8px;
         z-index: 9999;
-        animation: fadeInOut 3s ease;
+        display: flex;
+        align-items: center;
+        gap: 10px;
+        font-size: 14px;
+        animation: slideInRight 0.3s ease, fadeOut 0.3s ease 2.7s forwards;
     `;
     document.body.appendChild(msgDiv);
     
@@ -211,7 +222,6 @@ function escapeHtml(text) {
     return div.innerHTML;
 }
 
-// Initialize cart visibility on page load
 document.addEventListener('DOMContentLoaded', function() {
     updateCartVisibility();
 });

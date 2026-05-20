@@ -1,14 +1,15 @@
-// Beans Cafe - Main JavaScript
+// Beans Cafe - Main JavaScript (UPDATED)
 
-// API Base URL
-const API_URL = 'https://beans-cafe-backend.onrender.com/api';
+// API Base URL - Using config
+const API_URL = typeof APP_CONFIG !== 'undefined' ? APP_CONFIG.API_URL : 'https://beans-cafe-backend.onrender.com/api';
+const API_MODE = typeof APP_CONFIG !== 'undefined' ? APP_CONFIG.API_MODE : 'real';
 
 // Global base URL for navigation
 window.BASE_URL = window.location.origin;
 
 // Setup navigation when page loads
 document.addEventListener('DOMContentLoaded', function() {
-    console.log('DOM loaded - setting up navigation');
+    console.log('DOM loaded - Beans Cafe v2');
     
     // Setup all navigation links
     setupNavigation();
@@ -28,19 +29,20 @@ document.addEventListener('DOMContentLoaded', function() {
     if (window.location.pathname.endsWith('index.html') || window.location.pathname.endsWith('/')) {
         checkHash();
     }
+    
+    // Initialize mobile menu
+    initMobileMenu();
 });
 
 // Setup navigation for all section links
 function setupNavigation() {
     // Home page section links (data-section)
     const sectionLinks = document.querySelectorAll('[data-section]');
-    console.log('Found section links:', sectionLinks.length);
     
     sectionLinks.forEach(link => {
         link.addEventListener('click', function(e) {
             e.preventDefault();
             const sectionId = this.getAttribute('data-section');
-            console.log('Navigating to section:', sectionId);
             showSection(sectionId);
         });
     });
@@ -51,7 +53,6 @@ function setupNavigation() {
         link.addEventListener('click', function(e) {
             e.preventDefault();
             const sectionId = this.getAttribute('data-section');
-            console.log('Nav link clicked:', sectionId);
             showSection(sectionId);
         });
     });
@@ -59,10 +60,8 @@ function setupNavigation() {
 
 // Show specific section (for homepage)
 function showSection(sectionId) {
-    console.log('Showing section:', sectionId);
-    
     // Hide all sections
-    const sections = ['home', 'howto', 'about'];
+    const sections = ['home', 'howto', 'about', 'gallery'];
     sections.forEach(id => {
         const section = document.getElementById(`${id}-section`);
         if (section) {
@@ -74,9 +73,11 @@ function showSection(sectionId) {
     const targetSection = document.getElementById(`${sectionId}-section`);
     if (targetSection) {
         targetSection.classList.add('active');
-        console.log('Section activated:', sectionId);
-    } else {
-        console.error('Section not found:', `${sectionId}-section`);
+        
+        // Scroll to section
+        setTimeout(() => {
+            targetSection.scrollIntoView({ behavior: 'smooth', block: 'start' });
+        }, 100);
     }
     
     // Update active class on nav links
@@ -90,15 +91,6 @@ function showSection(sectionId) {
         activeLink.classList.add('active');
     }
     
-    // Update logo data-section
-    const logos = document.querySelectorAll('.logo, .footer-logo');
-    logos.forEach(logo => {
-        logo.setAttribute('data-section', sectionId);
-    });
-    
-    // Scroll to top
-    window.scrollTo({ top: 0, behavior: 'smooth' });
-    
     // Update URL hash without reload
     window.location.hash = sectionId;
 }
@@ -106,7 +98,7 @@ function showSection(sectionId) {
 // Check URL hash on load
 function checkHash() {
     const hash = window.location.hash.replace('#', '');
-    if (hash === 'howto' || hash === 'about') {
+    if (hash === 'howto' || hash === 'about' || hash === 'gallery') {
         showSection(hash);
     } else {
         showSection('home');
@@ -116,7 +108,7 @@ function checkHash() {
 // Handle hash change (browser back/forward)
 window.addEventListener('hashchange', function() {
     const hash = window.location.hash.replace('#', '');
-    if (hash === 'howto' || hash === 'about') {
+    if (hash === 'howto' || hash === 'about' || hash === 'gallery') {
         showSection(hash);
     } else if (!hash || hash === 'home') {
         showSection('home');
@@ -129,29 +121,53 @@ async function loadFeaturedProducts() {
     if (!productsContainer) return;
     
     try {
-        const response = await fetch(`${API_URL}/products`);
-        const data = await response.json();
+        let products = [];
         
-        const featuredProducts = data.products ? data.products.slice(0, 4) : [];
+        if (API_MODE === 'mock') {
+            if (typeof MOCK_DATA !== 'undefined') {
+                products = MOCK_DATA.products.filter(p => p.is_featured === true).slice(0, 4);
+            }
+        } else {
+            const response = await fetch(`${API_URL}/products`);
+            const data = await response.json();
+            // Get products that are featured, fallback to first 4 products if none featured
+            const featuredProducts = data.products ? data.products.filter(p => p.is_featured === true) : [];
+            if (featuredProducts.length > 0) {
+                products = featuredProducts.slice(0, 4);
+            } else {
+                // If no featured products, show first 4 products
+                products = (data.products || []).slice(0, 4);
+            }
+        }
         
-        if (featuredProducts.length === 0) {
+        if (products.length === 0) {
             productsContainer.innerHTML = '<div class="loading">No products available</div>';
             return;
         }
         
-        productsContainer.innerHTML = featuredProducts.map(product => `
+        const placeholderImage = 'https://images.unsplash.com/photo-1509042239860-f550ce710b93?w=400&h=400&fit=crop';
+        
+        productsContainer.innerHTML = products.map(product => `
             <div class="product-card" onclick="goToProduct(${product.id})">
-                <img src="${product.image_url || '../assets/images/coffee-placeholder.jpg'}" 
-                     alt="${product.name}" 
+                <img src="${product.image_url || placeholderImage}" 
+                     alt="${escapeHtml(product.name)}" 
                      class="product-image"
-                     onerror="this.src='https://placehold.co/300x200/F5E6D3/6F4E37?text=Coffee'">
+                     loading="lazy"
+                     onerror="this.src='${placeholderImage}'">
                 <div class="product-info">
                     <h3 class="product-title">${escapeHtml(product.name)}</h3>
-                    <p class="product-price">₱${product.price}</p>
-                    <button class="product-btn" onclick="event.stopPropagation(); addToCartFromProduct(${product.id})">Add to Cart</button>
+                    <p class="product-price">₱${parseFloat(product.price).toFixed(2)}</p>
+                    <button class="product-btn" onclick="event.stopPropagation(); addToCartFromProduct(${product.id})">
+                        <i class="fas fa-cart-plus"></i> Add to Cart
+                    </button>
                 </div>
             </div>
         `).join('');
+        
+        // Refresh animations for new content
+        if (typeof refreshAnimations === 'function') {
+            refreshAnimations();
+        }
         
     } catch (error) {
         console.error('Error loading products:', error);
@@ -161,23 +177,29 @@ async function loadFeaturedProducts() {
 
 // Go to product customization page
 function goToProduct(productId) {
-    console.log('Going to product with ID:', productId);
     if (productId) {
         window.location.href = `pages/customize.html?id=${productId}`;
-    } else {
-        console.error('No product ID provided');
     }
 }
 
 // Add to cart from homepage
 async function addToCartFromProduct(productId) {
     try {
-        const response = await fetch(`${API_URL}/products/${productId}`);
-        const data = await response.json();
+        let product;
         
-        if (data.product) {
-            addToCart(data.product);
-            showMessage(`${data.product.name} added to cart!`, 'success');
+        if (API_MODE === 'mock') {
+            if (typeof MOCK_DATA !== 'undefined') {
+                product = MOCK_DATA.products.find(p => p.id === productId);
+            }
+        } else {
+            const response = await fetch(`${API_URL}/products/${productId}`);
+            const data = await response.json();
+            product = data.product;
+        }
+        
+        if (product && typeof addToCart === 'function') {
+            addToCart(product);
+            showMessage(`${product.name} added to cart!`, 'success');
         }
     } catch (error) {
         console.error('Error adding to cart:', error);
@@ -185,7 +207,79 @@ async function addToCartFromProduct(productId) {
     }
 }
 
-// Escape HTML to prevent XSS
+// Load cafe settings from backend
+async function loadCafeSettings() {
+    try {
+        let settings = {};
+        
+        if (API_MODE === 'mock') {
+            if (typeof MOCK_DATA !== 'undefined') {
+                settings = MOCK_DATA.settings;
+            }
+        } else {
+            const response = await fetch(`${API_URL}/settings/public`);
+            const data = await response.json();
+            settings = data.settings || {};
+        }
+        
+        // Update cafe name
+        const cafeNameElements = document.querySelectorAll('.cafe-name');
+        cafeNameElements.forEach(el => {
+            if (el.tagName === 'A') {
+                const name = settings.cafe_name || 'Beans Cafe';
+                if (el.querySelector('span')) {
+                    const span = el.querySelector('span');
+                    span.textContent = name;
+                } else {
+                    el.innerHTML = `<i class="fas fa-mug-hot"></i> ${name}`;
+                }
+            } else {
+                el.textContent = settings.cafe_name || 'Beans Cafe';
+            }
+        });
+        
+        // Update address
+        const addressElements = document.querySelectorAll('.cafe-address');
+        addressElements.forEach(el => {
+            el.innerHTML = settings.cafe_address || '123 Coffee Street, Barangay Kapitolyo, Pasig City';
+        });
+        
+        // Update phone
+        const phoneElements = document.querySelectorAll('.cafe-phone');
+        phoneElements.forEach(el => {
+            el.innerHTML = settings.cafe_phone || '(02) 1234 5678';
+        });
+        
+        // Update email
+        const emailElements = document.querySelectorAll('.cafe-email');
+        emailElements.forEach(el => {
+            el.innerHTML = settings.cafe_email || 'hello@beanscafe.com';
+        });
+        
+        // Update hours
+        const hoursElements = document.querySelectorAll('.cafe-hours');
+        hoursElements.forEach(el => {
+            el.innerHTML = settings.cafe_hours || 'Mon-Fri: 7am-9pm, Sat-Sun: 8am-10pm';
+        });
+        
+        // Update social links
+        if (settings.facebook_url) {
+            const fbLinks = document.querySelectorAll('.social-facebook');
+            fbLinks.forEach(el => { if (el.tagName === 'A') el.href = settings.facebook_url; });
+        }
+        
+        if (settings.instagram_url) {
+            const igLinks = document.querySelectorAll('.social-instagram');
+            igLinks.forEach(el => { if (el.tagName === 'A') el.href = settings.instagram_url; });
+        }
+        
+        console.log('✅ Cafe settings loaded');
+    } catch (error) {
+        console.error('Error loading cafe settings:', error);
+    }
+}
+
+// Escape HTML
 function escapeHtml(text) {
     if (!text) return '';
     const div = document.createElement('div');
@@ -196,125 +290,77 @@ function escapeHtml(text) {
 // Show temporary message
 function showMessage(message, type) {
     const msgDiv = document.createElement('div');
-    msgDiv.textContent = message;
+    msgDiv.innerHTML = `
+        <i class="fas fa-${type === 'success' ? 'check-circle' : 'exclamation-circle'}"></i>
+        <span>${message}</span>
+    `;
     msgDiv.style.cssText = `
         position: fixed;
         bottom: 20px;
         right: 20px;
-        background: ${type === 'success' ? '#6F4E37' : '#dc3545'};
+        background: ${type === 'success' ? '#10b981' : '#ef4444'};
         color: white;
-        padding: 12px 24px;
+        padding: 12px 20px;
         border-radius: 8px;
         z-index: 9999;
-        animation: fadeInOut 3s ease;
+        display: flex;
+        align-items: center;
+        gap: 10px;
+        font-size: 14px;
+        animation: slideInRight 0.3s ease, fadeOut 0.3s ease 2.7s forwards;
     `;
     document.body.appendChild(msgDiv);
     
     setTimeout(() => {
-        msgDiv.remove();
+        if (msgDiv.parentNode) msgDiv.remove();
     }, 3000);
 }
 
-// Load cafe settings from backend
-async function loadCafeSettings() {
-    try {
-        const response = await fetch(`${API_URL}/settings/public`);
-        const data = await response.json();
-        const settings = data.settings || {};
-        
-        // Update cafe name in footer and logo
-        const cafeNameElements = document.querySelectorAll('.cafe-name, .footer-logo');
-        cafeNameElements.forEach(el => {
-            if (el.tagName === 'A' && el.classList.contains('footer-logo')) {
-                const name = settings.cafe_name || 'Beans Cafe';
-                el.innerHTML = name.replace('Beans Cafe', '<span class="cafe-name-text">' + name + '</span>');
-                if (!el.innerHTML.includes('span')) {
-                    el.textContent = name;
-                }
-            } else if (el.classList.contains('cafe-name')) {
-                el.textContent = settings.cafe_name || 'Beans Cafe';
-            }
-        });
-        
-        // Update address in footer
-        const addressElements = document.querySelectorAll('.cafe-address');
-        addressElements.forEach(el => {
-            el.innerHTML = settings.cafe_address || '📍 123 Coffee Street, Barangay Kapitolyo, Pasig City';
-        });
-        
-        // Update phone in footer
-        const phoneElements = document.querySelectorAll('.cafe-phone');
-        phoneElements.forEach(el => {
-            el.innerHTML = settings.cafe_phone || '📞 (02) 1234 5678';
-        });
-        
-        // Update email in footer
-        const emailElements = document.querySelectorAll('.cafe-email');
-        emailElements.forEach(el => {
-            el.innerHTML = settings.cafe_email || '✉️ hello@beanscafe.com';
-        });
-        
-        // Update hours in footer
-        const hoursElements = document.querySelectorAll('.cafe-hours');
-        hoursElements.forEach(el => {
-            el.innerHTML = settings.cafe_hours || 'Mon-Fri: 7am-9pm, Sat-Sun: 8am-10pm';
-        });
-        
-        // Update social links
-        if (settings.facebook_url) {
-            const fbLinks = document.querySelectorAll('.social-facebook');
-            fbLinks.forEach(el => {
-                el.href = settings.facebook_url;
-            });
-        }
-        
-        if (settings.instagram_url) {
-            const igLinks = document.querySelectorAll('.social-instagram');
-            igLinks.forEach(el => {
-                el.href = settings.instagram_url;
-            });
-        }
-        
-        console.log('✅ Cafe settings loaded:', settings);
-    } catch (error) {
-        console.error('Error loading cafe settings:', error);
+// Add animation keyframes
+const style = document.createElement('style');
+style.textContent = `
+    @keyframes slideInRight {
+        from { transform: translateX(100px); opacity: 0; }
+        to { transform: translateX(0); opacity: 1; }
     }
-}
+    @keyframes fadeOut {
+        to { opacity: 0; visibility: hidden; }
+    }
+`;
+document.head.appendChild(style);
 
-// Mobile Menu Functionality
-document.addEventListener('DOMContentLoaded', function() {
+// Initialize Mobile Menu - FIXED
+function initMobileMenu() {
     const mobileMenuToggle = document.getElementById('Mobile_Menu_Toggle');
     const mobileNav = document.getElementById('MobileNav');
     const closeMenuBtn = document.getElementById('closeMenu');
     const overlay = document.getElementById('Overlay');
     
-    // Function to close mobile menu
+    if (!mobileMenuToggle || !mobileNav) return;
+    
     function closeMobileMenu() {
-        if (mobileNav) mobileNav.classList.remove('active');
+        mobileNav.classList.remove('active');
         if (overlay) overlay.classList.remove('active');
-        if (mobileMenuToggle) mobileMenuToggle.classList.remove('active');
+        mobileMenuToggle.classList.remove('active');
         document.body.style.overflow = 'auto';
     }
     
-    // Function to open mobile menu
     function openMobileMenu() {
-        if (mobileNav) mobileNav.classList.add('active');
+        mobileNav.classList.add('active');
         if (overlay) overlay.classList.add('active');
-        if (mobileMenuToggle) mobileMenuToggle.classList.add('active');
+        mobileMenuToggle.classList.add('active');
         document.body.style.overflow = 'hidden';
     }
     
     // Toggle menu on hamburger click
-    if (mobileMenuToggle && mobileNav) {
-        mobileMenuToggle.addEventListener('click', function(e) {
-            e.stopPropagation();
-            if (mobileNav.classList.contains('active')) {
-                closeMobileMenu();
-            } else {
-                openMobileMenu();
-            }
-        });
-    }
+    mobileMenuToggle.addEventListener('click', function(e) {
+        e.stopPropagation();
+        if (mobileNav.classList.contains('active')) {
+            closeMobileMenu();
+        } else {
+            openMobileMenu();
+        }
+    });
     
     // Close menu when clicking close button
     if (closeMenuBtn) {
@@ -327,36 +373,22 @@ document.addEventListener('DOMContentLoaded', function() {
     }
     
     // Close menu when clicking a link inside mobile nav
-    if (mobileNav) {
-        const mobileLinks = mobileNav.querySelectorAll('a');
-        mobileLinks.forEach(link => {
-            link.addEventListener('click', closeMobileMenu);
-        });
-    }
+    const mobileLinks = mobileNav.querySelectorAll('a');
+    mobileLinks.forEach(link => {
+        link.addEventListener('click', closeMobileMenu);
+    });
     
     // Close menu when pressing Escape key
     document.addEventListener('keydown', function(e) {
-        if (e.key === 'Escape' && mobileNav && mobileNav.classList.contains('active')) {
+        if (e.key === 'Escape' && mobileNav.classList.contains('active')) {
             closeMobileMenu();
         }
     });
     
-    // Handle window resize - if resizing to desktop while menu is open, close it
+    // Handle window resize - close menu when resizing to desktop
     window.addEventListener('resize', function() {
-        if (window.innerWidth > 768 && mobileNav && mobileNav.classList.contains('active')) {
+        if (window.innerWidth > 768 && mobileNav.classList.contains('active')) {
             closeMobileMenu();
         }
     });
-});
-
-// Add CSS animation
-const style = document.createElement('style');
-style.textContent = `
-    @keyframes fadeInOut {
-        0% { opacity: 0; transform: translateY(20px); }
-        15% { opacity: 1; transform: translateY(0); }
-        85% { opacity: 1; transform: translateY(0); }
-        100% { opacity: 0; transform: translateY(-20px); }
-    }
-`;
-document.head.appendChild(style);
+}

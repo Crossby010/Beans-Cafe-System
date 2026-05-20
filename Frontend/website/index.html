@@ -4,21 +4,51 @@
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>Beans Cafe | Premium Coffee Experience</title>
+    
+    <!-- SEO Meta Tags -->
+    <meta name="description" content="Experience premium coffee crafted with passion. Order online for pickup at Beans Cafe. Freshly roasted beans, handcrafted beverages.">
+    <meta name="keywords" content="coffee shop, cafe, premium coffee, beans cafe, online ordering, pickup coffee">
+    <meta name="author" content="Beans Cafe">
+    <meta name="robots" content="index, follow">
+    
+    <!-- Open Graph / Social Media Meta Tags -->
+    <meta property="og:title" content="Beans Cafe | Premium Coffee Experience">
+    <meta property="og:description" content="Experience premium coffee crafted with passion. Order online for pickup.">
+    <meta property="og:image" content="https://beans-cafe.vercel.app/assets/images/og-image.jpg">
+    <meta property="og:url" content="https://beans-cafe.vercel.app">
+    <meta property="og:type" content="website">
+    <meta name="twitter:card" content="summary_large_image">
+    
+    <!-- Favicon -->
+    <link rel="icon" type="image/x-icon" href="assets/favicon.ico">
+    
+    <!-- Stylesheets -->
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
     <link rel="stylesheet" href="css/style.css">
+    <link rel="stylesheet" href="css/animations.css">
+    
+    <!-- Theme will be loaded dynamically -->
 </head>
 <body>
 
 <!-- Navigation -->
 <nav class="navbar">
     <div class="nav-container">
-        <a href="index.html" class="logo cafe-name">Beans<span>Cafe</span></a>
+        <a href="index.html" class="logo cafe-name">
+            <i class="fas fa-mug-hot"></i>
+            <span>Cafe</span>
+        </a>
         
         <div class="nav-links">
             <a href="index.html" data-section="home" class="active">Home</a>
             <a href="pages/menu.html">Menu</a>
             <a href="#" data-section="howto">How to Order</a>
             <a href="#" data-section="about">About</a>
-            <a href="cart.html" class="cart-link">🛒 Cart <span id="cart-count">0</span></a>
+            <a href="#" data-section="gallery">Gallery</a>
+            <a href="pages/cart.html" class="cart-link">
+                <i class="fas fa-shopping-cart"></i>
+                <span id="cart-count">0</span>
+            </a>
         </div>
         
         <div class="Mobile-Menu" id="Mobile_Menu_Toggle">
@@ -37,46 +67,92 @@
         <li><a href="pages/menu.html">Menu</a></li>
         <li><a href="#" data-section="howto">How to Order</a></li>
         <li><a href="#" data-section="about">About</a></li>
-        <li><a href="cart.html">Cart</a></li>
+        <li><a href="#" data-section="gallery">Gallery</a></li>
+        <li><a href="pages/cart.html">Cart</a></li>
     </ul>
 </div>
 
 <!-- Overlay -->
 <div class="Overlay" id="Overlay"></div>
 
-<!-- ==================== HOME SECTION (visible by default) ==================== -->
+<!-- ==================== HOME SECTION ==================== -->
 <div id="home-section" class="page-section active">
-    <!-- Hero Section -->
-    <section class="hero">
-        <div class="container" style="width: 100%; padding: 0;">
-            <div class="hero-content">
+
+    <!-- Hero Section - Video Background (FIXED: added playsinline) -->
+    <section class="hero hero-video" id="hero-section">
+        <div class="hero-video-bg">
+            <video autoplay loop muted playsinline id="hero-video">
+                <source src="assets/videos/hero-bg.mp4" type="video/mp4">
+            </video>
+            <div class="hero-overlay"></div>
+        </div>
+        <div class="container">
+            <div class="hero-content" data-aos="fade-up" data-aos-duration="1">
+                <div class="hero-badge">
+                    <i class="fas fa-certificate"></i> Premium Craft Coffee
+                </div>
                 <h1>Enjoy a new blend<br>of coffee beans</h1>
                 <p>Brew or order a Perfect Coffee based on your mood.<br>Anywhere. Anytime.</p>
                 <div class="hero-buttons">
-                    <a href="pages/menu.html" class="btn btn-primary">SHOP NOW</a>
-                    <a href="#" class="btn btn-secondary" data-section="howto">How it works</a>
+                    <a href="pages/menu.html" class="btn btn-primary">
+                        <i class="fas fa-shopping-bag"></i> SHOP NOW
+                    </a>
+                    <a href="#" class="btn btn-secondary" data-section="howto">
+                        <i class="fas fa-play"></i> How it works
+                    </a>
+                </div>
+                <div class="hero-stats">
+                    <div class="hero-stat">
+                        <span class="stat-number">100%</span>
+                        <span class="stat-label">Arabica Beans</span>
+                    </div>
+                    <div class="hero-stat">
+                        <span class="stat-number">15+</span>
+                        <span class="stat-label">Signature Drinks</span>
+                    </div>
+                    <div class="hero-stat">
+                        <span class="stat-number">500+</span>
+                        <span class="stat-label">Happy Customers</span>
+                    </div>
                 </div>
             </div>
+        </div>
+        <div class="hero-scroll-indicator">
+            <span>Scroll</span>
+            <i class="fas fa-chevron-down"></i>
         </div>
     </section>
 
     <!-- How It Works Section -->
     <section class="how-it-works">
         <div class="container">
-            <h2 class="section-title">How It Works</h2>
+            <div class="section-header" data-aos="fade-up">
+                <span class="section-tag">How It Works</span>
+                <h2 class="section-title">Simple Steps to Your Perfect Coffee</h2>
+                <p class="section-subtitle">Order, customize, and pick up - it's that easy</p>
+            </div>
             <div class="steps-grid">
-                <div class="step-card">
-                    <div class="step-icon">📱</div>
+                <div class="step-card" data-aos="fade-up" data-aos-delay="0">
+                    <div class="step-icon-wrapper">
+                        <div class="step-icon">📱</div>
+                        <div class="step-number">01</div>
+                    </div>
                     <h3>Browse Menu</h3>
                     <p>Explore our selection of premium coffee, tea, and pastries from your phone or computer</p>
                 </div>
-                <div class="step-card">
-                    <div class="step-icon">🎨</div>
+                <div class="step-card" data-aos="fade-up" data-aos-delay="0.1">
+                    <div class="step-icon-wrapper">
+                        <div class="step-icon">🎨</div>
+                        <div class="step-number">02</div>
+                    </div>
                     <h3>Customize</h3>
                     <p>Choose your size, milk preference, sweetness level, and add-ons just the way you like it</p>
                 </div>
-                <div class="step-card">
-                    <div class="step-icon">🏃</div>
+                <div class="step-card" data-aos="fade-up" data-aos-delay="0.2">
+                    <div class="step-icon-wrapper">
+                        <div class="step-icon">🏃</div>
+                        <div class="step-number">03</div>
+                    </div>
                     <h3>Pick Up</h3>
                     <p>Order online and pick up at our cafe - no waiting in line!</p>
                 </div>
@@ -84,12 +160,180 @@
         </div>
     </section>
 
+    <!-- Best Sellers Carousel Section -->
+    <section class="best-sellers">
+        <div class="container">
+            <div class="section-header" data-aos="fade-up">
+                <span class="section-tag">Customer Favorites</span>
+                <h2 class="section-title">Best Sellers</h2>
+                <p class="section-subtitle">Our most loved drinks, crafted to perfection</p>
+            </div>
+            <div class="carousel-container" data-aos="fade-up">
+                <div class="carousel-track" id="best-sellers-track">
+                    <div class="loading">Loading best sellers...</div>
+                </div>
+                <button class="carousel-btn prev" id="carousel-prev">
+                    <i class="fas fa-chevron-left"></i>
+                </button>
+                <button class="carousel-btn next" id="carousel-next">
+                    <i class="fas fa-chevron-right"></i>
+                </button>
+            </div>
+            <div class="carousel-dots" id="carousel-dots"></div>
+        </div>
+    </section>
+
     <!-- Featured Products Section -->
     <section class="featured-products">
         <div class="container">
-            <h2 class="section-title">Featured Drinks</h2>
-            <div class="products-grid" id="featured-products">
+            <div class="section-header" data-aos="fade-up">
+                <span class="section-tag">Our Menu</span>
+                <h2 class="section-title">Featured Drinks</h2>
+                <p class="section-subtitle">Discover our signature creations</p>
+            </div>
+            <div class="products-grid" id="featured-products" data-aos="fade-up">
                 <div class="loading">Loading menu...</div>
+            </div>
+            <div class="view-all-btn" data-aos="fade-up">
+                <a href="pages/menu.html" class="btn btn-secondary">View Full Menu <i class="fas fa-arrow-right"></i></a>
+            </div>
+        </div>
+    </section>
+
+    <!-- Gallery/Instagram Section -->
+    <section class="gallery-section" id="gallery">
+        <div class="container">
+            <div class="section-header" data-aos="fade-up">
+                <span class="section-tag">Instagram</span>
+                <h2 class="section-title">Our Cafe Moments</h2>
+                <p class="section-subtitle">Follow us <i class="fab fa-instagram"></i> @beanscafe</p>
+            </div>
+            <div class="gallery-grid" id="gallery-grid" data-aos="fade-up">
+                <!-- Gallery items will be loaded dynamically -->
+            </div>
+        </div>
+    </section>
+
+    <!-- About Section -->
+    <section class="about-section" id="about">
+        <div class="container">
+            <div class="about-grid">
+                <div class="about-content" data-aos="fade-right">
+                    <span class="section-tag">Our Story</span>
+                    <h2>More Than Just Coffee</h2>
+                    <p>Beans Cafe was founded with a simple mission: to serve perfectly crafted coffee that brightens your day. We believe that great coffee starts with quality beans and ends with a smile on your face.</p>
+                    <p>Every cup is brewed with passion and care, using locally sourced beans whenever possible. Our cafe is a place where coffee lovers gather, share stories, and enjoy moments of warmth and connection.</p>
+                    
+                    <div class="about-features">
+                        <div class="about-feature">
+                            <i class="fas fa-seedling"></i>
+                            <span>100% Arabica Beans</span>
+                        </div>
+                        <div class="about-feature">
+                            <i class="fas fa-hand-sparkles"></i>
+                            <span>Handcrafted Drinks</span>
+                        </div>
+                        <div class="about-feature">
+                            <i class="fas fa-heart"></i>
+                            <span>Locally Roasted</span>
+                        </div>
+                    </div>
+                    
+                    <a href="#" class="btn btn-primary">Learn More</a>
+                </div>
+                <div class="about-image" data-aos="fade-left">
+                    <img src="https://images.unsplash.com/photo-1445116572660-236099ec97a0?w=800&h=500&fit=crop" alt="Beans Cafe Interior" onerror="this.src='https://placehold.co/800x500/F5E6D3/6F4E37?text=Cafe+Image'">
+                    <div class="about-experience">
+                        <span class="years">10+</span>
+                        <span>Years of Excellence</span>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </section>
+
+    <!-- Testimonials Section -->
+    <section class="testimonials-section">
+        <div class="container">
+            <div class="section-header" data-aos="fade-up">
+                <span class="section-tag">Testimonials</span>
+                <h2 class="section-title">What Our Customers Say</h2>
+                <p class="section-subtitle">Loved by coffee enthusiasts</p>
+            </div>
+            <div class="testimonials-grid" id="testimonials-grid" data-aos="fade-up">
+                <div class="testimonial-card">
+                    <div class="testimonial-rating">
+                        <i class="fas fa-star"></i><i class="fas fa-star"></i><i class="fas fa-star"></i><i class="fas fa-star"></i><i class="fas fa-star"></i>
+                    </div>
+                    <p class="testimonial-text">"Best coffee in town! The caramel macchiato is absolutely perfect. The online ordering system is super convenient."</p>
+                    <div class="testimonial-author">
+                        <img src="https://randomuser.me/api/portraits/women/1.jpg" alt="Customer">
+                        <div>
+                            <h4>Maria Santos</h4>
+                            <span>Regular Customer</span>
+                        </div>
+                    </div>
+                </div>
+                <div class="testimonial-card">
+                    <div class="testimonial-rating">
+                        <i class="fas fa-star"></i><i class="fas fa-star"></i><i class="fas fa-star"></i><i class="fas fa-star"></i><i class="fas fa-star"></i>
+                    </div>
+                    <p class="testimonial-text">"Love the cozy atmosphere and friendly baristas. The matcha latte is my go-to drink every morning!"</p>
+                    <div class="testimonial-author">
+                        <img src="https://randomuser.me/api/portraits/men/1.jpg" alt="Customer">
+                        <div>
+                            <h4>John Reyes</h4>
+                            <span>Daily Customer</span>
+                        </div>
+                    </div>
+                </div>
+                <div class="testimonial-card">
+                    <div class="testimonial-rating">
+                        <i class="fas fa-star"></i><i class="fas fa-star"></i><i class="fas fa-star"></i><i class="fas fa-star"></i><i class="fas fa-star"></i>
+                    </div>
+                    <p class="testimonial-text">"The Spanish latte is amazing! Great place to work remotely. Fast WiFi and delicious pastries."</p>
+                    <div class="testimonial-author">
+                        <img src="https://randomuser.me/api/portraits/women/2.jpg" alt="Customer">
+                        <div>
+                            <h4>Anna Garcia</h4>
+                            <span>Work from Cafe</span>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </section>
+
+    <!-- Loyalty Banner -->
+    <section class="loyalty-banner">
+        <div class="container">
+            <div class="loyalty-content" data-aos="zoom-in">
+                <div class="loyalty-icon">
+                    <i class="fas fa-gem"></i>
+                </div>
+                <h3>Join Our Loyalty Program</h3>
+                <p>Get 1 point for every ₱100 spent. Redeem points for free drinks!</p>
+                <button class="btn btn-primary" onclick="alert('Loyalty program coming soon!')">Sign Up Free</button>
+            </div>
+        </div>
+    </section>
+
+    <!-- Newsletter Section -->
+    <section class="newsletter-section">
+        <div class="container">
+            <div class="newsletter-content" data-aos="fade-up">
+                <div class="newsletter-icon">
+                    <i class="fas fa-envelope-open-text"></i>
+                </div>
+                <h3>Subscribe to Our Newsletter</h3>
+                <p>Get exclusive offers, new product alerts, and cafe news delivered to your inbox</p>
+                <form id="newsletter-form" class="newsletter-form">
+                    <div class="newsletter-input-group">
+                        <input type="email" id="newsletter-email" placeholder="Enter your email address" required>
+                        <button type="submit">Subscribe</button>
+                    </div>
+                    <p class="newsletter-note">No spam, unsubscribe anytime.</p>
+                </form>
             </div>
         </div>
     </section>
@@ -97,45 +341,53 @@
 
 <!-- ==================== HOW TO ORDER SECTION ==================== -->
 <div id="howto-section" class="page-section">
-    <section class="howto-section">
+    <section class="howto-detailed-section">
         <div class="container">
-            <h2 class="section-title">How to Order</h2>
+            <div class="section-header" data-aos="fade-up">
+                <span class="section-tag">Simple Process</span>
+                <h2 class="section-title">How to Order</h2>
+                <p class="section-subtitle">Get your coffee in 4 easy steps</p>
+            </div>
             
-            <div class="steps-grid" style="margin-bottom: 60px;">
-                <div class="step-card">
-                    <div class="step-number">1</div>
+            <div class="howto-detailed-grid">
+                <div class="howto-detailed-card" data-aos="fade-up" data-aos-delay="0">
+                    <div class="howto-detailed-number">1</div>
+                    <div class="howto-detailed-icon">
+                        <i class="fas fa-mobile-alt"></i>
+                    </div>
                     <h3>Browse Our Menu</h3>
                     <p>Visit our Menu page to see all available drinks, pastries, and food items</p>
                 </div>
-                <div class="step-card">
-                    <div class="step-number">2</div>
+                <div class="howto-detailed-card" data-aos="fade-up" data-aos-delay="0.1">
+                    <div class="howto-detailed-number">2</div>
+                    <div class="howto-detailed-icon">
+                        <i class="fas fa-sliders-h"></i>
+                    </div>
                     <h3>Customize Your Drink</h3>
                     <p>Choose your size, milk preference, sweetness level, and add-ons</p>
                 </div>
-                <div class="step-card">
-                    <div class="step-number">3</div>
-                    <h3>Add to Cart</h3>
-                    <p>Review your order and add it to your shopping cart</p>
-                </div>
-                <div class="step-card">
-                    <div class="step-number">4</div>
+                <div class="howto-detailed-card" data-aos="fade-up" data-aos-delay="0.2">
+                    <div class="howto-detailed-number">3</div>
+                    <div class="howto-detailed-icon">
+                        <i class="fas fa-shopping-cart"></i>
+                    </div>
                     <h3>Checkout</h3>
                     <p>Enter your name and phone number for pickup</p>
                 </div>
-                <div class="step-card">
-                    <div class="step-number">5</div>
-                    <h3>Pick Up Your Order</h3>
+                <div class="howto-detailed-card" data-aos="fade-up" data-aos-delay="0.3">
+                    <div class="howto-detailed-number">4</div>
+                    <div class="howto-detailed-icon">
+                        <i class="fas fa-store"></i>
+                    </div>
+                    <h3>Pick Up & Enjoy</h3>
                     <p>Visit our cafe and show your order number to claim your drink</p>
-                </div>
-                <div class="step-card">
-                    <div class="step-number">6</div>
-                    <h3>Enjoy!</h3>
-                    <p>Sip and enjoy your perfectly crafted coffee</p>
                 </div>
             </div>
             
-            <div style="text-align: center; margin-top: 40px;">
-                <a href="pages/menu.html" class="btn btn-primary">Start Your Order</a>
+            <div class="howto-cta" data-aos="fade-up">
+                <a href="pages/menu.html" class="btn btn-primary btn-large">
+                    <i class="fas fa-coffee"></i> Start Your Order
+                </a>
             </div>
         </div>
     </section>
@@ -143,42 +395,101 @@
 
 <!-- ==================== ABOUT SECTION ==================== -->
 <div id="about-section" class="page-section">
-    <section class="about-section">
+    <section class="about-detailed-section">
         <div class="container">
-            <h2 class="section-title">About Beans Cafe</h2>
-            
-            <div class="about-grid">
-                <div class="about-image">
-                    <img src="assets/images/cafe-interior.jpg" alt="Beans Cafe Interior" style="width: 100%; height: 100%; object-fit: cover; border-radius: 16px;" onerror="this.src='https://placehold.co/600x400/F5E6D3/6F4E37?text=Cafe+Image'">
+            <div class="about-detailed-grid">
+                <div class="about-detailed-image" data-aos="fade-right">
+                    <img src="https://images.unsplash.com/photo-1514432324607-a09d9b4aefdd?w=800&h=600&fit=crop" alt="Our Barista" onerror="this.src='https://placehold.co/800x600/F5E6D3/6F4E37?text=Our+Team'">
                 </div>
-                <div class="about-content">
-                    <h3>Our Story</h3>
-                    <p>Beans Cafe was founded with a simple mission: to serve perfectly crafted coffee that brightens your day. We believe that great coffee starts with quality beans and ends with a smile on your face.</p>
-                    <p>Every cup is brewed with passion and care, using locally sourced beans whenever possible. Our cafe is a place where coffee lovers gather, share stories, and enjoy moments of warmth and connection.</p>
+                <div class="about-detailed-content" data-aos="fade-left">
+                    <span class="section-tag">Our Passion</span>
+                    <h2>Meet Our Team</h2>
+                    <p>Our baristas are coffee artists who take pride in every cup they serve. Each team member undergoes extensive training to ensure every drink meets our high standards.</p>
+                    
+                    <div class="team-stats">
+                        <div class="team-stat">
+                            <span class="stat-number">10+</span>
+                            <span>Years Combined Experience</span>
+                        </div>
+                        <div class="team-stat">
+                            <span class="stat-number">5</span>
+                            <span>Certified Baristas</span>
+                        </div>
+                        <div class="team-stat">
+                            <span class="stat-number">1000+</span>
+                            <span>Cups Daily</span>
+                        </div>
+                    </div>
                     
                     <div class="owner-info">
-                        <h4>Meet Our Owner</h4>
-                        <p><strong>Maria Rodriguez</strong> - A coffee enthusiast with over 10 years of experience in the industry. Maria started Beans Cafe to bring specialty coffee to the neighborhood and create a space where everyone feels welcome.</p>
+                        <i class="fas fa-user-tie"></i>
+                        <div>
+                            <h4>Maria Rodriguez</h4>
+                            <p>Founder & Head Barista - 10+ years of coffee expertise</p>
+                        </div>
                     </div>
-                    
-                    <div class="location-info">
-                        <h4>📍 Our Location</h4>
-                        <p class="cafe-address">123 Coffee Street, Barangay Kapitolyo<br>Pasig City, Metro Manila<br>Philippines</p>
-                        <p><strong>Hours:</strong><br>
-                        <span class="cafe-hours">Monday - Friday: 7:00 AM - 9:00 PM<br>Saturday - Sunday: 8:00 AM - 10:00 PM</span></p>
+                </div>
+            </div>
+            
+            <div class="location-info-detailed" data-aos="fade-up">
+                <div class="location-header">
+                    <i class="fas fa-map-marker-alt"></i>
+                    <h3>Visit Our Cafe</h3>
+                </div>
+                <div class="location-grid">
+                    <div class="location-details">
+                        <p class="cafe-address">📍 123 Coffee Street, Barangay Kapitolyo<br>Pasig City, Metro Manila<br>Philippines</p>
+                        <p class="cafe-phone">📞 (02) 1234 5678</p>
+                        <p class="cafe-email">✉️ hello@beanscafe.com</p>
                     </div>
+                    <div class="hours-details">
+                        <h4>Opening Hours</h4>
+                        <p>Monday - Friday: 7:00 AM - 9:00 PM</p>
+                        <p>Saturday - Sunday: 8:00 AM - 10:00 PM</p>
+                        <p class="holiday-note">Open on holidays</p>
+                    </div>
+                </div>
+                <div class="location-map">
+                    <iframe src="https://www.google.com/maps/embed?pb=!1m18!1m12!1m3!1d3860.0000000000005!2d121.00000000000001!3d14.000000000000004!2m3!1f0!2f0!3f0!3m2!1i1024!2i768!4f13.1!3m3!1m2!1s0x0%3A0x0!2zMTTCsDAwJzAwLjAiTiAxMjHCsDAwJzAwLjAiRQ!5e0!3m2!1sen!2sph!4v1234567890" 
+                            width="100%" height="250" style="border:0; border-radius: 16px;" allowfullscreen="" loading="lazy">
+                    </iframe>
                 </div>
             </div>
         </div>
     </section>
 </div>
 
+<!-- ==================== GALLERY SECTION ==================== -->
+<div id="gallery-section" class="page-section">
+    <section class="gallery-detailed-section">
+        <div class="container">
+            <div class="section-header" data-aos="fade-up">
+                <span class="section-tag">Visual Moments</span>
+                <h2 class="section-title">Our Gallery</h2>
+                <p class="section-subtitle">Experience the vibe of Beans Cafe</p>
+            </div>
+            <div class="gallery-masonry" id="gallery-masonry" data-aos="fade-up">
+                <!-- Gallery images will be loaded dynamically -->
+            </div>
+        </div>
+    </section>
+</div>
+
+<!-- Footer -->
 <footer class="footer">
     <div class="container">
         <div class="footer-content">
-            <div>
-                <a href="index.html" class="footer-logo cafe-name">Beans<span>Cafe</span></a>
-                <p style="margin-top: 15px;">Premium coffee experience crafted with passion.</p>
+            <div class="footer-brand">
+                <a href="index.html" class="footer-logo cafe-name">
+                    <i class="fas fa-mug-hot"></i><span>Cafe</span>
+                </a>
+                <p>Premium coffee experience crafted with passion. Every cup tells a story.</p>
+                <div class="footer-social">
+                    <a href="#" class="social-facebook" id="footer-facebook"><i class="fab fa-facebook-f"></i></a>
+                    <a href="#" class="social-instagram" id="footer-instagram"><i class="fab fa-instagram"></i></a>
+                    <a href="#" class="social-twitter" id="footer-twitter"><i class="fab fa-twitter"></i></a>
+                    <a href="#" class="social-tiktok"><i class="fab fa-tiktok"></i></a>
+                </div>
             </div>
             <div class="footer-links">
                 <h4>Quick Links</h4>
@@ -186,28 +497,108 @@
                 <a href="pages/menu.html">Menu</a>
                 <a href="#" data-section="howto">How to Order</a>
                 <a href="#" data-section="about">About</a>
+                <a href="#" data-section="gallery">Gallery</a>
                 <a href="pages/cart.html">Cart</a>
             </div>
             <div class="footer-links">
                 <h4>Contact</h4>
-                <a href="#" class="cafe-address">📍 123 Coffee Street, Manila</a>
-                <a href="#" class="cafe-phone">📞 (02) 1234 5678</a>
-                <a href="#" class="cafe-email">✉️ hello@beanscafe.com</a>
+                <a href="#" class="cafe-address">
+                    <i class="fas fa-location-dot"></i> 123 Coffee Street, Pasig
+                </a>
+                <a href="#" class="cafe-phone">
+                    <i class="fas fa-phone"></i> (02) 1234 5678
+                </a>
+                <a href="#" class="cafe-email">
+                    <i class="fas fa-envelope"></i> hello@beanscafe.com
+                </a>
             </div>
             <div class="footer-links">
                 <h4>Hours</h4>
-                <div class="cafe-hours">Mon - Fri: 7am - 9pm</div>
-                <div class="cafe-hours">Sat - Sun: 8am - 10pm</div>
+                <div class="cafe-hours">
+                    <i class="far fa-clock"></i> Mon - Fri: 7am - 9pm
+                </div>
+                <div class="cafe-hours">
+                    <i class="far fa-clock"></i> Sat - Sun: 8am - 10pm
+                </div>
+                <div class="footer-badge">
+                    <i class="fas fa-motorcycle"></i> Pickup Only
+                </div>
             </div>
         </div>
         <div class="footer-bottom">
-            <p>&copy; 2024 <span class="cafe-name">Beans Cafe</span>. All rights reserved. | Pickup Only</p>
+            <p>&copy; 2024 <span class="cafe-name">Beans Cafe</span>. All rights reserved.</p>
+            <div class="footer-bottom-links">
+                <a href="#">Privacy Policy</a>
+                <a href="#">Terms of Service</a>
+            </div>
         </div>
     </div>
 </footer>
 
+<!-- Scripts -->
+<script src="script/config.js"></script>
 <script src="script/main.js"></script>
 <script src="script/cart.js"></script>
+<script src="script/animations.js"></script>
+<script src="script/darkmode.js"></script>
+<script src="script/whatsapp.js"></script>
+<script src="script/cookie-consent.js"></script>
+<script src="script/backtotop.js"></script>
+<script src="script/carousel.js"></script>
+<script src="script/gallery.js"></script>
+<script src="script/pwa.js"></script>
+
+<script>
+    document.addEventListener('DOMContentLoaded', function() {
+        // Load featured products
+        if (document.getElementById('featured-products')) {
+            loadFeaturedProducts();
+        }
+        
+        // Load best sellers carousel
+        if (document.getElementById('best-sellers-track')) {
+            loadBestSellers();
+        }
+        
+        // Load gallery
+        if (document.getElementById('gallery-grid')) {
+            loadGallery();
+        }
+        
+        // Update cart count
+        updateCartCount();
+        
+        // Load cafe settings
+        loadCafeSettings();
+        
+        // Check URL hash
+        if (window.location.pathname.endsWith('index.html') || window.location.pathname.endsWith('/')) {
+            checkHash();
+        }
+        
+        // Newsletter form
+        const newsletterForm = document.getElementById('newsletter-form');
+        if (newsletterForm) {
+            newsletterForm.addEventListener('submit', function(e) {
+                e.preventDefault();
+                const email = document.getElementById('newsletter-email').value;
+                showMessage('Thanks for subscribing! 🎉', 'success');
+                newsletterForm.reset();
+            });
+        }
+        
+        // Hero scroll indicator
+        const scrollIndicator = document.querySelector('.hero-scroll-indicator');
+        if (scrollIndicator) {
+            scrollIndicator.addEventListener('click', () => {
+                window.scrollTo({
+                    top: window.innerHeight,
+                    behavior: 'smooth'
+                });
+            });
+        }
+    });
+</script>
 
 </body>
 </html>

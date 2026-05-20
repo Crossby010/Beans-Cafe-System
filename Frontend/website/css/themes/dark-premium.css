@@ -1,0 +1,530 @@
+/* Beans Cafe - Dark Premium Theme */
+/* Black & Gold - Luxury Coffee Experience */
+
+:root {
+    /* Primary Colors */
+    --primary: #C6A43F;
+    --primary-light: #D4B45F;
+    --primary-dark: #A8882E;
+    
+    /* Background Colors */
+    --bg-primary: #0D0D0D;
+    --bg-secondary: #1A1A1A;
+    --bg-tertiary: #242424;
+    --bg-card: #1A1A1A;
+    
+    /* Text Colors */
+    --text-primary: #FFFFFF;
+    --text-secondary: #B0B0B0;
+    --text-muted: #6B6B6B;
+    
+    /* Border & Accent */
+    --border: #2A2A2A;
+    --border-light: #333333;
+    --shadow: 0 8px 32px rgba(0, 0, 0, 0.3);
+    --shadow-hover: 0 12px 48px rgba(198, 164, 63, 0.15);
+    
+    /* Gradients */
+    --gradient-gold: linear-gradient(135deg, #C6A43F 0%, #8B7322 100%);
+    --gradient-dark: linear-gradient(135deg, #1A1A1A 0%, #0D0D0D 100%);
+    
+    /* Spacing */
+    --spacing-xs: 0.5rem;
+    --spacing-sm: 1rem;
+    --spacing-md: 1.5rem;
+    --spacing-lg: 2rem;
+    --spacing-xl: 3rem;
+    --spacing-2xl: 5rem;
+    
+    /* Typography */
+    --font-heading: 'Playfair Display', serif;
+    --font-body: 'Inter', sans-serif;
+    
+    /* Border Radius */
+    --radius-sm: 8px;
+    --radius-md: 12px;
+    --radius-lg: 16px;
+    --radius-xl: 24px;
+    
+    /* Transitions */
+    --transition-fast: 0.2s ease;
+    --transition: 0.3s ease;
+    --transition-slow: 0.5s ease;
+}
+
+/* Global Styles */
+body {
+    background: var(--bg-primary);
+    color: var(--text-primary);
+}
+
+/* ========== NAVIGATION - FIXED SCROLL ISSUE ========== */
+.navbar {
+    background: rgba(13, 13, 13, 0.95);
+    backdrop-filter: blur(10px);
+    border-bottom: 1px solid var(--border);
+    transition: all 0.3s ease;
+}
+
+/* When scrolled - keep dark background, just slightly more opaque */
+.navbar.scrolled {
+    background: rgba(13, 13, 13, 0.98);
+    box-shadow: 0 4px 20px rgba(0, 0, 0, 0.3);
+    border-bottom-color: rgba(198, 164, 63, 0.3);
+}
+
+.logo {
+    color: var(--primary);
+}
+
+.logo span {
+    color: var(--text-primary);
+}
+
+.nav-links a {
+    color: var(--text-secondary);
+}
+
+.nav-links a:hover,
+.nav-links a.active {
+    color: var(--primary);
+}
+
+.nav-links a::after {
+    background: var(--primary);
+}
+
+/* Mobile Menu - Dark theme */
+.Mobile-Menu {
+    background: rgba(198, 164, 63, 0.1);
+}
+
+.Mobile-Menu .bar {
+    background: var(--primary);
+}
+
+.Mobile-Nav {
+    background: var(--bg-card);
+    border-left: 1px solid var(--border);
+}
+
+.Mobile-Nav-Contents a {
+    color: var(--text-primary);
+}
+
+.Mobile-Nav-Contents a:hover {
+    background: rgba(198, 164, 63, 0.1);
+    color: var(--primary);
+}
+
+.close-menu::before,
+.close-menu::after {
+    background: var(--text-primary);
+}
+
+.Overlay {
+    background: rgba(0, 0, 0, 0.7);
+}
+
+/* Buttons */
+.btn-primary {
+    background: var(--gradient-gold);
+    color: var(--bg-primary);
+    border: none;
+}
+
+.btn-primary:hover {
+    transform: translateY(-2px);
+    box-shadow: var(--shadow-hover);
+}
+
+.btn-secondary {
+    background: transparent;
+    color: var(--primary);
+    border: 2px solid var(--primary);
+}
+
+.btn-secondary:hover {
+    background: var(--primary);
+    color: var(--bg-primary);
+}
+
+/* Hero Section */
+.hero {
+    background: linear-gradient(135deg, rgba(0,0,0,0.7), rgba(0,0,0,0.5)), url('../assets/images/hero-bg.jpg');
+    background-size: cover;
+    background-position: center;
+}
+
+.hero h1 {
+    background: linear-gradient(135deg, #FFFFFF 0%, #C6A43F 100%);
+    -webkit-background-clip: text;
+    background-clip: text;
+    color: transparent;
+}
+
+.hero-badge {
+    background: rgba(198, 164, 63, 0.2);
+    border: 1px solid rgba(198, 164, 63, 0.3);
+}
+
+.hero-stats .stat-number {
+    color: white;
+}
+
+.hero-scroll-indicator {
+    color: rgba(255, 255, 255, 0.7);
+}
+
+/* Cards */
+.step-card,
+.product-card,
+.dashboard-card {
+    background: var(--bg-card);
+    border: 1px solid var(--border);
+    border-radius: var(--radius-lg);
+}
+
+.step-card:hover,
+.product-card:hover {
+    transform: translateY(-5px);
+    border-color: var(--primary);
+    box-shadow: var(--shadow-hover);
+}
+
+.step-card::before {
+    background: var(--gradient-gold);
+}
+
+.step-icon {
+    background: rgba(198, 164, 63, 0.1);
+    color: var(--primary);
+}
+
+/* Section Titles */
+.section-title {
+    color: var(--text-primary);
+}
+
+.section-tag {
+    background: rgba(198, 164, 63, 0.1);
+    color: var(--primary);
+}
+
+/* How It Works Section */
+.how-it-works {
+    background: var(--bg-secondary);
+}
+
+/* Featured Products */
+.featured-products {
+    background: var(--bg-primary);
+}
+
+/* About Section */
+.about-section {
+    background: var(--bg-secondary);
+}
+
+.about-content h3 {
+    color: var(--text-primary);
+}
+
+.owner-info, .location-info {
+    border-top-color: var(--border);
+}
+
+.about-feature i {
+    color: var(--primary);
+}
+
+.about-experience {
+    background: var(--gradient-gold);
+    color: var(--bg-primary);
+}
+
+/* How To Detailed Section */
+.howto-detailed-section {
+    background: var(--bg-primary);
+}
+
+.howto-detailed-card {
+    background: var(--bg-card);
+    border: 1px solid var(--border);
+}
+
+.howto-detailed-number {
+    background: var(--primary);
+    color: var(--bg-primary);
+}
+
+.howto-detailed-icon {
+    color: var(--primary);
+}
+
+/* About Detailed Section */
+.about-detailed-section {
+    background: var(--bg-secondary);
+}
+
+.team-stat .stat-number {
+    color: var(--primary);
+}
+
+.location-info-detailed {
+    background: var(--bg-card);
+    border: 1px solid var(--border);
+}
+
+.location-header i {
+    color: var(--primary);
+}
+
+/* Gallery Section */
+.gallery-section {
+    background: var(--bg-secondary);
+}
+
+.gallery-detailed-section {
+    background: var(--bg-primary);
+}
+
+.gallery-overlay {
+    background: linear-gradient(transparent, rgba(0,0,0,0.8));
+}
+
+/* Testimonials */
+.testimonials-section {
+    background: var(--bg-secondary);
+}
+
+.testimonial-card {
+    background: var(--bg-card);
+    border: 1px solid var(--border);
+}
+
+.testimonial-rating {
+    color: #FFD700;
+}
+
+/* Loyalty Banner */
+.loyalty-banner {
+    background: var(--gradient-gold);
+}
+
+.loyalty-content .btn-primary {
+    background: var(--bg-primary);
+    color: var(--primary);
+}
+
+/* Newsletter */
+.newsletter-section {
+    background: var(--bg-primary);
+}
+
+.newsletter-icon {
+    color: var(--primary);
+}
+
+.newsletter-input-group input {
+    background: var(--bg-tertiary);
+    border: 1px solid var(--border);
+    color: var(--text-primary);
+}
+
+.newsletter-input-group button {
+    background: var(--primary);
+    color: var(--bg-primary);
+}
+
+.newsletter-input-group button:hover {
+    background: var(--primary-dark);
+}
+
+/* Footer */
+.footer {
+    background: var(--bg-secondary);
+    border-top: 1px solid var(--border);
+}
+
+.footer-logo {
+    color: var(--primary);
+}
+
+.footer-links a {
+    color: var(--text-secondary);
+}
+
+.footer-links a:hover {
+    color: var(--primary);
+}
+
+.footer-social a {
+    background: rgba(198, 164, 63, 0.1);
+    color: var(--primary);
+}
+
+.footer-social a:hover {
+    background: var(--primary);
+    color: var(--bg-primary);
+}
+
+.footer-bottom {
+    border-top-color: var(--border);
+    color: var(--text-muted);
+}
+
+/* Form Elements */
+input, textarea, select {
+    background: var(--bg-tertiary);
+    border: 1px solid var(--border);
+    color: var(--text-primary);
+}
+
+input:focus, textarea:focus, select:focus {
+    border-color: var(--primary);
+    outline: none;
+    box-shadow: 0 0 0 2px rgba(198, 164, 63, 0.2);
+}
+
+/* Modal */
+.modal-content {
+    background: var(--bg-secondary);
+    border: 1px solid var(--border);
+}
+
+.modal-content h3 {
+    color: var(--primary);
+}
+
+/* Admin Dashboard - Dark Premium */
+.sidebar {
+    background: linear-gradient(180deg, #0D0D0D 0%, #1A1A1A 100%);
+    border-right: 1px solid var(--border);
+}
+
+.sidebar-header h2 {
+    color: var(--primary);
+}
+
+.nav-item {
+    color: var(--text-secondary);
+}
+
+.nav-item:hover,
+.nav-item.active {
+    background: rgba(198, 164, 63, 0.1);
+    color: var(--primary);
+    border-left: 3px solid var(--primary);
+}
+
+.dashboard-stat-card,
+.dashboard-card {
+    background: var(--bg-card);
+    border: 1px solid var(--border);
+}
+
+.stat-value {
+    color: var(--primary);
+}
+
+.stat-icon {
+    background: rgba(198, 164, 63, 0.1);
+    color: var(--primary);
+}
+
+.quick-action {
+    background: var(--bg-tertiary);
+    border: 1px solid var(--border);
+}
+
+.quick-action:hover {
+    background: var(--primary);
+    color: var(--bg-primary);
+}
+
+.quick-action:hover i {
+    color: var(--bg-primary);
+}
+
+/* Tables */
+.data-table th {
+    background: var(--bg-tertiary);
+    color: var(--text-secondary);
+}
+
+.data-table td {
+    border-bottom-color: var(--border);
+}
+
+/* Buttons in Admin */
+.btn-primary {
+    background: var(--primary);
+    color: var(--bg-primary);
+}
+
+.btn-primary:hover {
+    background: var(--primary-dark);
+}
+
+.btn-edit {
+    background: rgba(59, 130, 246, 0.1);
+    color: #3b82f6;
+    border: 1px solid #3b82f6;
+}
+
+.btn-danger {
+    background: rgba(239, 68, 68, 0.1);
+    color: #ef4444;
+    border: 1px solid #ef4444;
+}
+
+.btn-success {
+    background: rgba(16, 185, 129, 0.1);
+    color: #10b981;
+    border: 1px solid #10b981;
+}
+
+/* Status Badges */
+.status-pending { background: rgba(245, 158, 11, 0.1); color: #f59e0b; }
+.status-preparing { background: rgba(59, 130, 246, 0.1); color: #3b82f6; }
+.status-ready { background: rgba(16, 185, 129, 0.1); color: #10b981; }
+.status-completed { background: rgba(107, 114, 128, 0.1); color: #9ca3af; }
+
+.role-admin { background: rgba(198, 164, 63, 0.1); color: var(--primary); }
+.role-staff { background: rgba(59, 130, 246, 0.1); color: #3b82f6; }
+
+/* Stock Badges */
+.stock-good { background: rgba(16, 185, 129, 0.1); color: #10b981; }
+.stock-low { background: rgba(245, 158, 11, 0.1); color: #f59e0b; }
+.stock-critical { background: rgba(239, 68, 68, 0.1); color: #ef4444; }
+
+/* Loading Animation */
+.loading {
+    background: linear-gradient(90deg, var(--bg-tertiary) 25%, var(--border) 50%, var(--bg-tertiary) 75%);
+    background-size: 200% 100%;
+    animation: loading 1.5s infinite;
+}
+
+@keyframes loading {
+    0% { background-position: 200% 0; }
+    100% { background-position: -200% 0; }
+}
+
+/* Scrollbar */
+::-webkit-scrollbar {
+    width: 8px;
+}
+
+::-webkit-scrollbar-track {
+    background: var(--bg-tertiary);
+}
+
+::-webkit-scrollbar-thumb {
+    background: var(--primary);
+    border-radius: 4px;
+}
+
+::-webkit-scrollbar-thumb:hover {
+    background: var(--primary-light);
+}

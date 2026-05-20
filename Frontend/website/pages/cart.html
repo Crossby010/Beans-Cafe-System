@@ -4,21 +4,32 @@
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>Shopping Cart | Beans Cafe</title>
+    
+    <!-- Stylesheets -->
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
     <link rel="stylesheet" href="../css/style.css">
+    <link rel="stylesheet" href="../css/animations.css">
 </head>
 <body>
 
 <!-- Navigation -->
 <nav class="navbar">
     <div class="nav-container">
-        <a href="../index.html" class="logo cafe-name">Beans<span>Cafe</span></a>
+        <a href="../index.html" class="logo cafe-name">
+            <i class="fas fa-mug-hot"></i>
+            Beans<span>Cafe</span>
+        </a>
         
         <div class="nav-links">
             <a href="../index.html">Home</a>
-            <a href="menu.html" class="active">Menu</a>
+            <a href="menu.html">Menu</a>
             <a href="../index.html#howto">How to Order</a>
             <a href="../index.html#about">About</a>
-            <a href="cart.html" class="cart-link">🛒 Cart <span id="cart-count">0</span></a>
+            <a href="../index.html#gallery">Gallery</a>
+            <a href="cart.html" class="cart-link">
+                <i class="fas fa-shopping-cart"></i>
+                <span id="cart-count">0</span>
+            </a>
         </div>
         
         <div class="Mobile-Menu" id="Mobile_Menu_Toggle">
@@ -29,7 +40,7 @@
     </div>
 </nav>
 
-<!-- Mobile Navigation Panel -->
+<!-- Mobile Navigation Panel - SINGLE ONLY -->
 <div class="Mobile-Nav" id="MobileNav">
     <button class="close-menu" id="closeMenu"></button>
     <ul class="Mobile-Nav-Contents">
@@ -37,45 +48,85 @@
         <li><a href="menu.html">Menu</a></li>
         <li><a href="../index.html#howto">How to Order</a></li>
         <li><a href="../index.html#about">About</a></li>
+        <li><a href="../index.html#gallery">Gallery</a></li>
         <li><a href="cart.html">Cart</a></li>
     </ul>
 </div>
 
-<section style="padding-top: 100px; min-height: 70vh;">
+<!-- Overlay -->
+<div class="Overlay" id="Overlay"></div>
+
+<!-- Cart Section -->
+<section class="cart-section">
     <div class="container">
-        <a href="menu.html" class="back-btn">← Back to Menu</a>
-        
-        <h2 class="section-title">Your Cart</h2>
+        <div class="cart-header" data-aos="fade-up">
+            <a href="menu.html" class="back-btn">
+                <i class="fas fa-arrow-left"></i> Continue Shopping
+            </a>
+            <h1 class="section-title">Your Cart</h1>
+        </div>
         
         <div class="cart-container">
-            <div class="cart-items">
-                <div class="loading">Loading cart...</div>
+            <div class="cart-items" id="cart-items">
+                <div class="loading">
+                    <div class="spinner"></div>
+                    <p>Loading your cart...</p>
+                </div>
             </div>
             
-            <div class="cart-summary" style="display: none;">
+            <div class="cart-summary" id="cart-summary" style="display: none;" data-aos="fade-up" data-aos-delay="0.2">
                 <h3>Order Summary</h3>
-                <div class="summary-row" style="display: flex; justify-content: space-between; padding: 10px 0;">
+                
+                <div class="summary-row">
                     <span>Subtotal:</span>
                     <span id="cart-subtotal">₱0.00</span>
                 </div>
-                <div class="summary-row" style="display: flex; justify-content: space-between; padding: 10px 0; border-top: 1px solid var(--border-light); margin-top: 10px; padding-top: 15px;">
-                    <span style="font-weight: 700;">Total:</span>
-                    <span id="cart-total" style="font-weight: 700; font-size: 20px;">₱0.00</span>
+                <div class="summary-row">
+                    <span>Service Fee:</span>
+                    <span>₱0.00</span>
                 </div>
-                <button class="btn btn-primary" style="width: 100%; margin-top: 20px;" onclick="proceedToCheckout()">
-                    Proceed to Checkout
+                <div class="summary-row total">
+                    <span>Total:</span>
+                    <span id="cart-total">₱0.00</span>
+                </div>
+                
+                <div class="promo-code">
+                    <input type="text" placeholder="Promo code">
+                    <button class="btn-secondary">Apply</button>
+                </div>
+                
+                <button class="btn btn-primary checkout-btn" onclick="proceedToCheckout()">
+                    <i class="fas fa-credit-card"></i> Proceed to Checkout
+                </button>
+                
+                <button class="btn btn-secondary whatsapp-cart-btn" onclick="shareCartOnWhatsApp()">
+                    <i class="fab fa-whatsapp"></i> Share Cart on WhatsApp
                 </button>
             </div>
+        </div>
+        
+        <!-- Recommended Products -->
+        <div class="recommended-section" id="recommended-section" style="display: none;">
+            <h3>You May Also Like</h3>
+            <div class="products-grid" id="recommended-products"></div>
         </div>
     </div>
 </section>
 
+<!-- Footer -->
 <footer class="footer">
     <div class="container">
         <div class="footer-content">
-            <div>
-                <a href="../index.html" class="footer-logo cafe-name">Beans<span>Cafe</span></a>
-                <p style="margin-top: 15px;">Premium coffee experience crafted with passion.</p>
+            <div class="footer-brand">
+                <a href="../index.html" class="footer-logo cafe-name">
+                    <i class="fas fa-mug-hot"></i> Beans<span>Cafe</span>
+                </a>
+                <p>Premium coffee experience crafted with passion.</p>
+                <div class="footer-social">
+                    <a href="#" class="social-facebook"><i class="fab fa-facebook-f"></i></a>
+                    <a href="#" class="social-instagram"><i class="fab fa-instagram"></i></a>
+                    <a href="#" class="social-twitter"><i class="fab fa-twitter"></i></a>
+                </div>
             </div>
             <div class="footer-links">
                 <h4>Quick Links</h4>
@@ -87,7 +138,7 @@
             </div>
             <div class="footer-links">
                 <h4>Contact</h4>
-                <a href="#" class="cafe-address">📍 123 Coffee Street, Manila</a>
+                <a href="#" class="cafe-address">📍 123 Coffee Street, Pasig</a>
                 <a href="#" class="cafe-phone">📞 (02) 1234 5678</a>
                 <a href="#" class="cafe-email">✉️ hello@beanscafe.com</a>
             </div>
@@ -103,8 +154,16 @@
     </div>
 </footer>
 
+<!-- Scripts -->
+<script src="../script/config.js"></script>
 <script src="../script/main.js"></script>
 <script src="../script/cart.js"></script>
+<script src="../script/animations.js"></script>
+<script src="../script/darkmode.js"></script>
+<script src="../script/whatsapp.js"></script>
+<script src="../script/cookie-consent.js"></script>
+<script src="../script/backtotop.js"></script>
+<script src="../script/pwa.js"></script>
 
 <script>
     document.addEventListener('DOMContentLoaded', function() {
@@ -112,6 +171,28 @@
         updateCartCount();
         loadCafeSettings();
     });
+    
+    function shareCartOnWhatsApp() {
+        const cart = getCart();
+        if (cart.length === 0) {
+            showMessage('Your cart is empty', 'error');
+            return;
+        }
+        
+        let message = `🛍️ *My Order from Beans Cafe*%0a%0a`;
+        cart.forEach(item => {
+            message += `☕ ${item.name} x${item.quantity} - ₱${(item.price * item.quantity).toFixed(2)}%0a`;
+            if (item.customizations) {
+                message += `   └ ${item.customizations}%0a`;
+            }
+        });
+        message += `%0a📦 *Total:* ₱${getCartTotal().toFixed(2)}%0a`;
+        message += `📍 *Pickup:* Beans Cafe%0a`;
+        message += `%0a_Ready in 15 minutes!_ ☕`;
+        
+        const url = `https://wa.me/${APP_CONFIG.BUSINESS.whatsapp}?text=${message}`;
+        window.open(url, '_blank');
+    }
 </script>
 
 </body>
