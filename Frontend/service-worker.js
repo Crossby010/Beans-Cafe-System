@@ -2,13 +2,12 @@
 
 const CACHE_NAME = 'beans-cache-v1';
 const urlsToCache = [
-    '/',
-    '/index.html',
-    '/css/style.css',
-    '/js/main.js',
-    '/js/config.js',
-    '/js/cart.js',
-    '/offline.html'
+    '/Frontend/website/',
+    '/Frontend/website/index.html',
+    '/Frontend/website/css/style.css',
+    '/Frontend/website/script/main.js',
+    '/Frontend/website/script/config.js',
+    '/Frontend/website/script/cart.js'
 ];
 
 // Install service worker
