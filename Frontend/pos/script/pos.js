@@ -17,7 +17,7 @@ function checkAuth() {
     
     // Allow both admin and staff to access POS
     if (!token || (user.role !== 'admin' && user.role !== 'staff')) {
-        window.location.href = '/Admin/login.html';  // Capital A
+        window.location.href = '/Admin/login.html';
         return false;
     }
     return true;
@@ -27,25 +27,15 @@ function checkAuth() {
 document.addEventListener('DOMContentLoaded', async function() {
     if (!checkAuth()) return;
     
-    // Initialize socket connection
     initSocket();
-    
-    // Load orders
     await loadOrders();
     await loadTodayStats();
-    
-    // Setup event listeners
     setupEventListeners();
-    
-    // Start auto-refresh (every 10 seconds)
     setInterval(refreshOrders, 10000);
-    
-    // Initialize sound
     notificationSound = document.getElementById('notification-sound');
 });
 
 function initSocket() {
-    // Connect to Socket.IO (same backend)
     socket = io('https://beans-cafe-backend.onrender.com', {
         transports: ['websocket', 'polling']
     });
@@ -267,7 +257,7 @@ function displayOrderDetails(order) {
 
 async function updateOrderStatus(orderId, status) {
     try {
-        const response = await fetch(`${API_URL}/orders/${orderId}/status`, {
+        const response = await fetch(`${APP_CONFIG.API_URL}/orders/${orderId}/status`, {
             method: 'PUT',
             headers: {
                 'Content-Type': 'application/json',
@@ -320,7 +310,7 @@ function updateOrdersCount() {
 
 async function loadTodayStats() {
     try {
-        const response = await fetch(`${API_URL}/orders`, {
+        const response = await fetch(`${APP_CONFIG.API_URL}/orders`, {
             headers: { 'Authorization': `Bearer ${token}` }
         });
         const data = await response.json();
@@ -396,7 +386,7 @@ function closeOrderModal() {
 function logoutPOS() {
     localStorage.removeItem('admin_token');
     localStorage.removeItem('admin_user');
-    window.location.href = '/Admin/login.html';  // Capital A
+    window.location.href = '/Admin/login.html';
 }
 
 function escapeHtml(text) {
