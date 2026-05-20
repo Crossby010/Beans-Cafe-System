@@ -2,11 +2,12 @@ const express = require('express');
 const pool = require('../config/database');
 const authenticate = require('../middleware/auth');
 const adminAuth = require('../middleware/adminAuth');
+const staffAuth = require('../middleware/staffAuth');  // ← ADD THIS
 
 const router = express.Router();
 
-// Get all recipes
-router.get('/', authenticate, adminAuth, async (req, res) => {
+// Allow staff to view recipes (read-only)
+router.get('/', authenticate, staffAuth, async (req, res) => {
     try {
         const recipes = await pool.query(
             `SELECT r.*, 
@@ -35,8 +36,8 @@ router.get('/', authenticate, adminAuth, async (req, res) => {
     }
 });
 
-// Get single recipe
-router.get('/:id', authenticate, adminAuth, async (req, res) => {
+// Get single recipe - allow staff
+router.get('/:id', authenticate, staffAuth, async (req, res) => {
     try {
         const recipe = await pool.query(
             `SELECT r.*, 
@@ -70,7 +71,7 @@ router.get('/:id', authenticate, adminAuth, async (req, res) => {
     }
 });
 
-// Add new recipe
+// Add new recipe - admin only
 router.post('/', authenticate, adminAuth, async (req, res) => {
     const client = await pool.connect();
     try {
@@ -78,7 +79,6 @@ router.post('/', authenticate, adminAuth, async (req, res) => {
         
         const { product_id, name, instructions, prep_time, ingredients } = req.body;
         
-        // Insert recipe
         const recipeResult = await client.query(
             `INSERT INTO recipes (product_id, name, instructions, prep_time) 
              VALUES ($1, $2, $3, $4) 
@@ -88,9 +88,7 @@ router.post('/', authenticate, adminAuth, async (req, res) => {
         
         const recipeId = recipeResult.rows[0].id;
         
-        // Insert recipe ingredients
         for (const ing of ingredients) {
-            // Get the unit from inventory item
             const unitResult = await client.query(
                 'SELECT unit FROM inventory_items WHERE id = $1',
                 [ing.inventory_item_id]
@@ -116,7 +114,7 @@ router.post('/', authenticate, adminAuth, async (req, res) => {
     }
 });
 
-// Delete recipe
+// Delete recipe - admin only
 router.delete('/:id', authenticate, adminAuth, async (req, res) => {
     try {
         await pool.query('DELETE FROM recipe_ingredients WHERE recipe_id = $1', [req.params.id]);
