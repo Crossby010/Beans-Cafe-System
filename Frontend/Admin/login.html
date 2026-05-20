@@ -61,20 +61,5 @@
     </div>
 
     <script src="script/admin-login.js"></script>
-    
-    <script>
-        // Password visibility toggle
-        const passwordToggle = document.getElementById('passwordToggle');
-        const passwordInput = document.getElementById('admin-password');
-        
-        if (passwordToggle && passwordInput) {
-            passwordToggle.addEventListener('click', function() {
-                const type = passwordInput.type === 'password' ? 'text' : 'password';
-                passwordInput.type = type;
-                this.classList.toggle('fa-eye');
-                this.classList.toggle('fa-eye-slash');
-            });
-        }
-    </script>
 </body>
 </html>
